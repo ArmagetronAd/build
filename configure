@@ -1,0 +1,298 @@
+#!/bin/bash
+# simple configuration script
+
+# Copyright (C) 2005  by Manuel Moos
+# and the AA DevTeam (see the file AUTHORS(.txt) in the main source directory)
+# Last change by $Author$ on $Date$
+
+# set -x
+
+# copy base information
+cp make.conf.template make.conf
+
+# process commandline arguments
+RPMTOPDIR=""
+
+while getopts "r:" Option
+# Initial declaration.
+# a, b, c, d, e, f, and g are the options (flags) expected.
+# The : after option 'e' shows it will have an argument passed with it.
+do
+  case $Option in
+    r ) RPMTOPDIR=$OPTARG
+  esac
+done
+shift $(($OPTIND - 1))
+# Move argument pointer to next.
+
+
+
+# try to guess some other settings
+
+# guess source location
+
+echo -n Determining source directory...  
+
+AA_SOURCE=""
+for CANDIDATE in ../armagetronad ../armagetron; do
+	test -d $CANDIDATE && test -z "$AA_SOURCE" && AA_SOURCE=$CANDIDATE
+done
+
+echo "# source directory" >> make.conf
+echo "AA_SOURCE=$AA_SOURCE" >> make.conf
+echo "" >> make.conf
+
+echo " $AA_SOURCE"
+
+# guess windows build files location
+
+echo -n Determining VisualC directory...  
+
+AA_VC_SOURCE=""
+for CANDIDATE in ../armagetronad_build_visualc ../visualc_build ../build_visualc; do
+	test -d $CANDIDATE && test -z "$AA_VC_SOURCE" && AA_VC_SOURCE=$CANDIDATE
+done
+
+echo "# VisualC directory" >> make.conf
+echo "AA_VISUALC=$AA_VC_SOURCE" >> make.conf
+echo "" >> make.conf
+
+echo " $AA_VC_SOURCE"
+
+echo -n Determining Code::Blocks directory...  
+
+AA_CODEBLOCKS_SOURCE=""
+for CANDIDATE in ../armagetronad_build_codeblocks ../build_codeblocks ../codeblocks_build; do
+	test -d $CANDIDATE && test -z "$AA_CODEBLOCKS_SOURCE" && AA_CODEBLOCKS_SOURCE=$CANDIDATE
+done
+
+echo "# Code::Blocks directory" >> make.conf
+echo "AA_CODEBLOCKS=$AA_CODEBLOCKS_SOURCE" >> make.conf
+echo "" >> make.conf
+
+echo " $AA_CODEBLOCKS_SOURCE"
+
+# guess packager name
+
+echo -n Determining packager name...
+
+PACKAGER=""
+USERNAME=""
+
+# get username from CVS entries (here and AA source)
+if test -r "$AA_SOURCE/CVS/Root"; then
+	USERNAME=`cat "$AA_SOURCE/CVS/Root" | sed -e "s|^:ext:||" -e "s|@.*$||"`
+fi
+if test -r "CVS/Root"; then
+    USERNAME=`cat "CVS/Root" | sed -e "s|^:ext:||" -e "s|@.*$||"`
+fi
+
+test -z "$USERNAME" || PACKAGER="$USERNAME < $USERNAME@users.sf.net >"
+
+if test -z "$PACKAGER"; then
+	PACKAGER="Anonymous"	
+fi
+
+echo "# packager name" >> make.conf
+echo "PACKAGER=\"$PACKAGER\"" >> make.conf
+echo "" >> make.conf
+
+echo " $PACKAGER"
+
+# get aabeta username
+if test -r "../www-aabeta/CVS/Root"; then
+    echo -n Determining aabeta user name...
+
+	USERNAME_AABETA=`cat "../www-aabeta/CVS/Root" | sed -e "s|^:ext:||" -e "s|@.*$||"`
+    echo "# aabeta user name" >> make.conf
+    echo "USERNAME_AABETA=\"$USERNAME_AABETA\"" >> make.conf
+    echo "" >> make.conf
+
+    echo " $USERNAME_AABETA"
+fi
+
+
+# guess RPM build directory
+
+echo -n Determining RPM build directory...
+
+if test "$RPMTOPDIR" = ""; then
+    test -r ~/.rpmmacros && USERCANDIDATE=`cat ~/.rpmmacros | grep "%_topdir" | sed -e 's,%_topdir[[:blank:]]*,,'`
+    for CANDIDATE in $USERCANDIDATE /usr/src/packages /usr/src/redhat; do
+        test -d $CANDIDATE/SOURCES && test -z "$RPMTOPDIR" && RPMTOPDIR=$CANDIDATE
+    done
+fi
+
+echo "# rpm build directory" >> make.conf
+echo "RPMTOPDIR=$RPMTOPDIR" >> make.conf
+echo "" >> make.conf
+
+test -z "$PRMTOPDIR" || RPMTOPDIR=none
+
+echo " $RPMTOPDIR"
+
+# LIBXML2
+
+echo -n Determining libxml2 version...
+
+XML2VER=`xml2-config --version` || exit -1
+
+# test if the version is larger than 2.6.12
+if test "${ALLOW_OLDLIBXML2}" = yes; then
+    echo " ${XML2VER}, forced compatibility with obsoleted version"
+    ALLOW_OLDLIBXML2=yes
+else
+    if test `echo -e "${XML2VER}\n2.6.12" | sort | head -n 1` = 2.6.12; then
+        ALLOW_OLDLIBXML2=no
+        echo " ${XML2VER}, fully compatible"
+    else
+        ALLOW_OLDLIBXML2=yes
+        echo " ${XML2VER}, obsolete for our purposes, features will be limited"
+    fi
+fi
+
+echo "# is LIBXML2 that we build with obsolete and can we allow lax dependencies?" >> make.conf
+echo "ALLOW_OLDLIBXML2=${ALLOW_OLDLIBXML2}" >> make.conf
+echo "" >> make.conf
+
+# guess OS type and architecture
+
+echo -n Determining OS type...
+
+#
+# determine system description
+#
+
+OSTAG=""
+
+# use MACHTYPE if that is set
+test -z "$MACHTYPE" || OSTAG="$MACHTYPE"
+
+# ask gcc
+test -z "${OSTAG}" && OSTAG=`gcc -dumpmachine` > /dev/null 2>&1
+
+# fall back to other shell variables
+if test -z "${OSTAG}"; then
+    test -z "$HOSTTYPE" || OSTAG="$OSTAG-$HOSTTYPE"
+    test -z "$OSTYPE" || OSTAG="$OSTAG-$OSTYPE"
+    OSTAG=`echo ${OSTAG} | sed -e "s,^-,,"`
+fi
+
+
+#well formed OSTAG examples (from SF compile farm and z-man's work PC. more examples welcome):
+#OSTAG=i386-redhat-linux-gnu
+#OSTAG=i686-suse-linux
+#OSTAG=i386-portbld-freebsd4.6
+#OSTAG=x86_64-suse-linux
+#OSTAG=x86_64-redhat-linux-gnu
+#OSTAG=alpha-unknown-linux-gnu
+#OSTAG=powerpc-apple-darwin6.0
+#OSTAG=sparc-sun-solaris2.9
+#OSTAG=i386-pc-solaris2.9
+#OSTAG=i586-mandrake-linux-gnu
+
+# OpenBSD: semi-well formed
+#OSTAG=i386-unknown-openbsd3.4
+
+# not so well formed: from Debian and Gentoo linux
+#OSTAG=i686-pc-linux-gnu
+#OSTAG=i386-pc-linux-gnu
+
+# uh oh. Debian GNU/Hurd: (and it does not have a /etc/*-release)
+# OSTAG=i386-pc-gnu
+
+echo -n "${OSTAG}"
+
+# rewrite OSTAG o our preferences
+BITS=32
+# extract architecture
+ARCH=`echo $OSTAG | sed -e "s,-.*,,"`
+# extract OS (actually, VENDOR-OS part)
+OS=`echo $OSTAG | sed -e "s,${ARCH}-,,"`
+
+#
+# Sanity check OSTAG
+#
+
+# if OS contains insufficient information (only gnu, pc and linux), add it from the
+# existence of /etc/VENDOR-release
+if test -z `echo ${OS} | sed -e "s,linux,," -e "s,unknown,," -e "s,gnu,," -e "s,pc,," -e "s,-,,g"`; then
+    # remove -unknown- part of OS
+    OS=`echo ${OS} | sed -e "s,unknown-,,"`
+
+    # determine true vendor
+    VENDOR=`ls /etc/*-release | sed -e "s,/etc/,," -e "s,-release,," | head -n 1` > /dev/null 2>&1
+    test -z "$VENDOR" && VENDOR=unknown
+
+    # reassemble OS
+    OS=${VENDOR}-${OS}
+    echo -n " -> " ${ARCH}-${OS}
+fi
+
+# reassemble OSTAG
+OSTAG=${ARCH}-${OS}
+
+#
+# Generate generic OSTAG for builds that are not overly vendor specific
+#
+
+OS_GENERIC=`echo ${OS} | sed -e "s,^[a-zA-Z]*-,generic-," -e "s,pc-,,"`
+
+# add -gnu for linux (once we start supporting a non-gnu linux, this needs adaption)
+if echo ${OS} | grep linux > /dev/null && echo ${OS} | grep -v gnu > /dev/null; then
+   OS_GENERIC=${OS_GENERIC}-gnu
+fi
+
+OSTAG_GENERIC=${ARCH}-${OS_GENERIC}
+
+#
+# Reassemble OSTAG in different order for AABETA
+#
+
+# rewrite architecture
+ARCH=`echo ${ARCH} | sed -e "s,powerpc,ppc," -e "s,i.86,x86,"`
+
+# recognize 64 bit architectures (please add others you know of)
+# not to include as they can be both:
+# sparc
+echo ${ARCH} | egrep "64|alpha" > /dev/null 2>&1 && BITS=64
+
+# blend arch and bits
+echo ${ARCH} | grep ${BITS} > /dev/null 2>&1 || ARCH=${ARCH}_${BITS}
+
+# remove pc- tag from OS
+if echo ${OS} | grep pc- > /dev/null 2>&1; then
+    OS=`echo ${OS} | sed -e "s,pc-,,"`
+    #ARCH=${ARCH}-pc
+fi
+
+# rewrite os: eliminate linux of well known distributors
+for vendor in suse redhat gentoo debian ubuntu; do
+    echo ${OS} | grep ${vendor} > /dev/null 2>&1 && OS=${vendor} 
+done
+
+# mandrake -> mandriva
+echo ${OS} | grep mandrake  > /dev/null 2>&1 && OS=mandriva
+
+if test "${ALLOW_OLDLIBXML2}" = "yes"; then
+    OSTAG=${OSTAG}-libxml2-pre-2_6_12
+    OS=${OS}-libxml2-pre-2_6_12
+fi
+
+# replace dots by underscores
+OS=`echo ${OS} | sed -e "s,\.,_,g"`
+OSTAG=`echo ${OSTAG} | sed -e "s,\.,_,g"`
+
+# reassemble
+OSTAG_AABETA=${OS}.${ARCH}
+#.${BITS}
+
+echo "# OS info" >> make.conf
+echo "OSTAG=${OSTAG}" >> make.conf
+echo "OSTAG_GENERIC=${OSTAG_GENERIC}" >> make.conf
+echo "OSTAG_AABETA=${OSTAG_AABETA}" >> make.conf
+echo "" >> make.conf
+
+echo " -> ${OSTAG_AABETA}"
+
+

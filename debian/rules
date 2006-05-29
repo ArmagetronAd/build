@@ -1,0 +1,161 @@
+#!/usr/bin/make -f
+# Copyright 2005 AA-DevTeam
+# Copyright 2002 Andreas Bombe <aeb@debian.org>
+# GNU copyright 2000 Marcelo E. Magallon <mmagallo@debian.org>
+# Based on sample debian/rules that uses debhelper, GNU copyright 1997 to 1999
+# by Joey Hess.
+
+#export DH_VERBOSE=1
+export DH_COMPAT=4
+
+export DEB_HOST_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+export DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+
+# for autoconf 2.13
+ifeq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
+confflags += $(DEB_HOST_GNU_TYPE)
+else
+confflags += --host $(DEB_BUILD_GNU_TYPE) --build $(DEB_HOST_GNU_TYPE)
+endif
+
+
+tmpdir := $(PWD)/debian
+client := $(tmpdir)/armagetronad
+server := $(tmpdir)/armagetronad-server
+common := $(tmpdir)/armagetronad-common
+
+INSTALL         := install -m 0644 -o root -g root
+INSTALL_PROGRAM := install -m 0755 -o root -g root
+
+CXXFLAGS := -Wall -g
+
+ifeq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+CXXFLAGS += -O2
+endif
+
+# armagetronad apparently relies on arithmetics with denormals
+ifeq ($(shell dpkg-architecture -qDEB_HOST_ARCH),alpha)
+CXXFLAGS += -mieee
+endif
+
+export CXXFLAGS
+
+
+configure: autotools-update configure-stamp.client configure-stamp.server
+
+autotools-update:
+	test -r /usr/share/misc/config.guess && cp /usr/share/misc/config.guess .
+	test -r /usr/share/misc/config.sub && cp /usr/share/misc/config.sub .
+	sh bootstrap.sh
+
+configure-stamp.client:
+	dh_testdir
+	mkdir client
+	cd client && sh ../configure $(confflags) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info --enable-glout
+	cd client && perl -pi -e 's/\s-lpng\b//; s/\s-lz\b//' `find -name Makefile`
+	touch $@
+
+configure-stamp.server:
+	dh_testdir
+	mkdir server
+	cd server && sh ../configure $(confflags) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info --disable-glout
+	cd server && perl -pi -e 's/\s-lpng\b//; s/\s-lz\b//' `find -name Makefile`
+	touch $@
+
+build: configure build-stamp.client build-stamp.server
+
+build-stamp.client:
+	dh_testdir
+	$(MAKE) -C client
+	touch $@
+
+build-stamp.server:
+	dh_testdir
+	$(MAKE) -C server
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -rf client server
+	rm -f build-stamp.* configure-stamp.* install-stamp
+	rm -f config.guess config.sub
+	dh_clean
+
+install-stamp:
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+	$(INSTALL_PROGRAM) debian/armagetronad.wrapper $(client)/usr/games/armagetronad
+	$(INSTALL_PROGRAM) client/src/armagetronad_main $(client)/usr/games/armagetronad.real
+	$(INSTALL_PROGRAM) debian/armagetronad-dedicated.wrapper $(server)/usr/games/armagetronad-dedicated
+	$(INSTALL_PROGRAM) server/src/armagetronad_main $(server)/usr/games/armagetronad-dedicated.real
+	$(INSTALL) config/*.cfg $(common)/etc/armagetronad
+	$(INSTALL) client/config/*.* $(common)/etc/armagetronad
+	$(INSTALL) config/master.srv $(common)/etc/armagetronad
+	$(INSTALL) debian/armagetronad.xpm $(client)/usr/share/pixmaps/armagetronad.xpm
+	$(INSTALL) debian/armagetronad.png $(client)/usr/share/pixmaps/armagetronad.png
+	$(INSTALL) debian/armagetronad.desktop $(client)/usr/share/applications/armagetronad.desktop
+
+	# models, sound and textures
+	for dir in models sound textures; do \
+	    $(INSTALL) $$dir/*.* $(client)/usr/share/games/armagetronad/$$dir; \
+	done
+
+	# documentation
+	$(INSTALL) $(filter-out client/src/doc/install_macosx.html client/src/doc/install_windows.html client/src/doc/readme_macosx.html client/src/doc/readme_windows.html,$(wildcard client/src/doc/*.html)) $(common)/usr/share/doc/armagetronad-common
+	$(INSTALL) $(wildcard client/src/doc/net/*.html) $(common)/usr/share/doc/armagetronad-common/net
+	$(INSTALL) $(wildcard src/doc/Content_Creation/*.txt) $(common)/usr/share/doc/armagetronad-common/Content_Creation
+
+	# languages
+	$(INSTALL) client/language/* $(common)/usr/share/games/armagetronad/language
+	$(INSTALL) language/*.txt $(common)/usr/share/games/armagetronad/language
+
+	# resources
+	$(INSTALL) resource/included/*.dtd $(common)/usr/share/games/armagetronad/resource
+	$(INSTALL) resource/included/Anonymous/README $(common)/usr/share/games/armagetronad/resource/included/Anonymous
+	$(INSTALL) resource/included/Anonymous/polygon/README $(common)/usr/share/games/armagetronad/resource/included/Anonymous/polygon
+	$(INSTALL) resource/included/Anonymous/polygon/regular/README $(common)/usr/share/games/armagetronad/resource/included/Anonymous/polygon/regular
+	$(INSTALL) resource/included/Anonymous/polygon/regular/*.xml $(common)/usr/share/games/armagetronad/resource/included/Anonymous/polygon/regular
+	$(INSTALL) resource/included/Your_mom/clever/*.xml $(common)/usr/share/games/armagetronad/resource/included/Your_mom/clever
+	$(INSTALL) resource/included/Z-Man/fortress/*.xml $(common)/usr/share/games/armagetronad/resource/included/Z-Man/fortress
+
+	touch $@
+
+install: build install-stamp
+
+
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installdocs -parmagetronad-common
+	dh_installchangelogs -parmagetronad-common client/src/doc/changelog.html
+	dh_link -i
+	dh_compress -i
+	dh_fixperms -i
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
+
+
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installmenu
+	dh_installman -parmagetronad debian/armagetronad.6
+	dh_installman -parmagetronad-server debian/armagetronad-dedicated.6
+	dh_link -a
+	dh_strip -a
+	dh_compress -a
+	dh_fixperms -a
+	dh_installdeb -a
+	dh_shlibdeps -a
+	dh_gencontrol -a
+	dh_md5sums -a
+	dh_builddeb -a
+
+binary: binary-indep binary-arch
+.PHONY: build clean configure build binary-indep binary-arch binary \
+	install autotools-update

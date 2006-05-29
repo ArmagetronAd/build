@@ -1,0 +1,9 @@
+Document: armagetronad
+Title: Armagetron Advanced Manual - A 3D Tron-like high speed game
+Author: AA-DevTeam
+Abstract: Users manual for Armagetron Advanced, A 3D Tron-like high speed game.
+Section: Games/Arcade
+
+Format: HTML
+Index: /usr/share/doc/armagetronad/index.html
+Files: /usr/share/doc/armagetronad/*.html

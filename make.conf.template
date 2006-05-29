@@ -1,0 +1,29 @@
+# configuration file for build scrips and makefile
+
+#set program and package name
+PROGNAME="Armagetron Advanced"
+PACKAGE=armagetronad
+
+#prefix to install the program to
+PREFIX=/usr/local
+
+# RPM build root
+#RPMBUILDROOT="%{_tmppath}/%{name}-%{version}-root"
+
+# additional options to configure
+#CONFIGURE_OPTIONS="--enable-etc --disable-music"
+
+# where to find the config files after installation
+#CONFIGFILES=/etc/$PACKAGENAME
+
+# alternative setting for location of config files
+#test $CONFIGURE_OPTIONS || CONFIGURE_OPTIONS=--disable-etc
+#test $CONFIGFILES || CONFIGFILES=$PREFIX/games/$PACKAGENAME/config
+
+# set C compiler flags
+# CXXFLAGS="-Os"
+
+#
+# AUTOMATICALLY DETERMINED VALUES FOLLOW. PLEASE CHECK IN make.conf
+#
+

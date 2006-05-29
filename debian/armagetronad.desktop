@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Armagetron Advanced
+Comment=Tron-style 3D game
+Exec=armagetronad
+Icon=armagetronad
+Terminal=false
+Type=Application
+Categories=Application;Game;
+StartupNotify=false

@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# uploads result of build; this script is only supposed to run on MY PERSONAL
+# MACHINE. look into the subdirectories for portable build scripts.
+
+pushd ..
+
+
+VERSION=$( cat major_version ).$( cat minor_version )
+
+MV=$(( $( cat minor_version ) + 1 ))pre
+echo "echo $MV > minor_version" >> ../tagcvs
+
+TARGETDEV=/windows/G/ArmagetronDevel
+TARGETBASE=$TARGETDEV/Source
+UPLOAD=/abakus/home/manuel/C++/Armagetron/Upload
+
+ARCHIVE=$TARGETDEV/archive/armagetron-$VERSION
+
+#archive windows versions for future patches
+install -d $TARGETDEV/archive
+rm -rf $TARGETBASE/var/*
+rm -rf $ARCHIVE
+mkdir $ARCHIVE
+mv  $TARGETBASE/dist_server $ARCHIVE/server
+mv  $TARGETBASE/dist_client $ARCHIVE/client
+mv  $TARGETBASE/update_client $ARCHIVE/update_client
+rm -rf $ARCHIVE/client/*.dll
+rm -rf $ARCHIVE/client/*.DLL
+
+cd $UPLOAD
+echo -e "cd incoming\nmput armagetron*\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\nexit" | pftp upload.sf.net $*
+
+popd

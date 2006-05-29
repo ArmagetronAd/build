@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# copies sources from CVS folder into given target folder
+
+# set -x
+
+# read configuration
+. make.conf
+
+TARGET=$1
+VERSION=$2
+
+# generate automatic files
+CWD=`pwd`
+if test -z "$VERSION"; then
+    if test -r $AA_SOURCE/version && test -r $AA_SOURCE/configure && test -r $AA_SOURCE/ChangeLog ; then
+        echo "No bootstrap required."
+    else
+        # bootstrap
+        lwd=`pwd`
+        cd $AA_SOURCE
+        sh ./bootstrap.sh || exit -1
+        cd ${lwd}
+    fi
+        
+    # adapt version to source
+    VERSION=`sed -e 's,.*\[,,' -e 's,\].*,,'  < $AA_SOURCE/version`
+else
+    # adapt source to version
+    echo "m4_define(AUTOMATIC_VERSION,[$VERSION])" > .v
+    if ! diff .v  $AA_SOURCE/version ; then
+        pushd $AA_SOURCE
+        sh ./bootstrap.sh || exit -1
+        mv $CWD/.v version
+        autoconf || exit -1
+        popd
+    fi
+fi
+
+# make disttribution
+mkdir -p $TARGET/distmaker
+lwd=`pwd`
+cd $TARGET/distmaker
+test -r config.h || docstyle=web $CWD/$AA_SOURCE/configure --prefix=/usr/local --disable-glout --enable-automakedefaults --disable-useradd --disable-etc --disable-initscripts || exit -1
+${MAKE} distprep || exit -1
+${MAKE} dist || exit -1
+mv *.tar.* ../
+cd ${lwd}
+
+# copy raw sources for later tagging
+rm -rf $TARGET/cvs-$VERSION
+cp -ax $AA_SOURCE $TARGET/cvs-$VERSION || exit 1
+
+

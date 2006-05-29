@@ -1,0 +1,28 @@
+#!/bin/bash
+# small script that makes sure all files included from the main makefile are up to date
+
+# Copyright (C) 2005  by Manuel Moos
+# and the AA DevTeam (see the file AUTHORS(.txt) in the main source directory)
+# Last change by $Author: z-man $ on $Date: 2005/08/26 14:27:05 $
+
+# set -x
+
+INCLUDES_UPDATED=.includes-updated
+
+test -r .remaking-includes && { touch ${INCLUDES_UPDATED} ; exit 0 ; }
+
+RETVAL=0
+
+touch .remaking-includes
+${MAKE} nothing-but-includes || true
+COUNT=1
+while test -r ${INCLUDES_UPDATED} -a ${COUNT} -lt 10; do
+	RETVAL=1
+	rm -f ${INCLUDES_UPDATED}
+	${MAKE} --stop nothing-but-includes
+    COUNT=$((${COUNT} + 1 ))
+done
+rm -f .remaking-includes
+
+test ${RETVAL} = 1 && echo -e -n "\n\nIncluded makefiles updated. Please rerun make.\n\n"
+exit ${RETVAL}

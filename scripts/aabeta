@@ -1,0 +1,188 @@
+#!/bin/bash
+#renames release files for aabeta
+
+# set -x
+
+# adapt this on every CVS branch
+BRANCH=0.2.8
+
+OFFICIAL_VERSION=`cat ../../../.versionfile.proto`
+# LJR: Does this work? The directory for alphas is Branch/Date...
+
+DIRECTORY=${BRANCH}/${OFFICIAL_VERSION}
+
+rm -f releases*.php*
+
+for f in *; do
+    # ignore old-libxml files
+    if echo "$f" | grep "libxml2" >/dev/null; then
+		rm $f
+        continue
+	fi
+
+    # determine file type by extension
+	TYPE=""
+	echo $f | grep ".deb\$"    >/dev/null && TYPE=inst.
+	echo $f | grep ".rpm\$"    >/dev/null && TYPE=inst.
+	echo $f | grep ".exe\$"    >/dev/null && TYPE=inst.
+	echo $f | grep ".package\$"    >/dev/null && TYPE=inst.
+	echo $f | grep ".src." >/dev/null && TYPE=""
+	echo $f | grep ".${TYPE}." >/dev/null && TYPE=""
+    
+    # determine product: the filename up to the first dash, followed by a number
+    PRODUCT=`echo $f | sed -e "s,-[0-9].*,,"`
+    REST=`   echo $f | sed -e "s,^${PRODUCT}-,,"`
+
+    SERVER_AABETA=false
+    echo $PRODUCT | grep dedicated >/dev/null && SERVER_AABETA=true
+    
+    # determine version: the rest of the filename up to the first dot, followed by a letter
+    VERSION=`echo ${REST} | sed -e "s,\.[a-zA-Z].*,,"`
+    REST=`   echo ${REST} | sed -e "s,^${VERSION}\.,,"` 
+
+    # test if this is a windows build
+    if test "${REST}" = "win32.exe"; then
+        TARGET=${PRODUCT}-${VERSION}.${TYPE}windows.x86.exe 
+        SYSTEM_AABETA=windows
+        SYSTEM_AABETA_FULL=Windows
+        ARCH_AABETA=x86_32
+        EXT_AABETA=exe
+    elif test `echo ${REST} | sed -e "s,^[^\.]*\.,,"` = "win32.exe"; then
+        TARGET=${PRODUCT}-${VERSION}.${TYPE}windows.x86.exe 
+        SYSTEM_AABETA=windows
+        COMPILER=`echo ${REST} | sed -e "s,\..*$,," -e "s,g,G,g" -e "s,v,V,g" -e "s,c,C,g"`
+        SYSTEM_AABETA_FULL="Windows (${COMPILER})"
+        ARCH_AABETA=x86_32
+        EXT_AABETA=exe
+    elif test "${REST}" = "zip"; then
+        SERVER_AABETA="'doesnotapply'"
+    
+        TARGET=${PRODUCT}-${VERSION}.src.windows.zip
+        ARCH_AABETA=doesnotapply
+        SYSTEM_AABETA=windows
+        SYSTEM_AABETA_FULL=\(Source\)
+        EXT_AABETA=zip
+    else
+        # TODO: mac files
+
+        # assume it's unix
+
+        # nothing needs to be done for source packages
+        if echo ${REST} | grep "^src\." >/dev/null; then
+            SERVER_AABETA="'doesnotapply'"
+            TARGET=$f
+            SYSTEM_AABETA="doesnotapply"
+            SYSTEM_AABETA_FULL=\(Source\)
+            TYPE=src.
+            ARCH_AABETA="doesnotapply"
+            REST=`echo ${REST} | sed -e "s,^src\.,,"` 
+        else
+    		# architecture: the rest of the filename to then ext dash
+            ARCH=`echo ${REST} | sed -e "s,-.*,,"`
+            REST=`echo ${REST} | sed -e "s,^${ARCH}-,,"` 
+
+	        # system: everything to the next dot
+            SYSTEM=`echo ${REST} | sed -e "s,\..*,,"`
+            REST=`  echo ${REST} | sed -e "s,^${SYSTEM}\.,,"` 
+
+	        # map arch for aabeta
+            ARCH_AABETA=${ARCH}
+            echo ${ARCH} | grep "i.86" >/dev/null && ARCH_AABETA=x86_32
+
+	  	  	# map system for aabeta
+            SYSTEM_AABETA=${SYSTEM}
+            SYSTEM_AABETA_FULL=${SYSTEM}
+            test ${SYSTEM} == "generic-linux-gnu" && SYSTEM_AABETA=gnulinux SYSTEM_AABETA_FULL="GNU/Linux"
+        fi
+
+        # the rest must be the extension
+        EXT=${REST}
+
+        # map extension for aabeta
+        EXT_AABETA=${EXT}
+        test ${EXT} == tar.gz && EXT_AABETA=tgz
+        test ${EXT} == tar.bz2 && EXT_AABETA=tbz2
+ 
+	    # rename the file
+        TARGET=${PRODUCT}-${VERSION}.${TYPE}${SYSTEM_AABETA}.${ARCH_AABETA}.${EXT_AABETA}
+        
+        # filter out irrelevant info
+        TARGET=`echo $TARGET | sed -e "s,doesnotapply\.,,g"`
+    fi
+    
+    TARGET=$f
+    #echo mv $f ${TARGET}
+    #test $f == ${TARGET} || mv $f $TARGET
+
+    tag=${OFFICIAL_VERSION}
+    
+    # extract date tag
+    if echo ${OFFICIAL_VERSION} | grep "alpha"; then
+        tagdate=`echo ${OFFICIAL_VERSION} | sed -e "s,.*alpha,,g"`
+        tag=`date -d ${tagdate} +%Y-%m-%d`
+    fi
+
+    cat >> releases.php.proto <<EOF
+array(
+    'file'     => '${DIRECTORY}/${TARGET}',
+    //'source'   => 'sf_aa',
+    'branch'   => '0.2.8',
+    'date'     => '`date -r ${TARGET} +%Y-%m-%d`',
+    'tag'      => '${tag}',
+    'os'       => '${SYSTEM_AABETA_FULL}',
+    'arch'     => '${ARCH_AABETA}',
+    'format'   => '.${EXT_AABETA}',
+    'packager' => '`echo ${PACKAGER} | sed -e "s, .*,,"`',
+    'server'   => ${SERVER_AABETA},
+),
+EOF
+
+
+	#mv $$f `echo $$f | sed -e "s,${OSTAG},$${TYPE}${OSTAG_AABETA}," -e "s,${OSTAG_GENERIC},$${TYPE}${OSTAG_AABETA},"`;\
+done
+
+grep < releases.php.proto > releases.php -v "'doesnotapply'"
+
+# build in new elements into releases.php
+REALRELEASES=../../../../../www-aabeta/releases.php
+if test -r ${REALRELEASES}; then
+    insertat=2
+    totallines=`wc -l < ${REALRELEASES}`
+    lines=$(( ${totallines} - ${insertat} ))
+    tail -n ${lines} ${REALRELEASES} > releases_tail.php
+    head -n ${insertat} ${REALRELEASES} > releases_head.php
+    cp releases_head.php ${REALRELEASES}
+    echo "// begin version ${OFFICIAL_VERSION}" >> ${REALRELEASES}
+    cat releases.php                            >> ${REALRELEASES}
+    echo "// end version ${OFFICIAL_VERSION}"   >> ${REALRELEASES}
+    cat releases_tail.php                       >> ${REALRELEASES}
+fi
+
+set +x
+
+echo
+echo New aabeta releases:
+cat releases.php
+echo
+
+rm -f releases*.php*
+
+echo
+echo File list:
+ls -l
+
+echo
+echo Upload commands:
+COMMAND1="ssh ${USERNAME_AABETA}@beta.armagetronad.net mkdir -m g+ws -p /var/www/aabeta/download/${DIRECTORY}"
+COMMAND2="rsync --progress * ${USERNAME_AABETA}@beta.armagetronad.net:/var/www/aabeta/download/${DIRECTORY}/"
+echo ${COMMAND1}
+echo ${COMMAND2}
+
+if test "${DO_UPLOAD}" == yes; then
+ echo
+ echo Press enter to upload the files.
+ line
+
+ ${COMMAND1}
+ ${COMMAND2}
+fi

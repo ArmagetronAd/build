@@ -1,0 +1,147 @@
+armagetronad (0.2.8.0rc1-1) unstable; urgency=low
+  * Fixed bugs:
+    Random client disconnection
+    Another vote-not-appearing-on-client bug
+    Invisible wall segments right after turn
+    Arena initialization before all settings are transmitted from the server
+    The server was using more rubber than the client sometimes
+    Crash with moviepack and some maps
+    Object sync messages not accepted by client in second network session
+  * Improved kill/suicide/team kill distinction (ENEMY_* settings)
+  * Chatbots and idle players can be removed from the game and kicked (CHATTER/IDLE_REMOVE_TIME,IDLE_KICK_TIME)
+  * Players/team leaders can pause the game before a rond starts (PLAYER_CHAT_WAIT*)
+  * Color codes can be filtered from player names (FILTER_COLOR_NAMES)
+  * New machine readable log file: ladderlog.txt
+  * Configurable and better core dump/team kill/suicide distinction algorithm
+  * Unknown settings are recognized now in configuration files
+  * All global key bindings (Grab mouse, pause and texture reload were left) are now configurable
+  * Player listing length limit adjusted so two teams/16 players fits on screen
+  * Less verbose upgrade warning messages
+  * Imposters can get a non-conflicting name (ALLOW_IMPOST[EO]RS)
+
+ -- AA-DevTeam <klaxnek@users.sf.net>  Sat, 14 Jan 2006 16:45:00 +0100
+
+armagetronad (0.2.8.0beta4.1-1) unstable; urgency=low
+  * Fixed bugs:
+    Windows version had a memory overwrite error causing crashes and weird behavior.
+    The game quit when the chat key and a key bound to an instant chat were pressed to quickly.
+    Votes expired too early on the client.
+    Performance: a lot of unused temporary walls were hanging around each round.
+    Cycles sometimes warped to odd locations.
+  * Tweaked smart camera to not stay in front of the cycle so much.
+    Tweaked smart camera custom glancing.
+    Report back whether you like or hate it!
+  * Made custom camera even more configurable, changed default settings.
+    (old ones are still in settings.cfg)
+  * Forced glancing end on cycle turn now looks better.
+  * FOV settings now deal better with wide screens/splitscreen mode.
+  * Increased ping measurements again by adding the fluctuations. The raw 
+    average ping caused the game logic to be too picky.
+
+ -- AA-DevTeam <klaxnek@users.sf.net>  Sat, 28 Dic 2005 18:45:00 +0100
+
+armagetronad (0.2.8.0beta4-1) unstable; urgency=low
+
+  * Famous fixed bugs: 
+    Random huge felt lag or blank screen (it was actually a problem with the timer) is gone.
+    Bogus "possible phase bug" message.
+    Seemingly random walls popping out of nothing, only to disapear a second later.
+    Random camera focus changes while you were still alive.
+    Every 100th console line got deleted.
+  * Reduced pings! Actually, just the measurement is improved, the actual latency
+    stays the same. z-man: I read NEWS file ;)
+  * New text editing convenience: Home and end keys work, and CTRL+left/right/del/backspace
+    work on whole words. Thanks, Nemo!
+  * New instant chat functions: There are now 25 instant chat strings. If an instant
+    chat string ends in a \, it will not be sent immediately, it's opened to be edited by you.
+    Pressing an instant chat key while already chatting will insert the string, provided the
+    key does not produce a regular character.
+  * If enabled by the server administrator: control your cycle while you chat.
+  * Turning speed of custom and internal camera can be adjusted with CAMERA_CUSTOM_TURN_SPEED
+    and CAMERA_IN_TURN_SPEED.
+  * The custom camera zooms out from a closeup at round start. Useful to see your position
+    in your team. Configurable with CAMERA_CUSTOM_ZOOM.
+  * Master server redundancy enabled. Thanks to Lucifer for hosting the backup master!
+
+ -- AA-DevTeam <klaxnek@users.sf.net>  Sat, 28 Nov 2005 18:45:00 +0100
+
+armagetronad (0.2.8.0beta3-1) unstable; urgency=low
+
+  * Support for shaped arenas (axes and map)
+  * Resource manager
+  * Coloured zones: green for win-zone; red for death-zone
+  * Private messaging -- /msg PLAYER MESSAGE or /team MESSAGE
+  * PNG screenshots
+  * Multiple interface support for servers + server ip and port config
+  * Separate directory for screenshots (instead of USER_DATA_DIR)
+  * Remote admin
+  * Replay capacity of network game (z-man)
+  * Refactoring of network code (z-man)
+  * Server bookmarks in browser (nemo, z-man)
+  * Dynamically determine available display resolutions (Lucifer)
+  * Centralized resource repository (code support only; Luke-Jr)
+
+ -- AA-DevTeam <klaxnek@users.sf.net>  Sun, 23 Oct 2005 12:49:25 +0100
+
+armagetronad (0.2.7.1-1) unstable; urgency=high
+
+  * Server side cycle synchronization issues fixed:
+    destination removal fixed
+    lag sliding caused by different interpretion of grinding turn commands on client and server fixed
+    niceness for older clients: sync interval decreased, no sync in front of wall to prevent local tunneling
+  * Client side cycle synchronization issues fixed:
+    smooth corrections now oly affect the appearence, the correct values are used internally
+    sync messages are no longer ignored,
+    new extrapolating sync method implemented,
+    ghosting fixed,
+    wall ends sticking out fixed ( for enemy cycles ),
+    the sophisitcated distance based sync code implemented years ago is now actualy used, oh dear.
+  * Performance improvements:
+    netobject synchroinzation does no longer traverse all netobjects
+    disabled gameobject-gameobject interaction
+  * added support for nonorthogonal driving directions
+  * added support for debug recording and playback
+
+ -- AA-DevTeam <klaxnek@users.sf.net>  Wed, 09 Mar 2005 12:30:35 +0100
+
+armagetronad (0.2.7.0-1) unstable; urgency=high
+
+  * Fixed security issues: fake message ID crash, fake peer ID crash ( both
+    maybe could be used to execute arbitrary code ), fake logout exploit, fake
+    connections DOS attack
+  * The feared "left grid" error message has been replaced by recovery code
+  * Fixed transfer of infinite floats over the network
+  * Fixed network timer inaccuracies on long running servers
+  * Fixed rip bug ( for those who like it: search and you will find )
+  * Fixed wall bending ( there is still some wall bending left, but it will be
+    too small to notice )
+  * Fixed tunneling bugs ( you were able to move from one side of a wall to the other )
+  * Fixed bounce bug ( a small zigzag towards a wall sometimes put you further
+    away from it, leaving a hole )
+  * Fixed massive reference counting overflow crash caused by repeated close grinding/180ing
+  * Made rubber code customizable and frame rate independent ( new CYCLE_RUBBER_
+    variables in settings.cfg )
+  * For debugging and scripting: dedicated server console messages can be
+    decorated with client ID and IP
+  * Topology police: facility to catch tunneling issues after they happened. off
+    by default
+  * Cycle network code is more robust
+  * Update frequency of cycle position now configurable and more frequent for
+    client's own cycle that the rest by default
+  * Corrected rc.d scripts to start the server as a system service
+  * Voting more configurable: voters can be made public, spectators can't vote
+    any more by default
+  * Moviepack floor color fixed
+  * Hostname lookup failure fixed
+  * "PLAYER_1 nick" console command problems fixed
+  * Windows libraries moved out of the main source tree
+  * Source code now compatible with 64 bit and gcc 3.4
+  * Colored explosions!
+  * HUD enhancements: customization, works in splitscreen mode
+  * Directory scanning code added ( not yet visible, will be used for
+    moviepack/cycle selection )
+  * Moviepack sky texture support
+  * Master server can now run on windows, too
+  * Explosion sound now actually works
+
+ -- AA-DevTeam <klaxnek@users.sf.net>  Sun, 30 Jan 2005 16:40:15 +0100

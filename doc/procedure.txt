@@ -1,0 +1,46 @@
+How the releasse procedure works:
+(This document is more of a "How z-man handles things when he
+does a release", a documentation of how it's done rather than
+how it should be done)
+
+======= Case 1: The primary build. No tarball exists yet. =======
+
+=== Step 1: Tag the Sources ===
+
+Do a checkout of ALL modules (armagetronad, armagetronad_build,
+armagetronad_build_visualc, armagetronad_build_codeblocks, 
+armagetronad_winlibs currently) or update old checkouts to the
+revisions that should go into the distribution. Use "cvs update -d"
+so no directory is forgotten. Tag them with 
+"cvs tag v<version with . replaced by _>".
+
+=== Step 2: Get the Sources ===
+
+Update a different copy of ALL modules to the tag that was just made.
+All future work will be done here.
+
+=== Step 3: Build ===
+
+Enter the armagetronad_release module of the workspace. Run "make"
+once to scan the sources and update all variables. Run "make full"
+or another target of your choice to do the build. Z-Man does 
+"make z-man-home", to just build a tarball, do "make tarsource".
+See the makefiles and top level README.txt for details.
+
+=== Step 4: Upload ===
+Automatic uploading to the SourceForge ftp server is done with
+"make upload". Semi-automatic upload to aabeta are done with
+"make upload-aabeta". The aabeta user name needs to be set in
+make.conf and will be used for the upload and build tag. 
+If the www-aabeta module with releases.php is present
+parallel to armagetronad_build, then appropriate entries will be
+added to it, but AT THE END of the file. You need to manually
+move them to the beginning and should check them.
+
+========= Case 2: secondary builds. Tarball exists. =========
+
+Check out the armagetronad_build module. Create a subdirectory
+called "tarballs" in it and copy the tarball there. Proceed with
+Step 4.
+
+========= Case 3: Windows builds. =========

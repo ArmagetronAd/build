@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# builds rpm package
+#
+# the purpose of this script is to make it easier for distribution builders to
+# generate their RPM files; custom BuidRoot- settings are supported.
+# It should be possible to make all adatpions by just setting the variables
+# in make.conf included at the top of this file.
+
+set -x
+
+# load settings
+test -r ../make.conf && . ../make.conf
+
+# load default settings
+
+#set RPM top directory ( needed to have a place to unpack the sources )
+test -z "$RPMTOPDIR" && RPMTOPDIR=/usr/src/redhat
+export RPMTOPDIR
+
+#build spec
+bash ./buildspec
+
+#build package
+rpmbuild "$@" $RPMTOPDIR/SPECS/armagetronad.spec
+

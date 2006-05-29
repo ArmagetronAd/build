@@ -1,0 +1,17 @@
+#!/bin/bash
+# configures and builds the project
+
+target="$1"
+shift
+source="$1"
+shift
+
+CONFIGURE=`which $source/configure`
+
+echo cd $target
+cd $target
+echo $CONFIGURE "$@"
+$CONFIGURE "$@"
+
+
+

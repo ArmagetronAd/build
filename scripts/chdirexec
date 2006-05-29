@@ -1,0 +1,13 @@
+#!/bin/bash
+# executes commands within a directory, translating arguments relative to the current
+# directory to arguments relative to the new working directory
+
+directory=$1
+shift
+
+COMMANDS=`{ echo "cd $directory; "; echo "$@" | sed -e "s|$directory/||g"; }`
+echo $COMMANDS
+echo $COMMANDS | bash
+
+
+

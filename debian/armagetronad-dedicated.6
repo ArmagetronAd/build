@@ -1,0 +1,32 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.TH ARMAGETRONAD 6 "January 30, 2005"
+.SH NAME
+armagetronad-server \- An armagetronad game server 
+.SH SYNOPSIS
+.B armagetronad-server
+.SH DESCRIPTION
+NOTE: The information in this man page is outdated in this release.
+.P
+The server program will read the normal configuration file
+\fB~/.armagetronad/user.cfg\fP and set up a network game according to the
+settings in the game menu (Number of AI players, game mode and finish
+mode), and it will limit its output bandwidth to the value set in the
+network game menu.  A dedicated server takes input from the keyboard and
+interprets it just the way it does with the configuration files;
+additionally to the usual configuration files, the dedicated server will
+read the file everytime.cfg before each round; it may be comfortable to
+place quickly changing settings there.
+.SH SEE ALSO
+armagetronad(6).
+.P
+Armagetron Advanced is documented fully by the provided HTML docs, found under
+/usr/share/doc/armagetronad/ or the armagetron website,
+\fIhttp://armagetronad.sourceforge.net/\fP.
+.SH AUTHOR
+Armagetron Advanced is based on Armagetron (written by Manuel Moos)
+Armagetron Advanced is written by AA-DevTeam (see AUTHORS)
+.P
+This manual was updated for Armagetron Advanced. The Armagetron manual page
+was adapted from the original HTML version by Marcelo
+E. Magallon <mmagallo@debian.org>, for the Debian GNU/Linux system (but
+may be used by others).

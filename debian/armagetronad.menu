@@ -1,0 +1,3 @@
+?package(armagetronad):needs=X11 section=Games/Arcade\
+  title="Armagetron Advanced" command="armagetronad"\
+  icon=/usr/share/pixmaps/armagetronad.xpm

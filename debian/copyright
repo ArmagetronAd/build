@@ -1,0 +1,13 @@
+Armagetron Advanced is based on Armagetron (written by Manuel Moos)
+Armagetron Advanced is written by AA-DevTeam (see AUTHORS)
+
+The original source package was downloaded from
+http://armagetronad.sourceforge.net/
+
+The copyright of this package is GPL, version 2 or later.  On Debian
+GNU/Linux systems, the complete text of the GNU General Public License
+can be found in `/usr/share/common-licenses/GPL'.
+
+This package was modified to conform Armagetron Advanced.
+This package was debianized by Marcelo E. Magallon <mmagallo@debian.org> on
+Sun, 30 Jul 2000 21:46:08 +0200.

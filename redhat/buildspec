@@ -1,0 +1,75 @@
+#!/bin/sh
+
+# load settings
+test -r ../make.conf && . ../make.conf
+test -r ../builds/.versionfile && . ../builds/.versionfile
+
+# determine build version and release count
+RELEASE=$( cat ../builds/b_$VERSION/rc.base )
+
+# fallback version
+test -z "$VERSION" && VERSION=`date +%y%m%d`
+test -z "$RELEASE" && RELEASE=1
+
+# read release tag and core version
+. ../builds/b_$VERSION/.releasetag
+
+# adapt version and release to RPM standards
+RPMVERSION=${COREVERSION}
+RPMRELEASE=${RELEASETAG}.${RELEASE}
+
+#so, the official version-releasse tag looks like this:
+echo RELEASE = ${VERSION}-${RELEASE}
+#while to RPM, it's this:
+echo RPMRELEASE = ${RPMVERSION}-${RPMRELEASE}
+
+#
+# default settings
+#
+
+# default build root
+test -z "$PRMBUILDROOT" && RPMBUILDROOT="%{_tmppath}/%{name}-%{version}-root"
+
+#prefix to install the program to
+test -z "$PREFIX" && PREFIX=/usr/local
+
+#set program and package name
+test -z "$PROGNAME" && PROGNAME="Armagetron Advanced"
+test -z "$PACKAGE" && PACKAGE=armagetronad
+
+#additional options to configure
+test -z "$CONFIGURE_OPTIONS" && CONFIGURE_OPTIONS="--disable-music --localstatedir=/var --enable-etc --enable-initscripts --enable-automakedefaults --enable-useradd"
+
+#where to find the config files after installation
+test -z "$CONFIGFILES" && CONFIGFILES=/etc/$PACKAGE
+
+#alternative setting for location of config files
+#test -z "$CONFIGURE_OPTIONS" && CONFIGURE_OPTIONS=--disable-etc
+#test -z "$CONFIGFILES" && CONFIGFILES=$PREFIX/games/$PACKAGE/config
+
+#packager
+#test $PACKAGER && PACKAGER="klaxnek < klaxnek@users.sf.net >"
+test -z "$PACKAGER" && PACKAGER="z-man < z-man@users.sf.net >"
+
+#set C compiler flags
+test -z "$CXXFLAGS" && CXXFLAGS="-Os"
+
+echo "" > preset.m4
+echo "define(SLOT,$SLOT) dnl">>  preset.m4
+echo "define(ALLOW_OLDLIBXML2,$ALLOW_OLDLIBXML2) dnl">>  preset.m4
+echo "define(RPMVERSION,$RPMVERSION) dnl">>  preset.m4
+echo "define(VERSION,$VERSION) dnl">>  preset.m4
+echo "define(CONFIGURE_OPTIONS,$CONFIGURE_OPTIONS) dnl "  >> preset.m4
+echo "define(RPMBUILDROOT,$RPMBUILDROOT) dnl" >> preset.m4
+echo "define(PREFIX,$PREFIX) dnl" >> preset.m4
+echo "define(PROGNAME,$PROGNAME) dnl" >> preset.m4
+echo "define(PACKAGENAMEBASE,$PACKAGE) dnl" >> preset.m4
+echo "define(PACKAGER,$PACKAGER) dnl" >> preset.m4
+echo "define(RELEASE,$RPMRELEASE) dnl" >> preset.m4
+echo "define(CONFIG,$CONFIGFILES) dnl" >> preset.m4
+echo "define(PACKAGE,$PACKAGE) dnl" >> preset.m4
+#echo "define(DEDICATED,no) dnl" >> preset.m4
+
+cat preset.m4 armagetronad.spec.m4 | m4 > $RPMTOPDIR/SPECS/armagetronad.spec
+
+rm -rf preset.m4

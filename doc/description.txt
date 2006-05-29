@@ -1,0 +1,199 @@
+Description to copy-paste to sf or fm news
+
+In this game, you ride a lightcycle around the game grid. You can only make sharp turns
+of 90 degrees and a wall constantly builds up after you. Make your
+enemies crash into your wall, but be aware that they are trying to do
+the same to you. Only if you are fast enough, you may
+be able to trap them; but the only way to speed up your lightcycle is to drive close to the
+dangerous walls. Prepare for exciting strategic preparations followed by action-packed
+close combat!
+
+Armagetron is a simple action game modeled after the lightcycle sequence of the movie Tron.
+The main focus lies on the multiplayer mode, which has already made Armagetron a popular
+warmup game on LAN parties.
+
+----------------------------------
+
+0.2.8.2_rc2:
+Two critical bugs have been fixed since rc1. With default settings
+on a new install, the server starter script was chowning /var/run and 
+/var/log to the armagetronad user, causing major system havoc. And 
+short names with only special characters had a chance of crashing a server
+from an illegal read operation.
+
+0.2.8.2_rc1:
+Some bugs of lesser importance have been fixed since 0.2.8.1; under
+rare circumstances, cycles could pass through each other's trail, for
+example. There are some nifty new features: The chat and console input
+fields now have a history, on servers that support it, spectators are
+no longer invisible and can chat, there is some rudimentary control
+of players over the team formation using chat commands, and the cycle
+trail length now knows more tricks.
+
+0.2.8.1:
+Another security fix: ingame admins were able to read the first word of
+every line in all files the server has read access to. The Windows builds
+of 0.2.8.0 had an interesting fatal malfunction due to a misbehaving 
+system function on some PCs, this has been fixed as well.
+
+0.2.8.0:
+Main change since the last rc is a security fix: via a forged MAP_FILE
+setting, a malicious server administrator could inject files into the
+clients' file system anywhere. Files could not be overwritten, but it was
+a critical error anyway: on most systems, injecting files in the right
+place can execute arbitrary commands. We had actually already code to
+prevent this exploit, but it was faulty. We're deeply sorry.
+
+0.2.8.0_rc4:
+A compiler bug in some versions of GCC has been worked around and
+strict adherence to resource naming standards is now enforced. Apart from
+that, only minor bugfixes (camera stuck in free mode), tweaks (wall texture)
+and configurability (menu key and smart camera) were added in rc4.
+
+0.2.8.0_rc3:
+New in rc3: Fixed rendering performance waste (player walls were rendered twice)
+and serious network problems causing all kinds of poltergeist activity
+(zombie cycles, invisible teams).
+
+0.2.8.0_rc2:
+Main reasons for rc2 to come this soon: the camera code of rc1 was making people sick and
+got reverted, and the Windows dedicated server did not build.
+
+Some more art was replaced. Again, visit 
+http://forums.armagetronad.net/viewtopic.php?p=40255#40255 to help!
+
+0.2.8.0_rc1:
+All important bugs seem to be fixed now, so here comes the first release candidate for 0.2.8.0.
+It features some new art assets, we plan to replace more for the final release.
+Visit http://forums.armagetronad.net/viewtopic.php?p=40255#40255 to help!
+
+0.2.8_beta4:
+Well, beta3 wasn't that great (Lag problems), so here comes an update.
+It supports more than two fortress zones now and has improved instant chat handling.
+
+0.2.8_beta3:
+This is the third (and planned to be last) beta release for the upcoming stable version 0.2.8.0.
+
+Known problems:
+- More than two fortress zones don't make too much sense for now. We're working on it, but not for the beta. 
+ - There are these random connection losses. As far as I can tell, they are real network problems (messages being sent, but not received), but somehow the reason for that must be rooted in the code. It seems to happen more frequently on full servers. 
+ - The "User 0 timed out" problem is still there, and still with unknown cause. 
+ - Configuration strings, most notably MAP_FILE, cannot have spaces in them. We'll add quoting for the release candidate. 
+ - Arena walls are still not properly visible when viewed head on, and the texture stretching bug is still there.
+
+0.2.8_beta12:
+This is the second beta release for the upcoming stable version 0.2.8.0.
+
+Known problems:
+- The server crashes if the connection to the master server fails. This happens when it's down or unreachable, or if SERVER_IP is set wrongly. 
+ - The FPS counter goes crazy at the start of a round and displays incredibly high values; it calms down after some seconds. Only happens in Windows where we have to smooth the inaccurate system timer. 
+
+0.2.8_beta1:
+This is the first beta release for the upcoming stable version 0.2.8.0.
+
+0.2.8:
+The 0.2.8 series, codenamed Artemis, introduces arenas of arbitrary shape,
+nonorthogonal driving directions and game recording facilities.
+The functionality of the in-game administration interface has been
+extended to all console commands. As always, there were countless 
+bugfixes and some performance improvements.
+We plan to make this the last stable release series before we jump to 1.0.
+
+0.2.7.1:
+This is a bugfix and feature roundoff release. Mayor bugs fixed include the
+rim rip bug, all forms of real tunneling through walls, some security
+vulnerabilities, server side cycle control command interpretation and colored
+text alignment issues. It is now much easier to stay alive in a network game.
+
+0.2.5.2:
+This release disables the fullscreen toggle ( and other ) key bindings
+while in chat mode and fixes a crash when entering the team menu while
+in observer mode.
+
+0.2.5.1:
+This release fixes some minor problems ( and a crash some people
+compiling Armagetron from source may have gotten ). It unifies
+the basic network for Unix and Windows getting rid of connection
+losses sometimes reported. Smaller new features: a windowed/fullscreen
+toggle key has been added and the server browser now displays a list
+of active human players for compatible servers.
+
+This release introduces two new features: an instant win zone is
+activated when nothing happens for a while ( usually because all
+remaining players are trapped in large areas ); the first to reach the
+zone wins. And: Brakes are now wear off and cannot be used to delay
+death when you are trapped. Some minor bugs were fixed on the way, too.
+
+This release fixes some critical issues: A server freezer occurring
+when to many people played too long was fixed and explosions now have
+exactly the same effect on the clients as on the server.
+
+This release fixes may smaller nuisances: Instant chat was repaired,
+the scoring tables now work properly in the presence of team play and
+the smart camera now handles it better when you are constantly
+braking. Additionally, two reasons for crashes have been eliminated.
+
+
+This release is a quick fix for the short lived version 0.2.0; A single, rare crash was fixed.
+Just in case you missed all the 0.2.pre-versions: the 0.2 branch introduces many highly anticipated
+features such as team play, better AI opponents and destructive explosions.
+
+The new release is a bugfixing release for the last prerelease versions, fixing all known bugs. Relative to 1.4.9, a ton of long-awaited features has been added and is now working properly.
+
+This release introduces a whole bag of new features relative to the 0.1.4 branch: Team play, finite wall length, destructive explosions, configurable arena size, better AI opponents and an Internet and LAN server browser.
+
+This is a bugfixing release only.
+
+Moviesounds playback has been fixed, servers now should communicate their address correctly to the master server and a new installation method, preserving user changes to the system wide configuration files, has been added.a
+
+Changes since 0.2.0:
+- Fixed crash when watching a quitting player
+
+Changes since 0.2.pre4:
+- Fixed crashes
+- Fixed windows network connection problems
+- Fixed color related problems
+- Added marker for own cycle to avoid confusion in team mode
+- Changed directory placement: configuration resides in /etc/armagetron,
+  user configuration in ~/.armagetron/var
+- Data files added to ~/.armagetron/textures ( or /models or /sounds )
+  are now loaded in favor of original data, allowing user specific mods
+
+Changes since 0.2.pre3:
+- Fixed some more rare crashes and lockups
+- Fixed team handling: all team change operations now get only active
+  on next round address
+- Fixed moviesounds
+- Fixed server-master server communications
+- new installation method: make update ( keeps user configuration )
+
+Changes since 0.2.pre2:
+- Fixed some rare crashes and lockups
+- Improved cycle handling over network
+- It is now allowed to fight with an arbitrary large team against the AI
+  regardless of the balancing settings
+- improved rendering precision: z-fighting artifacts are now uncommon,
+  and at the same time early clipping on the near clipping plane
+
+Changes since 0.2.pre:
+- got rid of "zombie" players
+- corrected team messages
+- fixed chatting
+- fixed 32 bit rendering
+
+Changes since 0.1.4.x:
+- it is now possible for players to form teams
+- explosion now can blow holes in player walls
+- delay added to wall disappearance after death
+- finite wall length supported for snake-style gameplay
+- arena size and game speed configurable in the menu
+- the AI has been greatly improved
+- there is an Internet master server active
+- support for localization has been added, currently featuring 
+  English and German
+- AI players now have names
+- the moviepack title screen is displayed
+- Linux version: easier system-wide installation with RPM packages 
+  or "make install"
+
+ 

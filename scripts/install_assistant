@@ -1,0 +1,12 @@
+#!/bin/bash
+# install assistant
+
+# get the list of downloadable files
+wget http://prdownloads.sourceforge.net/armagetronad -O /tmp/aa_prdownloads
+
+grep HREF=\"/armagetronad/[a-Z] < /tmp/aa_prdownloads |\
+sed -e "s,.*<A HREF=\"/armagetronad/,," -e "s,\">.*,," \
+> /tmp/aa_download_files
+
+cat /tmp/aa_download_files
+#rm /tmp/aa_download_files

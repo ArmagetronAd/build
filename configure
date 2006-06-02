@@ -7,6 +7,15 @@
 
 # set -x
 
+# flag to set on warnings
+WARNING=no
+
+# rescue packager from previous run
+PACKAGER=""
+if test -r make.conf; then
+    PACKAGER=`cat make.conf | grep ^PACKAGER | sed -e 's,^PACKAGER=",,' -e's,"$,,'`
+fi
+
 # copy base information
 cp make.conf.template make.conf
 
@@ -44,6 +53,11 @@ echo "" >> make.conf
 
 echo " $AA_SOURCE"
 
+if test -z "$AA_SOURCE"; then
+    WARNING=yes
+    echo "Main sources not found. You'll have to drop a tarball into the tarballs subdirectory."
+fi
+
 # guess windows build files location
 
 echo -n Determining VisualC directory...  
@@ -59,6 +73,11 @@ echo "" >> make.conf
 
 echo " $AA_VC_SOURCE"
 
+if test -z "$AA_VC_SOURCE"; then
+    WARNING=yes
+    echo "VisualC build files not found. You'll need them to prepare sources for the Windows build."
+fi
+
 echo -n Determining Code::Blocks directory...  
 
 AA_CODEBLOCKS_SOURCE=""
@@ -72,11 +91,45 @@ echo "" >> make.conf
 
 echo " $AA_CODEBLOCKS_SOURCE"
 
+if test -z "$AA_CODEBLOCKS_SOURCE"; then
+    WARNING=yes
+    echo "Code::Blocks build files not found. You'll need them to prepare sources for the Windows build."
+fi
+
+echo -n Determining winlibs directory...  
+
+AA_WINLIBS_SOURCE=""
+for CANDIDATE in ../armagetronad_winlibs ../winlibs; do
+	test -d $CANDIDATE && test -z "$AA_WINLIBS_SOURCE" && AA_WINLIBS_SOURCE=$CANDIDATE
+done
+
+echo "# winlibs directory" >> make.conf
+echo "AA_WINLIBS=$AA_WINLIBS_SOURCE" >> make.conf
+echo "" >> make.conf
+
+echo " $AA_WINLIBS_SOURCE"
+
+if test -z "$AA_WINLIBS_SOURCE"; then
+    WARNING=yes
+    echo "Windows library sources not found. You'll need them to prepare sources for the Windows build. (well, not yet, but in future revisions, you will)."
+fi
+
+# get aabeta username
+if test -r "../../www-aabeta/CVS/Root"; then
+    echo -n Determining aabeta user name...
+
+	USERNAME_AABETA=`cat "../../www-aabeta/CVS/Root" | sed -e "s|^:ext:||" -e "s|@.*$||"`
+    echo "# aabeta user name" >> make.conf
+    echo "USERNAME_AABETA=\"$USERNAME_AABETA\"" >> make.conf
+    echo "" >> make.conf
+
+    echo " $USERNAME_AABETA"
+fi
+
 # guess packager name
 
 echo -n Determining packager name...
 
-PACKAGER=""
 USERNAME=""
 
 # get username from CVS entries (here and AA source)
@@ -90,7 +143,10 @@ fi
 test -z "$USERNAME" || PACKAGER="$USERNAME < $USERNAME@users.sf.net >"
 
 if test -z "$PACKAGER"; then
-	PACKAGER="Anonymous"	
+    PACKAGER=$USERNAME_AABETA
+    if test -z "$PACKAGER"; then
+        PACKAGER="Anonymous"	
+    fi
 fi
 
 echo "# packager name" >> make.conf
@@ -98,19 +154,6 @@ echo "PACKAGER=\"$PACKAGER\"" >> make.conf
 echo "" >> make.conf
 
 echo " $PACKAGER"
-
-# get aabeta username
-if test -r "../www-aabeta/CVS/Root"; then
-    echo -n Determining aabeta user name...
-
-	USERNAME_AABETA=`cat "../www-aabeta/CVS/Root" | sed -e "s|^:ext:||" -e "s|@.*$||"`
-    echo "# aabeta user name" >> make.conf
-    echo "USERNAME_AABETA=\"$USERNAME_AABETA\"" >> make.conf
-    echo "" >> make.conf
-
-    echo " $USERNAME_AABETA"
-fi
-
 
 # guess RPM build directory
 
@@ -135,7 +178,7 @@ echo " $RPMTOPDIR"
 
 echo -n Determining libxml2 version...
 
-XML2VER=`xml2-config --version` || exit -1
+XML2VER=`xml2-config --version` || { rm -f make.conf; exit -1; }
 
 # test if the version is larger than 2.6.12
 if test "${ALLOW_OLDLIBXML2}" = yes; then
@@ -295,4 +338,14 @@ echo "" >> make.conf
 
 echo " -> ${OSTAG_AABETA}"
 
+if echo $PACKAGER | grep -v "@" > /dev/null; then
+    echo -e "\nThe packager name is not an email address.\nYou may want to correct that by editing make.conf."
+    WARNING=yes
+fi
 
+if test "$WARNING" = no; then
+    echo "Everything seems OK."
+else
+    echo -e "\nWarning encountered. To ignore, just rerun make.\n"
+    exit 1
+fi

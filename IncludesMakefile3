@@ -1,0 +1,31 @@
+# Copyright (C) 2005  by Manuel Moos
+# and the AA DevTeam (see the file AUTHORS(.txt) in the main source directory)
+# Last change by $Author: luke-jr $ on $Date: 2006-05-28 08:29:43 +0200 (Sun, 28 May 2006) $
+
+include IncludesMakefile2
+
+# determine relase candidate
+BUILDDIR=$(subst /b_WRONG,/.WRONG,builds/b_$(VERSION))
+RCFILE=$(BUILDDIR)/.rc
+
+$(BUILDDIR)/.tag: builds/.tag
+	test -d $(BUILDDIR) || mkdir $(BUILDDIR)
+	echo "" > $@
+
+# determine relase candidate, ctd
+$(RCFILE).tag: $(BUILDDIR)/.tag
+	touch $@
+
+$(RCFILE).base: $(VERSIONTAG) $(BUILDDIR)/.tag
+	#
+	# *****************************************
+	# * bump release candidate count          *
+	# *****************************************
+	#
+	${TESTVERSION}
+	echo $$((`cat $@` + 1 )) > $@
+
+$(RCFILE): $(RCFILE).base
+	echo RC=`cat $<` > $@
+
+sinclude $(RCFILE)

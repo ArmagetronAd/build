@@ -1,0 +1,53 @@
+# Copyright (C) 2005  by Manuel Moos
+# and the AA DevTeam (see the file AUTHORS(.txt) in the main source directory)
+# Last change by $Author: luke-jr $ on $Date: 2006-05-28 08:29:43 +0200 (Sun, 28 May 2006) $
+
+include IncludesMakefile1
+
+# make directory for builds
+builds/.tag:
+	test -d builds || mkdir builds
+	echo "" > $@
+
+# tag indicating that we generated a tarball from sources not too far away
+SOURCETAG=tarballs/.sourcetag
+
+OUTDATE=touch -t 198001010000
+
+$(SOURCETAG):
+	#
+	# *****************************************
+	# *  Building tarball from source         *
+	# *****************************************
+	#
+	test -d tarballs || mkdir tarballs
+	rm -f $(RCFILE).tag
+	if test -n "$(AA_SOURCE)" && test -d "$(AA_SOURCE)"; then MAKE=${MAKE} sh scripts/copysrc tarballs; fi
+	touch $@
+	rm -rf builds/b_;
+
+sinclude $(SOURCETAG)
+
+VERSIONTAG=builds/.versionfile
+
+# dummy values; should be overwritten later by include files
+VERSION=WRONG
+RC=1
+
+SOURCE_TARBALLS=$(wildcard tarballs/*.tar*)
+
+# determine current version
+$(VERSIONTAG): $(SOURCE_TARBALLS) make.conf $(SOURCETAG) builds/.tag
+	#
+	# *****************************************
+	# * determine version                     *
+	# *****************************************
+	#
+	rm -f $@.proto
+	for f in tarballs/*.tar*; do if test $$f -nt $@.proto; then echo $$f | sed -e "s,.*-,," -e "s,\.src\.tar.*,," -e "s,\.tar.*,," > $@.proto; touch $@.proto -r $$f; fi; done
+	test -r $@.proto || { echo -e "\n\nNo sources found. Drop a tarball into the tarballs subdirectory\nor check out the main armagetronad CVS module in parallel.\n\n"; rm -f .includes-updated; $(OUTDATE) $(SOURCETAG); false; }
+	echo VERSION=`cat $@.proto` > $@
+	if test -z `cat $@.proto | grep -e "alpha\|beta\|rc\|^[^\.]\.[0-9]*[13579]"`; then echo "STABLE=true" >> $@; else echo "STABLE=false" >> $@; fi
+
+sinclude $(VERSIONTAG)
+

@@ -60,7 +60,7 @@ SOURCEDIR=$(RCDIR)/$(PACKAGE)-$(VERSION)
 
 RELEASETAGFILE = $(BUILDDIR)/.releasetag
 
-$(RELEASETAGFILE): $(SOURCEDIR) $(VERSIONTAG) $(RCFILE)
+$(RELEASETAGFILE): $(SOURCEDIR)/.tag $(VERSIONTAG) $(RCFILE)
 	#
 	# ************************************************
 	# * determine core version, release tag and slot *
@@ -240,7 +240,7 @@ WINDOCDIR=$(RCDIR)/doc.windows
 
 # windows documentation
 windoc: $(WINDOCDIR)
-$(RCDIR)/doc.%.build: $(SOURCEDIR)
+$(RCDIR)/doc.%.build: $(SOURCEDIR)/.tag
 	#
 	# *****************************************
 	# *  prepare $* documentation build          
@@ -274,18 +274,19 @@ webdoc:$(RCDIR)/doc.web
 # keep windows build dir
 .PRECIOUS: $(RCDIR)/doc.windows.build $(RCDIR)/doc.web.build
 
-$(SOURCEDIR): $(RCDIR)/.tag $(VERSIONTAG) $(INPUTTARBALLBASE)
+$(SOURCEDIR)/.tag: $(RCDIR)/.tag $(VERSIONTAG) $(INPUTTARBALLBASE)
 	#
 	# *****************************************
 	# *  unpacking source                     *
 	# *****************************************
 	#
 	${TESTVERSION}
-	rm -rf $@
+	rm -rf $(SOURCEDIR)
 	cd $(RCDIR); tar -xf ../../../$(INPUTTARBALLBASE)
-	test -d $@
-	touch $@
-	find $@ -name "*.html" -exec rm \{\} \;
+	test -d $(SOURCEDIR)
+	touch $(SOURCEDIR)
+	find $(SOURCEDIR) -name "*.html" -exec rm \{\} \;
+	echo "" > $@
 
 # windows source zip
 WINSOURCE=$(UPLOAD)/$(RCNAME).src.zip
@@ -293,7 +294,7 @@ WINSOURCEDIR=$(SOURCEDIR)-win
 WINBUILDDIR=$(RCDIR)/doc.windows.build
 
 zipsource: $(WINSOURCE)
-$(WINSOURCEDIR): $(SOURCEDIR) $(WINDOCDIR) $(WINBUILDDIR) Makefile scripts/winsrc
+$(WINSOURCEDIR): $(SOURCEDIR)/.tag $(WINDOCDIR) $(WINBUILDDIR) Makefile scripts/winsrc
 	#
 	# *****************************************
 	# *  prepare windows source               *
@@ -317,7 +318,7 @@ $(WINSOURCE): $(WINSOURCEDIR) $(UPLOAD)/.tag
 
 DEBSOURCEDIR=$(SOURCEDIR)-debian
 debianprepare: $(DEBSOURCEDIR)
-$(DEBSOURCEDIR): $(SOURCEDIR)
+$(DEBSOURCEDIR): $(SOURCEDIR)/.tag
 	#
 	# *****************************************
 	# *  prepare debian build                 *
@@ -348,7 +349,7 @@ autopackage-client: $(APFILE).client
 autopackage-server: $(APFILE).server
 autopackage-legacyserver: $(APFILE).legacyserver
 autopackage: autopackage-client autopackage-server
-$(APFILE).%: $(SOURCEDIR) autopackage/Makefile autopackage/default.apspec $(UPLOAD)
+$(APFILE).%: $(SOURCEDIR)/.tag autopackage/Makefile autopackage/default.apspec $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  build autopackage $*

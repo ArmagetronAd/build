@@ -3,13 +3,13 @@
 # Last change by $Author$ on $Date$
 
 all: tarsource
-full: all rpm deb
+full: all rpm debian
 pack: tarsource webdoc windoc zipsource
 rpm-mdk: mandriva
 rpm-mdkded: mandriva-dedicated
 
 # everything z-man can build at home and work
-z-man-home: tarsource zipsource webdoc windoc autopackage
+z-man-home: tarsource zipsource webdoc windoc rpm autopackage
 z-man-work: autopackage-legacyserver autopackage-client
 
 # other builders are invited to add their build sets.
@@ -50,24 +50,10 @@ $(UPLOAD)/.tag: $(RCDIR)/.tag
 	test -d $(UPLOAD) || mkdir $(UPLOAD)
 	echo "" > $@
 
-# upload directory for zeroinstall archives
-0UPLOAD=$(UPLOAD)/ZeroInstall/$(RC)
-0UPLOADTAG=$(0UPLOAD)/README.txt
-$(0UPLOADTAG): $(UPLOAD)/.tag
-	test -d $(0UPLOAD) || mkdir -p $(0UPLOAD)
-	echo "IMPORTANT, READ ME:\nThese files are for the ZeroInstall system and hard to get working if you donwload them manually.\nStick to the files one folder up or use our ZeroInstall feeds (which we very much recommend):\nhttp://wiki.armagetronad.org/index.php/0Install" > $@
-	todos $@
-
-ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
-
-uploadcheck: $(UPLOAD)/.tag
-#   check for windows build directory dumped into Upload
-	if test -d $(UPLOAD)/dist; then RCDIR=$(RCDIR) VERSION=$(VERSION) PACKAGE=${PACKAGE} scripts/handledist; rm -f $(ZEROINSTTAG); fi
-
 # bump rc number
 bump:
 	# update release candidate number
-	rm builds/.tag
+	rm $(RCFILE).tag
 .PHONY: bump
 
 SOURCEDIR=$(RCDIR)/$(PACKAGE)-$(VERSION)
@@ -86,7 +72,7 @@ include $(RELEASETAGFILE)
 
 # build tarball
 INPUTTARBALLBASE=tarballs/$(PACKAGE)-$(VERSION).src.tar
-#INPUTTARBALLBASE2=tarballs/armagetronad-$(VERSION).tar.gz
+INPUTTARBALLBASE2=tarballs/$(PACKAGE)-$(VERSION).tar.gz
 TARBALLBASE=$(UPLOAD)/$(RCNAME).src.tar
 TARBALLGZ=$(TARBALLBASE).gz
 TARBALLBZ=$(TARBALLBASE).bz2
@@ -100,7 +86,7 @@ $(INPUTTARBALLBASE): $(wildcard $(INPUTTARBALLBASE).*)
 	# *****************************************
 	#
 	${TESTVERSION}
-#	mv $(INPUTTARBALLBASE2) $(INPUTTARBALLBASE).gz || true
+	mv $(INPUTTARBALLBASE2) $(INPUTTARBALLBASE).gz || true
 	if test -r $(INPUTTARBALLBASE).gz  && gzip -f -d $(INPUTTARBALLBASE).gz; then echo done; else rm -f $(INPUTTARBALLBASE).gz; fi
 	if test -r $(INPUTTARBALLBASE).bz2  && bzip2 -f -d $(INPUTTARBALLBASE).bz2; then echo done; else rm -f $(INPUTTARBALLBASE).bz2; fi
 	test -r $@ || { echo "Source tarball not found. Please rerun make." ; rm -rf  ${SOURCETAG} ${VERSIONTAG}; false; }
@@ -129,11 +115,11 @@ $(TARBALLGZ): $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	#
 	${TESTVERSION}
 	rm -f $@
-	mkdir -p tarballs/unpack2
-	rm -rf tarballs/unpack2/*
-	cd tarballs/unpack2 && tar -xf ../$(PACKAGE)-$(VERSION).src.tar
-	cd tarballs/unpack2 && tar -czf ../$(PACKAGE)-$(VERSION).src.tar.gz *
-	rm -rf tarballs/unpack2
+	mkdir -p tarballs/unpack
+	rm -rf tarballs/unpack/*
+	cd tarballs/unpack && tar -xf ../$(PACKAGE)-$(VERSION).src.tar
+	cd tarballs/unpack && tar -czf ../$(PACKAGE)-$(VERSION).src.tar.gz *
+	rm -rf tarballs/unpack
 	mv tarballs/$(PACKAGE)-$(VERSION).src.tar.gz $@
 	test -r $@
 	touch $@
@@ -265,7 +251,7 @@ $(RCDIR)/doc.%.build: $(SOURCEDIR)/.tag
 	mkdir $@
 
 	# configure and make documentation
-	CXXFLAGS="$(CXXFLAGS) -O0" docstyle=$* bash scripts/configure $@ $(SOURCEDIR)	--prefix='/usr/local' --disable-glout
+	CXXFLAGS=$(CXXFLAGS) docstyle=$* bash scripts/configure $@ $(SOURCEDIR)	--prefix='/usr/local' --disable-glout
 
 $(RCDIR)/doc.%: $(RCDIR)/doc.%.build
 	#
@@ -288,8 +274,7 @@ webdoc:$(RCDIR)/doc.web
 # keep windows build dir
 .PRECIOUS: $(RCDIR)/doc.windows.build $(RCDIR)/doc.web.build
 
-sourcedir: $(SOURCEDIR)/.tag
-$(SOURCEDIR)/.tag: $(INPUTTARBALLBASE) $(RCDIR)/.tag
+$(SOURCEDIR)/.tag: $(RCDIR)/.tag $(VERSIONTAG) $(INPUTTARBALLBASE)
 	#
 	# *****************************************
 	# *  unpacking source                     *
@@ -317,7 +302,7 @@ $(WINSOURCEDIR): $(SOURCEDIR)/.tag $(WINDOCDIR) $(WINBUILDDIR) Makefile scripts/
 	#
 	test "$(AA_VISUALC)" != "" || { echo -e "\nCVS module armagetronad_build_visualc needs to be checked out parallel to this directory for Windows source build.\n"; false; }
 	rm -rf $@ $@-proto $(RCDIR)/$(PACKAGE)
-	PROGNAME=$(PROGNAME) VERSION=$(VERSION) bash scripts/winsrc $@-proto $(SOURCEDIR) $(WINBUILDDIR) $(WINDOCDIR) $(AA_VISUALC) $(AA_CODEBLOCKS)
+	VERSION=$(VERSION) bash scripts/winsrc $@-proto $(SOURCEDIR) $(WINBUILDDIR) $(WINDOCDIR) $(AA_VISUALC) $(AA_CODEBLOCKS)
 	mv $@-proto $@
 	touch $@
 
@@ -331,21 +316,6 @@ $(WINSOURCE): $(WINSOURCEDIR) $(UPLOAD)/.tag
 	bash scripts/chdirexec $(RCDIR) zip -q -r $@ $(WINSOURCEDIR)
 	touch $@
 
-winbin: $(WINSOURCEDIR).hasbeenbuilt
-$(WINSOURCEDIR).hasbeenbuilt: $(WINSOURCEDIR) $(UPLOAD)/.tag ${AA_WINLIBS}/SDL
-	#
-	# *****************************************
-	# *  build windows
-	# *****************************************
-	#
-	rm -rf $(WINSOURCEDIR).build
-	cp -ax $(WINSOURCEDIR) $(WINSOURCEDIR).build
-	rm -f ${RCDIR}/winlibs; ln -s $$(pwd)/${AA_WINLIBS} ${RCDIR}/winlibs
-	cd $(WINSOURCEDIR).build; if test -z "$$DISPLAY"; then DISPLAY=:0.0 xterm -e "bash ./fromunix.sh"; else bash ./fromunix.sh; fi
-	mv ${RCDIR}/dist $(UPLOAD)/
-#	$(MAKE) uploadcheck
-	touch $@
-
 DEBSOURCEDIR=$(SOURCEDIR)-debian
 debianprepare: $(DEBSOURCEDIR)
 $(DEBSOURCEDIR): $(SOURCEDIR)/.tag
@@ -354,10 +324,7 @@ $(DEBSOURCEDIR): $(SOURCEDIR)/.tag
 	# *  prepare debian build                 *
 	# *****************************************
 	#
-	mkdir -p $(RCDIR)/tmp
-	cd $(RCDIR)/tmp; tar -xf ../../../../$(INPUTTARBALLBASE)
-	mv $(RCDIR)/tmp/$(PACKAGE)-$(VERSION) $@
-	rmdir $(RCDIR)/tmp
+	cp -ax $(SOURCEDIR) $@
 	cp -ax debian $@
 	chmod 755 $@/debian/rules
 
@@ -367,9 +334,9 @@ debianbuild: $(DEBSOURCEDIR)
 	# *  build debian package                 *
 	# *****************************************
 	#
-	cd $<; fakeroot debian/rules binary
+	cd $<; debian/rules binary
 
-deb: debianbuild $(UPLOAD)/.tag
+debian: debianbuild
 	#
 	# *****************************************
 	# *  harvesting debian package            *
@@ -377,293 +344,31 @@ deb: debianbuild $(UPLOAD)/.tag
 	#
 	find $(RCDIR) -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
 
-
-DEBVERSION=$(subst -,~,$(subst _,~,$(subst _rc,_arc,${VERSION})))~ppa
-UBUNTUSOURCEDIR=$(RCDIR)/$(PACKAGE)-$(DEBVERSION)
-$(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
-	#
-	# *****************************************
-	# *  prepare ubuntu build                 *
-	# *****************************************
-	#
-	rm -rf $(UBUNTUSOURCEDIR)$*
-	mkdir -p $(RCDIR)/tmp2
-	cd $(RCDIR)/tmp2; tar -xf ../../../../$(INPUTTARBALLBASE)
-	mv $(RCDIR)/tmp2/$(PACKAGE)-$(VERSION) $(UBUNTUSOURCEDIR)$*
-	rmdir $(RCDIR)/tmp2
-#   adapt the following line as ubuntu releases get updated
-	bzr pull -d ../ubuntu || HOME=/noway bzr branch lp:ubuntu/armagetronad ../ubuntu
-	cp -ax ../ubuntu/debian $(UBUNTUSOURCEDIR)$*/debian
-#   add libzthread debendency
-	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu.patch
-#   version dependant patches
-	rel=$$(echo $* | sed -e "s,.*~,,"); echo patches/ubuntu~$$rel.patch; if test -r patches/ubuntu~$$rel.patch; then patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu~$$rel.patch; fi
-	# we're actually using 1.0 format here still.
-	echo "1.0" > $(UBUNTUSOURCEDIR)$*/debian/source/format
-#   rebrand package
-#	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\./armagetronad./g" > $(UBUNTUSOURCEDIR)/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
-	cd $(UBUNTUSOURCEDIR)$*/debian/; for f in *; do dest=$$(echo $$f | sed -e "s,armagetronad,${PACKAGE},g"); test -d $$f || sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" --e "s/${PACKAGE}\.source/armagetronad.source/g" > $$dest.out; rm $$f; mv $$dest.out $$dest; done
-	chmod 755 $(UBUNTUSOURCEDIR)$*/debian/rules
-#   build changelog
-	DIST="`echo $* | sed -e s/^[0-9]*// -e s/.*~//`"; test -z $$DIST && DIST=hardy; sed -e "s/@distribution@/$$DIST/g" -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/${DEBVERSION}$*/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $(UBUNTUSOURCEDIR)$*/debian/changelog
-	cat < ../ubuntu/debian/changelog >> $(UBUNTUSOURCEDIR)$*/debian/changelog
-	echo "x" > $@
-
-$(RCDIR)/ubuntu%.tag: $(UBUNTUSOURCEDIR)%.tag
-	#
-	# *****************************************
-	# *  ubuntu build                         *
-	# *****************************************
-	#
-	cd $(UBUNTUSOURCEDIR)$*; fakeroot debian/rules binary
-#   harvesting debian package(s)
-	find $(RCDIR) -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
-	echo "x" > $@
-
-xubuntu-build-%: $(RCDIR)/ubuntu%.tag
-	echo $@
-
-#real targets for the user
-ubuntu: xubuntu-build-$(RC)
-	echo $@
-ubuntu-%: xubuntu-build-$(RC)~%
-	echo $@
-
-$(RCDIR)/${PACKAGE}_${DEBVERSION}%_source.changes: $(UBUNTUSOURCEDIR)%.tag
-	#
-	# ************************************
-	# *  preparing ubuntu source for ppa *
-	# ************************************
-	#
-	cd $(UBUNTUSOURCEDIR)$* && debuild -S -sa
-
-xupload-ubuntu-%: $(RCDIR)/${PACKAGE}_${DEBVERSION}%_source.changes
-	#
-	# ***********************************
-	# *  uploading ubuntu source to ppa *
-	# ***********************************
-	#
-	cd $(RCDIR) && dput ppa:armagetronad-dev/ppa ${PACKAGE}_${DEBVERSION}$*_source.changes
-
-#real targets for the user
-upload-ubuntu: xupload-ubuntu-$(RC)
-	echo $@
-upload-ubuntu-%: xupload-ubuntu-$(RC)~%
-	echo $@
-
-upload-ubuntu-all: \
-upload-ubuntu-utopic \
-upload-ubuntu-trusty \
-upload-ubuntu-saucy \
-upload-ubuntu-precise \
-upload-ubuntu-lucid 
-	echo $@
-
-# generic client build
-GENERIC_CLIENT_DIR=$(RCDIR)/client.build
-GENERIC_CONFIGURE_ARGUMENTS=--prefix='/usr/local' --disable-uninstall --disable-restoreold --enable-etc --enable-automakedefaults --disable-useradd
-CLIENT_CONFIGURE_ARGUMENTS=${GENERIC_CONFIGURE_ARGUMENTS} --disable-sysinstall --disable-initscripts
-generic_client: $(GENERIC_CLIENT_DIR).tag
-$(GENERIC_CLIENT_DIR).tag: $(SOURCEDIR)/.tag
-	#
-	# *****************************************
-	# *  generic client build          
-	# *****************************************
-	#
-	# create build directory
-	rm -rf $(GENERIC_CLIENT_DIR)/config.cache $(GENERIC_CLIENT_DIR)/Makefile
-	mkdir -p $(GENERIC_CLIENT_DIR)
-
-	# configure and make
-	bash scripts/configure $(GENERIC_CLIENT_DIR) $(SOURCEDIR) $(CLIENT_CONFIGURE_ARGUMENTS)
-
-	${MAKE} -C $(GENERIC_CLIENT_DIR)
-	touch $@
-
-GENERIC_SERVER_DIR=$(RCDIR)/server.build
-SERVER_CONFIGURE_ARGUMENTS=$(GENERIC_CONFIGURE_ARGUMENTS) --disable-glout --enable-armathentication
-generic_server: $(GENERIC_SERVER_DIR).tag
-$(GENERIC_SERVER_DIR).tag: $(SOURCEDIR)/.tag
-	#
-	# *****************************************
-	# *  generic server build          
-	# *****************************************
-	#
-	# create build directory
-	rm -rf $(GENERIC_SERVER_DIR)/config.cache $(GENERIC_SERVER_DIR)/Makefile
-	mkdir -p $(GENERIC_SERVER_DIR)
-
-	# configure and make
-	bash scripts/configure $(GENERIC_SERVER_DIR) $(SOURCEDIR) $(SERVER_CONFIGURE_ARGUMENTS)
-
-	${MAKE} -C $(GENERIC_SERVER_DIR)
-	touch $@
-
-generic_build: generic_client generic_server
-
-# portable client build
-PORTABLE_CLIENT_BASENAME=$(subst ",,${PROGNAME})
-#"
-PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
-APPDIR_CLIENT=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
-PORTABLE_CLIENT=$(UPLOAD)/$(PORTABLE_CLIENT_NAME)_${VERSION}
-portable_client: $(PORTABLE_CLIENT)
-$(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build portable/fixlinks WorkMakefile $(UPLOAD)/.tag
-	#
-	# *****************************************
-	# *  package portable client
-	# *****************************************
-	#
-#   install into appdir
-	rm -rf ${APPDIR_CLIENT}
-	${MAKE} -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${APPDIR_CLIENT} install
-
-#   delegate
-	APPDIR=${APPDIR_CLIENT} PORTABLE=${PORTABLE_CLIENT} PACKAGE=${PACKAGE} portable/build	
-
-# portable server build
-PORTABLE_SERVER_BASENAME=$(subst ",,${PROGNAME})Dedicated
-#"
-PORTABLE_SERVER_NAME=$(shell echo ${PORTABLE_SERVER_BASENAME} | sed -e "s, ,,g")
-APPDIR_SERVER=$(RCDIR)/$(PORTABLE_SERVER_NAME).AppDir
-PORTABLE_SERVER=$(UPLOAD)/$(PORTABLE_SERVER_NAME)_${VERSION}
-portable_server: $(PORTABLE_SERVER)
-$(PORTABLE_SERVER): $(GENERIC_SERVER_DIR).tag portable/AppRun portable/build portable/fixlinks WorkMakefile $(UPLOAD)/.tag
-	#
-	# *****************************************
-	# *  package portable server
-	# *****************************************
-	#
-#   install into appdir
-	rm -rf ${APPDIR_SERVER}
-	${MAKE} -C ${GENERIC_SERVER_DIR} DESTDIR=$$(pwd)/${APPDIR_SERVER} install
-
-#   delegate
-	APPDIR=${APPDIR_SERVER} PORTABLE=${PORTABLE_SERVER} PACKAGE=${PACKAGE}-dedicated portable/build	
-
-# plain binary tarball
-BINARY_CLIENT_TARBALL_NAME=${PACKAGE}-${VERSION}.${OSTAG_GENERIC}
-CLIENT_TARBALL_DIR=$(RCDIR)/$(BINARY_CLIENT_TARBALL_NAME).fortar
-BINARY_CLIENT_TARBALL=$(0UPLOAD)/$(BINARY_CLIENT_TARBALL_NAME).bin.tar.bz2
-binary_client_tarball: $(BINARY_CLIENT_TARBALL)
-$(BINARY_CLIENT_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile portable/AppRun $(0UPLOADTAG)
-	#
-	# *****************************************
-	# *  package client as tarball
-	# *****************************************
-	#
-#   install into appdir
-	rm -rf ${CLIENT_TARBALL_DIR}
-	${MAKE} -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${CLIENT_TARBALL_DIR} install
-
-#   copy AppRun
-	cp portable/AppRun ${CLIENT_TARBALL_DIR}/run
-	find ${CLIENT_TARBALL_DIR} -type f  -name "*.desktop" -exec mv \{\} ${CLIENT_TARBALL_DIR}/ \;
-
-#   tar it up
-	wd=$$(pwd); cd ${CLIENT_TARBALL_DIR}; tar -cjf $${wd}/${BINARY_CLIENT_TARBALL} *
-	rm -f $(ZEROINSTTAG)
-
-# plain binary tarball
-BINARY_SERVER_TARBALL_NAME=${PACKAGE}-dedicated-${VERSION}.${OSTAG_GENERIC}
-SERVER_TARBALL_DIR=$(RCDIR)/$(BINARY_SERVER_TARBALL_NAME).fortar
-BINARY_SERVER_TARBALL=$(0UPLOAD)/$(BINARY_SERVER_TARBALL_NAME).bin.tar.bz2
-binary_server_tarball: $(BINARY_SERVER_TARBALL)
-$(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/fixlinks portable/AppRun $(0UPLOADTAG)
-	#
-	# *****************************************
-	# *  package server as tarball
-	# *****************************************
-	#
-#   install into appdir
-	rm -rf ${SERVER_TARBALL_DIR}
-	${MAKE} -C ${GENERIC_SERVER_DIR} DESTDIR=$$(pwd)/${SERVER_TARBALL_DIR} install
-
-#   copy AppRun
-	cp portable/AppRun ${SERVER_TARBALL_DIR}/run
-	find ${SERVER_TARBALL_DIR} -type f -name "*.desktop" -exec mv \{\} ${SERVER_TARBALL_DIR}/ \;
-
-	APPDIR=${SERVER_TARBALL_DIR} portable/fixlinks 
-
-#   tar it up
-	wd=$$(pwd); cd ${SERVER_TARBALL_DIR}; tar -cjf $${wd}/${BINARY_SERVER_TARBALL} *
-	rm -f $(ZEROINSTTAG)
-
-binary_tarball: binary_client_tarball binary_server_tarball
-
-0install:
-	#
-	# *****************************************
-	# *  checking out zeroinstall streams
-	# *****************************************
-	#
-	rm -rf $@
-	bzr branch bzr+ssh://bazaar.launchpad.net/~armagetronad-dev/armagetronad/trunk-zeroinstall-work $@
-	cd $@; bzr push bzr+ssh://bazaar.launchpad.net/~armagetronad-dev/armagetronad/trunk-zeroinstall-work
-
-0install/update: 0install
-
-# sf upload subdirectory
-# get a stable year tag
-$(UPLOAD).datetag:
-	date +BUILDYEAR=%Y > $@
-sinclude $(UPLOAD).datetag
-
-SF_DIRECTORY=$(shell echo "$(SERIES)" | sed -e 's,^0.2.8$$,stable,' -e 's,^\(.*\)-snapshots,snapshots/\1,' -e 's,^hacks$$,snapshots/hacks,' -e 's,\(snapshots.*\),\1/$(BUILDYEAR),')
-
-zeroinstall:  uploadcheck $(ZEROINSTTAG)
-$(ZEROINSTTAG): $(BINARY_CLIENT_TARBALL) $(BINARY_SERVER_TARBALL) 0install 0install/update
-	#
-	# *****************************************
-	# *  update zeroinstall stream
-	# *****************************************
-	#
-	SF_DIRECTORY=$(SF_DIRECTORY) OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_CLIENT_TARBALL} VERSION=${VERSION} RC=${RC} 0install/update
-	SF_DIRECTORY=$(SF_DIRECTORY) OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE}-dedicated SERIES=${SERIES} FILE=${BINARY_SERVER_TARBALL} VERSION=${VERSION} RC=${RC} 0install/update
-	touch $@
-
 APFILE=$(RCDIR)/.package
 autopackage-client: $(APFILE).client
 autopackage-server: $(APFILE).server
 autopackage-legacyserver: $(APFILE).legacyserver
 autopackage: autopackage-client autopackage-server
-$(APFILE).%: $(SOURCEDIR)/.tag package/Makefile package/default.apspec $(UPLOAD)/.tag
+$(APFILE).%: $(SOURCEDIR)/.tag autopackage/Makefile autopackage/default.apspec $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  build autopackage $*
 	# *****************************************
 	#
 	rm -rf ap-$*
-	SOURCEDIR=$(SOURCEDIR) $(MAKE) -C package release-$*
+	SOURCEDIR=$(SOURCEDIR) $(MAKE) -C autopackage release-$*
 	mv ap-$*/*.package $(UPLOAD)/$(RCNAME.$*).$(OSTAG_GENERIC).package
 	rm -rf ap-$*
 	touch $@
 
-# rename renegade uploads
-upload-rename: uploadcheck
-	if test $(PACKAGE) != armagetronad; then cd $(UPLOAD); for f in armagetronad*; do if echo $$f | egrep "armagetronad-0|armagetronad-dedicated-0" > /dev/null; then mv $$f $$(echo $$f | sed -e "s,armagetronad,$(PACKAGE),"); fi; done; fi
-
-upload-lp: $(SOURCEDIR)/.tag uploadcheck upload-rename
-	#
-	# *****************************************
-	# *  uploading compiled files to lp       *
-	# *****************************************
-	#
-	cp doc/releasenotes.txt $(UPLOAD)/
-	head -n 1000 $(SOURCEDIR)/ChangeLog > $(UPLOAD)/ChangeLog
-	cd ${UPLOAD};  ../../../../scripts/lp-upload armagetronad "$(SERIES)" "$(VERSION)" *.gz *.bz2 *.zip *.deb *.package *.rpm *.exe *.dmg $(PORTABLE_CLIENT_NAME)*
-#	cd ${UPLOAD}; PROJ=armagetron-builds; test $(PACKAGE) = armagetronad && PROJ=armagetronad; ../../../../scripts/lp-upload "$$PROJ" "$(SERIES)" "$(VERSION)" *.gz *.bz2 *.zip *.deb *.package *.rpm *.exe *.dmg
-
-upload-sf: uploadcheck upload-rename
+upload:
 	#
 	# *****************************************
 	# *  uploading compiled files to sf       *
 	# *****************************************
 	#
-	#echo $(SF_DIRECTORY); false
-	cp doc/releasenotes.txt $(UPLOAD)/
-	todos $(UPLOAD)/releasenotes.txt
-	cd ${UPLOAD}; mkdir -p armagetronad/$(SF_DIRECTORY)/$(VERSION); rsync -r -e ssh armagetronad z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/; rm -rf armagetronad; rsync --ignore-existing -avP -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/$(SF_DIRECTORY)/$(VERSION)/; rsync -avP --no-R -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/$(SF_DIRECTORY)/$(VERSION)/
+
+	cd ${UPLOAD}; echo -e "cd incoming\nmput armagetron*\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\nexit" | ftp -p upload.sf.net $*
 
 TOEMPTYLINE=sed -e "s,^$$,," -e "t q" -e "p" -e "d" -e ": q" -e "q"
 
@@ -689,8 +394,7 @@ ${FRESHMEAT}: ${RCDIR}
 	echo "RPM-URL: http://prdownloads.sourceforge.net/armagetronad/`ls $(UPLOAD)/*.rpm | grep -e "src\|dedicated" -v | sed -e "s,.*/,,"`?download" >> $@
 	echo "Gzipped-tar-URL: http://prdownloads.sourceforge.net/armagetronad/`echo $(TARBALLGZ) | sed -e "s,.*/,,"`?download" >> $@
 	echo "Bzipped-tar-URL: http://prdownloads.sourceforge.net/armagetronad/`echo $(TARBALLBZ) | sed -e "s,.*/,,"`?download" >> $@
-	echo "OSX-URL: http://prdownloads.sourceforge.net/armagetronad/armagetronad-$(VERSION).macosx-universal.dmg?download" >> $@
-#   echo "CVS-URL: http://cvs.sourceforge.net/viewcvs.py/armagetronad" >> $@
+	echo "CVS-URL: http://cvs.sourceforge.net/viewcvs.py/armagetronad" >> $@
 	echo "" >> $@
 
 # extract description

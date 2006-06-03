@@ -41,7 +41,7 @@ challenging AI opponents for a quick training match.
 # should be removed before building.
 
 export CPPFLAGS="-DDEFAULT_SDL_AUDIODRIVER=alsa" 
-APBUILD_STATIC="xml2" DEBUGLEVEL=0 prepareBuild --src ../../armagetronad --disable-sysinstall --disable-restoreold --disable-desktop --disable-glout --enable-uninstall="package remove armagetronad-dedicated" --localstatedir=/var --enable-etc --enable-initscripts --enable-automakedefaults --enable-useradd
+APBUILD_STATIC="xml2 ftgl" DEBUGLEVEL=0 prepareBuild --src ../../armagetronad --disable-sysinstall --disable-restoreold --disable-desktop --disable-glout --enable-uninstall="package remove armagetronad-dedicated" --localstatedir=/var --enable-etc --enable-initscripts --enable-automakedefaults --enable-useradd
 
 [BuildUnprepare]
 unprepareBuild
@@ -57,8 +57,10 @@ require @xmlsoft.org/libxml2 2.6
 #client_require @opengl.org/opengl 1.2
 #client_require @opengl.org/glu 1.2
 #client_require @libsdl.org/sdl_image 1.2
+#client_require @libsdl.org/sdl_mixer 1.2
 #client_require @libpng.org/libpng 3
 #client_require @zlib.org/zlib 1.2
+#client_require @freetype.org/freetype 6
 
 [Install]
 # Put your installation script here

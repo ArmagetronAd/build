@@ -59,7 +59,7 @@ test-%:
 	mkdir -p $(BUILDDIR)-test-$*/autopackage
 	sed < default.apspec > $(BUILDDIR)-test-$*/autopackage/default.apspec ${SED.$*} ${DEBUGSED}
 	cd $(BUILDDIR)-test-$*; makeinstaller; ${hack-t}
-    
+	mv $(BUILDDIR)-test-$*/*.package .	
 
 release-%:
 	mkdir -p $(BUILDDIR)-$*/autopackage

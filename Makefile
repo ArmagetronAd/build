@@ -49,5 +49,5 @@ sourcechange:
 	# *  triggering rescan of sources         *
 	# *****************************************
 	#
-	rm -f $(SOURCETAG) tarballs/*.tar*
+	rm -f tarballs/.sourcetag tarballs/*.tar*
 

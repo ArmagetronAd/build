@@ -25,6 +25,8 @@ define(DATAFILES,[dnl
 dnl %attr(-,root,root) 		PREFIX/games/$1SUFFIX/music
 %attr(-,root,root) 		PREFIX/share/games/$1[]SUFFIX/sound
 %attr(-,root,root) 		PREFIX/share/games/$1[]SUFFIX/textures
+%attr(-,root,root) 		PREFIX/share/games/$1[]SUFFIX/music
+%attr(-,root,root) 		PREFIX/share/services/PACKAGE.protocol
 ])dnl
 dnl
 define(EXEFILES,[dnl
@@ -42,6 +44,7 @@ dnl
 define(BASEFILES,[dnl
 %attr(-,root,root) %config 	PREFIX/etc/games/$1[]SUFFIX
 %attr(-,root,root) 		PREFIX/share/games/$1[]SUFFIX/resource
+%attr(-,root,root) 		PREFIX/share/games/$1[]SUFFIX/www-root
 %attr(-,root,root) 		PREFIX/share/games/$1[]SUFFIX/scripts
 %attr(-,root,root) 		PREFIX/share/games/$1[]SUFFIX/language
 %attr(-,root,root) %doc 	PREFIX/share/doc/games/$1[]SUFFIX
@@ -134,4 +137,4 @@ This is the additional data for PROGNAME, making it look more like the movie.
 %files moviepack
 PREFIX/games/PACKAGE/moviepack
 )
-]
+])

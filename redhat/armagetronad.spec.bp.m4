@@ -64,11 +64,11 @@ rm -f PACKAGENAMEBASE[-]VERSION/textures/KGN*
 define(CONFIGARG,[--disable-sysinstall --disable-restoreold EXTRACONFIGARG --prefix=PREFIX])
 mkdir bindist-dedicated
 pushd bindist-dedicated
-CXX=apg++ CONFIGURE_VARIABLE sh ../configure CONFIGURE_OPTIONS --disable-glout --enable-uninstall="rpm -e PACKAGENAMEBASE-dedicated" CONFIGARG
+APBUILD_STATIC="ftgl" CXX=apg++ CONFIGURE_VARIABLE sh ../configure CONFIGURE_OPTIONS --disable-glout --enable-uninstall="rpm -e PACKAGENAMEBASE-dedicated" CONFIGARG
 popd
 
 #prepare client
 mkdir bindist
 pushd bindist
-CXX=apg++ CONFIGURE_VARIABLE sh ../configure CONFIGURE_OPTIONS  --disable-useradd --enable-uninstall="rpm -e PACKAGENAMEBASE" CONFIGARG
+APBUILD_STATIC="ftgl" CXX=apg++ CONFIGURE_VARIABLE sh ../configure CONFIGURE_OPTIONS  --disable-useradd --enable-uninstall="rpm -e PACKAGENAMEBASE" CONFIGARG
 popd

@@ -38,7 +38,7 @@ test -z "$PROGNAME" && PROGNAME="Armagetron Advanced"
 test -z "$PACKAGE" && PACKAGE=armagetronad
 
 #additional options to configure
-test -z "$CONFIGURE_OPTIONS" && CONFIGURE_OPTIONS="--disable-music --localstatedir=/var --enable-etc --enable-initscripts --enable-automakedefaults --enable-useradd"
+test -z "$CONFIGURE_OPTIONS" && CONFIGURE_OPTIONS="--localstatedir=/var --enable-etc --enable-initscripts --enable-automakedefaults --enable-useradd"
 
 #where to find the config files after installation
 test -z "$CONFIGFILES" && CONFIGFILES=/etc/$PACKAGE

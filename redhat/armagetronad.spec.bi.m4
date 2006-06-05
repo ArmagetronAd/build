@@ -134,4 +134,4 @@ This is the additional data for PROGNAME, making it look more like the movie.
 %files moviepack
 PREFIX/games/PACKAGE/moviepack
 )
-]
+])

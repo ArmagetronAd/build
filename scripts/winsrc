@@ -1,21 +1,21 @@
 #!/bin/sh
 # packs windows sources
 
-#set -x
+# set -x
 
 WINDIR=$1
 SRCDIR=$2
 BUILDDIR=$3
 DOCDIR=$4
-VISUALC=$5
-CODEBLOCKS=$6
+#VISUALC=$5
+#CODEBLOCKS=$6
 
 # prepare windows sources
 rm -rf $WINDIR
 cp -ax $SRCDIR $WINDIR || exit 1
 rm -rf $WINDIR/src/doc
 rm -rf $WINDIR/doc
-cp -r $DOCDIR $WINDIR/doc || exit 1
+cp -r $DOCDIR $WINDIR/src/doc || exit 1
 cp -r $BUILDDIR/language/languages.txt $WINDIR/language || exit 1
 cp -r $BUILDDIR/config/aiplayers.cfg $WINDIR/config || exit 1
 
@@ -25,7 +25,7 @@ for f in $WINDIR/INSTALL $WINDIR/COPYING $WINDIR/AUTHORS $WINDIR/NEWS $WINDIR/Ch
 done
 
 # copy Code::Blocks build files
-if test -d ${CODEBLOCKS}; then
+if false && test -d ${CODEBLOCKS}; then
     cp -r ${CODEBLOCKS}/* ${WINDIR}/ || exit 1
     
     # adapt relative paths to source
@@ -36,7 +36,7 @@ if test -d ${CODEBLOCKS}; then
 fi
 
 # copy visualC build files
-if test -d ${VISUALC}; then
+if false && test -d ${VISUALC}; then
     cp -r ${VISUALC}/* ${WINDIR}/ || exit 1
 
     # transcribe nsi scripts

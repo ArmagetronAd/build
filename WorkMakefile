@@ -285,7 +285,7 @@ $(SOURCEDIR)/.tag: $(RCDIR)/.tag $(VERSIONTAG) $(INPUTTARBALLBASE)
 	cd $(RCDIR); tar -xf ../../../$(INPUTTARBALLBASE)
 	test -d $(SOURCEDIR)
 	touch $(SOURCEDIR)
-	find $(SOURCEDIR) -name "*.html" -exec rm \{\} \;
+	find $(SOURCEDIR)/src/doc -name "*.html" -exec rm \{\} \;
 	echo "" > $@
 
 # windows source zip

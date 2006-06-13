@@ -7,8 +7,7 @@ WINDIR=$1
 SRCDIR=$2
 BUILDDIR=$3
 DOCDIR=$4
-#VISUALC=$5
-#CODEBLOCKS=$6
+VERSION=$5
 
 # prepare windows sources
 rm -rf $WINDIR
@@ -32,6 +31,13 @@ for f in ${WINDIR}/win32/*.nsi; do
     rm $f.in
 done
 
+# generate version.h
+WINVERSION=`echo $VERSION | sed -e 's/\./,/g' -e 's/_alpha/,/' -e 's/_beta/,/' -e 's/_rc/,/'`
+MINVERSION=`echo $VERSION | sed -e 's/^.*_/_/'`
+echo "#define MINOR_VERSION ${MINVERSION}"      >  ${WINDIR}/src/version.h
+echo "#define MAJOR_VERSION ${WINVERSION}"      >> ${WINDIR}/src/version.h
+echo "#define VERSION \"${VERSION}\""           >> ${WINDIR}/src/version.h
+echo "#define BUILD_DATE \"`date +%Y%m%d`\""    >> ${WINDIR}/src/version.h
 
 # transcode to windows CR/LF line mode
 for suffix in bat nsi nsi.m4 cfg txt dsp dsw h cpp dtd xml; do

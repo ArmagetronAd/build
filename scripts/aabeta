@@ -4,11 +4,20 @@
 # set -x
 
 # adapt this on every CVS branch
-BRANCH=0.2.8
+BRANCH=0.3
 
 OFFICIAL_VERSION=`cat ../../../.versionfile.proto`
 
 DIRECTORY=`echo "${BRANCH}/${OFFICIAL_VERSION}" | sed 's,^\([^/]\+/\)[0-9.]\+_alpha\([0-9]\+\)$,\1\2,'`
+
+tag=${OFFICIAL_VERSION}
+    
+# extract date tag
+if echo ${OFFICIAL_VERSION} | grep "alpha" > /dev/null; then
+    tag=`date +%Y-%m-%d`
+    DIRECTORY=${BRANCH}/`date +%Y%m%d`
+fi
+
 
 rm -f releases*.php*
 
@@ -113,14 +122,6 @@ for f in *; do
     #echo mv $f ${TARGET}
     #test $f == ${TARGET} || mv $f $TARGET
 
-    tag=${OFFICIAL_VERSION}
-    
-    # extract date tag
-    if echo ${OFFICIAL_VERSION} | grep "alpha"; then
-        tagdate=`echo ${OFFICIAL_VERSION} | sed -e "s,.*alpha,,g"`
-        tag=`date -d ${tagdate} +%Y-%m-%d`
-    fi
-
     cat >> releases.php.proto <<EOF
 array(
     'file'     => '${DIRECTORY}/${TARGET}',
@@ -143,7 +144,7 @@ done
 grep < releases.php.proto > releases.php -v "'doesnotapply'"
 
 # build in new elements into releases.php
-REALRELEASES=../../../../../www-aabeta/releases.php
+REALRELEASES=../../../../../../www-aabeta/releases.php
 if test -r ${REALRELEASES}; then
     insertat=2
     totallines=`wc -l < ${REALRELEASES}`

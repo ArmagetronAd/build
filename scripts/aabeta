@@ -126,7 +126,7 @@ for f in *; do
 array(
     'file'     => '${DIRECTORY}/${TARGET}',
     //'source'   => 'sf_aa',
-    'branch'   => '0.2.8',
+    'branch'   => '${BRANCH}',
     'date'     => '`date -r ${TARGET} +%Y-%m-%d`',
     'tag'      => '${tag}',
     'os'       => '${SYSTEM_AABETA_FULL}',

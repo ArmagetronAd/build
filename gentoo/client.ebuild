@@ -1,21 +1,26 @@
 # Copyright 1999-2006 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header$
+# $Header: /cvsroot/armagetronad/armagetronad_build/gentoo/client.ebuild,v 1.24 2006/05/05 13:55:13 luke-jr Exp $
 
 inherit flag-o-matic eutils games
 
-DESCRIPTION="\"A Tron clone in 3D\""
+DESCRIPTION="3D light cycles (deathmatch-style racing game like in the movie TRON)"
 HOMEPAGE="http://armagetronad.net/"
-SRC_URI="mirror://sourceforge/armagetronad/${P}.src.tar.bz2
+
+OPT_CLIENTSRC="
 	moviesounds? (
-		http://armagetron.sourceforge.net/addons/moviesounds_fq.zip
+		http://beta.armagetronad.net/fetch.php/PreResource/moviesounds_fq.zip
 		linguas_es? ( !linguas_en? (
-			http://usuario.tiscalinet.es/hgctiscali/naflat/downloads/spanishvoices.zip
+			http://beta.armagetronad.net/fetch.php/PreResource/spanishvoices.zip
 		) )
 	)
 	moviepack? (
-		http://armagetron.sourceforge.net/addons/moviepack.zip
+		http://beta.armagetronad.net/fetch.php/PreResource/moviepack.zip
 	)
+"
+SRC_URI="mirror://sourceforge/armagetronad/${P}.src.tar.bz2
+	opengl? ( ${OPT_CLIENTSRC} )
+	!dedicated? ( ${OPT_CLIENTSRC} )
 "
 
 LICENSE="GPL-2"
@@ -24,69 +29,31 @@ KEYWORDS="amd64 ppc x86"
 IUSE="debug dedicated krawall opengl moviepack moviesounds"
 
 GLDEPS="
-		|| (
-			virtual/x11
-			x11-libs/libX11
-		)
-		virtual/glu
-		virtual/opengl
-		media-libs/libsdl
-		media-libs/sdl-image
-		media-libs/jpeg
-		media-libs/libpng
-	"
+	|| (
+		x11-libs/libX11
+		virtual/x11
+	)
+	virtual/glu
+	virtual/opengl
+	media-libs/libsdl
+	media-libs/sdl-image
+	media-libs/jpeg
+	media-libs/libpng
+"
 RDEPEND="
-		>=dev-libs/libxml2-2.6.12
-		sys-libs/zlib
-		opengl? ( ${GLDEPS} )
-		!dedicated? ( ${GLDEPS} )
-	"
-DEPEND="${RDEPEND}
+	>=dev-libs/libxml2-2.6.12
+	sys-libs/zlib
+	opengl? ( ${GLDEPS} )
+	!dedicated? ( ${GLDEPS} )
+"
+OPT_CLIENTDEPS="
 	moviepack? ( app-arch/unzip )
 	moviesounds? ( app-arch/unzip )
-	linguas_es? ( !linguas_en? ( app-arch/unzip ) )
-	"
-
-pkg_setup() {
-	if use debug; then
-		ewarn
-		ewarn 'The "debug" USE flag will enable debugging code. This will cause AI'
-		ewarn ' players to chat debugging information, debugging lines to be drawn'
-		ewarn ' on the grid and at wall angles, and probably most relevant to your'
-		ewarn ' decision to keep the USE flag:'
-		ewarn '         FULL SCREEN MODE AND SOUND WILL BE DISABLED'
-		ewarn
-		ewarn "If you don't like this, add this line to /etc/portage/package.use:"
-		ewarn '	games-action/armagetronad -debug'
-		ewarn
-		ewarn 'If you ignore this warning and complain about any of the above'
-		ewarn ' effects, the Armagetron Advanced team will either ignore you or'
-		ewarn ' delete your complaint.'
-		ewarn
-		ebeep 5
-	fi
-	# Assume client if they don't want a server
-	use opengl || ! use dedicated && build_client=true || build_client=false
-	use dedicated && build_server=true || build_server=false
-
-	MyEMAKE="armabindir=${GAMES_BINDIR}"	# we have a broken build system, I guess
-	# Note: Music isn't there yet
-	COMMON_CONFIG="--disable-binreloc --disable-master --enable-main --disable-memmanager --disable-music $(use_enable krawall) --enable-sysinstall --disable-useradd --enable-etc --disable-restoreold --disable-games"
-	if [ "$SLOT" == "0" ]; then
-		COMMON_CONFIG="${COMMON_CONFIG} --disable-multiver"
-		GameSLOT=""
-	else
-		COMMON_CONFIG="${COMMON_CONFIG}  --enable-multiver=${SLOT}"
-		GameSLOT="-${SLOT}"
-	fi
-	UNINSTALL_CONFIG=--enable-uninstall="emerge --clean =${CATEGORY}/${PF}"
-	if use debug; then
-		DEBUGLEVEL=3
-	else
-		DEBUGLEVEL=0
-	fi
-	CODELEVEL=0
-}
+"
+DEPEND="${RDEPEND}
+	opengl? ( ${OPT_CLIENTDEPS} )
+	!dedicated? ( ${OPT_CLIENTDEPS} )
+"
 
 src_unpack() {
 	unpack ${A}
@@ -98,14 +65,23 @@ aabuild() {
 	MyBUILDDIR="${WORKDIR}/build-$1"
 	mkdir -p "${MyBUILDDIR}" || die "error creating build directory($1)"	# -p to allow EEXIST scenario
 	cd "${MyBUILDDIR}"
-	ln -s "${S}/configure" .
-	export DEBUGLEVEL CODELEVEL
-	egamesconf --srcdir="${S}" ${COMMON_CONFIG} "${UNINSTALL_CONFIG}" "${@:2}" || die "egamesconf($1) failed"
-	if [ "$1" == "server" ]; then
-		ded='-dedicated'
-	else
-		ded=''
-	fi
+	export ECONF_SOURCE="../${P}"
+	use debug && DEBUGLEVEL=3 || DEBUGLEVEL=0
+	export DEBUGLEVEL CODELEVEL=0
+	[ "$SLOT" == "0" ] && myconf="--disable-multiver" || myconf="--enable-multiver=${SLOT}"
+	egamesconf ${myconf} \
+		--disable-binreloc \
+		--disable-master \
+		--enable-main \
+		$(use_enable krawall) \
+		--enable-sysinstall \
+		--disable-useradd \
+		--enable-etc \
+		--disable-restoreold \
+		--disable-games \
+		--enable-uninstall="emerge --clean =${CATEGORY}/${PF}" \
+		"${@:2}" || die "egamesconf($1) failed"
+	[ "$1" == "server" ] && ded='-dedicated' || ded=''
 	cat >>"config.h" <<EOF
 #define DATA_DIR "${GAMES_DATADIR}/${PN}${ded}${GameSLOT}"
 #define CONFIG_DIR "${GAMES_SYSCONFDIR}/${PN}${ded}${GameSLOT}"
@@ -114,10 +90,15 @@ aabuild() {
 #define AUTORESOURCE_DIR "~/.${PN}/resource/automatic"
 #define INCLUDEDRESOURCE_DIR "${GAMES_DATADIR}/${PN}${ded}${GameSLOT}/resource/included"
 EOF
-	emake ${MyEMAKE} || die "emake($1) failed"
+	emake armabindir="${GAMES_BINDIR}" || die "emake($1) failed"
 }
 
 src_compile() {
+	# Assume client if they don't want a server
+	use opengl || ! use dedicated && build_client=true || build_client=false
+	use dedicated && build_server=true || build_server=false
+
+	[ "$SLOT" == "0" ] && GameSLOT="" || GameSLOT="-${SLOT}"
 	filter-flags -fno-exceptions
 	if ${build_client}; then
 		einfo "Building game client"
@@ -132,15 +113,15 @@ src_compile() {
 src_install() {
 	if ${build_client} && ${build_server}; then
 		# Setup symlink so both client and server share their common data
-		mkdir -p "${D}${GAMES_DATADIR}"
+		dodir "${GAMES_DATADIR}"
 		dosym "${PN}${GameSLOT}" "${GAMES_DATADIR}/${PN}-dedicated${GameSLOT}"
-		mkdir -p "${D}${GAMES_SYSCONFDIR}"
+		dodir "${GAMES_SYSCONFDIR}"
 		dosym "${PN}${GameSLOT}" "${GAMES_SYSCONFDIR}/${PN}-dedicated${GameSLOT}"
 	fi
 	if ${build_client}; then
 		einfo "Installing game client"
 		cd "${WORKDIR}/build-client"
-		emake install DESTDIR="${D}" ${MyEMAKE} || die "emake(client) install failed"
+		make DESTDIR="${D}" armabindir="${GAMES_BINDIR}" install || die "make(client) install failed"
 		# copy moviepacks/sounds
 		cd "${WORKDIR}"
 		insinto "${GAMES_DATADIR}/${PN}${GameSLOT}"
@@ -160,11 +141,11 @@ src_install() {
 	if ${build_server}; then
 		einfo "Installing dedicated server"
 		cd "${WORKDIR}/build-server"
-		emake install DESTDIR="${D}" ${MyEMAKE} || die "emake(server) install failed"
+		make DESTDIR="${D}" armabindir="${GAMES_BINDIR}" install || die "make(server) install failed"
 		einfo 'Adjusting dedicated server configuration'
 		dosed "s,^\(user=\).*$,\1${GAMES_USER_DED},; s,^#\(VARDIR=/.*\)$,\\1," "${GAMES_SYSCONFDIR}/${PN}-dedicated${GameSLOT}/rc.config" || ewarn 'adjustments for rc.config FAILED; the defaults may not be suited for your system!'
 		DedHOME="$(eval echo ~${GAMES_USER_DED})"
-		mkdir -p "${D}${DedHOME}"
+		dodir "${DedHOME}"
 		dosym "${GAMES_STATEDIR}/${PN}-dedicated${GameSLOT}" "${DedHOME}/.${PN}"
 	fi
 	# Ok, so we screwed up on doc installation... so for now, the ebuild does this manually

@@ -43,6 +43,11 @@ lwd=`pwd`
 cd $TARGET/distmaker
 test -r config.h || docstyle=web $CWD/$AA_SOURCE/configure --prefix=/usr/local --disable-glout --enable-automakedefaults --disable-useradd --disable-etc --disable-initscripts || exit -1
 ${MAKE} distprep || exit -1
+
+# call some idle makes to update includes and do stuff
+${MAKE} nothing 
+${MAKE} nothingeither
+
 ${MAKE} dist || exit -1
 mv *.tar.* ../
 cd ${lwd}

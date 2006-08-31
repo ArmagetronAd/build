@@ -144,7 +144,7 @@ done
 grep < releases.php.proto > releases.php -v "'doesnotapply'"
 
 # build in new elements into releases.php
-REALRELEASES=../../../../../www-aabeta/releases.php
+REALRELEASES=../../../../../../www-aabeta/releases.php
 if test -r ${REALRELEASES}; then
     insertat=2
     totallines=`wc -l < ${REALRELEASES}`
@@ -173,8 +173,8 @@ ls -l
 
 echo
 echo Upload commands:
-COMMAND1="ssh ${USERNAME_AABETA}@beta.armagetronad.net mkdir -m g+ws -p /var/www/aabeta/download/${DIRECTORY}"
-COMMAND2="rsync --progress * ${USERNAME_AABETA}@beta.armagetronad.net:/var/www/aabeta/download/${DIRECTORY}/"
+COMMAND1="ssh ${USERNAME_AABETA}@beta.armagetronad.net mkdir -m g+ws -p /var/www/armagetron/distfiles/${DIRECTORY}"
+COMMAND2="rsync --progress * ${USERNAME_AABETA}@beta.armagetronad.net:/var/www/armagetron/distfiles/${DIRECTORY}/"
 echo ${COMMAND1}
 echo ${COMMAND2}
 

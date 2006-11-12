@@ -396,7 +396,8 @@ ${FRESHMEAT}: ${RCDIR}
 	echo "RPM-URL: http://prdownloads.sourceforge.net/armagetronad/`ls $(UPLOAD)/*.rpm | grep -e "src\|dedicated" -v | sed -e "s,.*/,,"`?download" >> $@
 	echo "Gzipped-tar-URL: http://prdownloads.sourceforge.net/armagetronad/`echo $(TARBALLGZ) | sed -e "s,.*/,,"`?download" >> $@
 	echo "Bzipped-tar-URL: http://prdownloads.sourceforge.net/armagetronad/`echo $(TARBALLBZ) | sed -e "s,.*/,,"`?download" >> $@
-	echo "CVS-URL: http://cvs.sourceforge.net/viewcvs.py/armagetronad" >> $@
+	echo "OSX-URL: http://prdownloads.sourceforge.net/armagetronad/armagetronad-$(VERSION).macosx-universal.dmg?download" >> $@
+#   echo "CVS-URL: http://cvs.sourceforge.net/viewcvs.py/armagetronad" >> $@
 	echo "" >> $@
 
 # extract description

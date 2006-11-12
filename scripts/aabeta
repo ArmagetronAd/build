@@ -173,8 +173,8 @@ ls -l
 
 echo
 echo Upload commands:
-COMMAND1="ssh ${USERNAME_AABETA}@beta.armagetronad.net mkdir -m g+ws -p /var/www/aabeta/download/${DIRECTORY}"
-COMMAND2="rsync --progress * ${USERNAME_AABETA}@beta.armagetronad.net:/var/www/aabeta/download/${DIRECTORY}/"
+COMMAND1="ssh ${USERNAME_AABETA}@beta.armagetronad.net mkdir -m g+ws -p /var/www/armagetron/distfiles/${DIRECTORY}"
+COMMAND2="rsync --progress * ${USERNAME_AABETA}@beta.armagetronad.net:/var/www/armagetron/distfiles/${DIRECTORY}/"
 echo ${COMMAND1}
 echo ${COMMAND2}
 

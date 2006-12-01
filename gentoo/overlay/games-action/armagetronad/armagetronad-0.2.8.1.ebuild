@@ -26,7 +26,7 @@ SRC_URI="mirror://sourceforge/armagetronad/${P}.src.tar.bz2
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 ppc x86"
-IUSE="debug dedicated krawall opengl moviepack moviesounds"
+IUSE="debug dedicated opengl moviepack moviesounds"
 
 GLDEPS="
 		|| (
@@ -76,7 +76,7 @@ aabuild() {
 		--disable-binreloc \
 		--disable-master \
 		--enable-main \
-		$(use_enable krawall) \
+		--disable-krawall \
 		--enable-sysinstall \
 		--disable-useradd \
 		--enable-etc \

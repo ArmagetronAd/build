@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<overlays>
+	<overlay
+	 contact="luke_armagetron@dashjr.org"
+	 name="armagetron"
+	 src="https://svn.sourceforge.net/svnroot/armagetronad/armagetronad/trunk/build/gentoo/overlay"
+	 type="svn"
+	 >
+		<link>
+			http://armagetronad.net
+		</link>
+		<description>
+			3D light cycles, like the movie TRON
+		</description>
+	</overlay>
+</overlays>

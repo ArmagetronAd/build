@@ -3,7 +3,7 @@
 	<overlay
 	 contact="luke_armagetron@dashjr.org"
 	 name="armagetron"
-	 src="https://svn.sourceforge.net/svnroot/armagetronad/armagetronad/trunk/build/gentoo/overlay"
+	 src="https://armagetronad.svn.sourceforge.net/svnroot/armagetronad/armagetronad/trunk/build/gentoo/overlay"
 	 type="svn"
 	 >
 		<link>

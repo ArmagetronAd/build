@@ -4,7 +4,7 @@
 
 inherit flag-o-matic eutils games
 
-DESCRIPTION="3D light cycles (deathmatch-style racing game like in the movie TRON)"
+DESCRIPTION="3D light cycles like in the movie TRON"
 HOMEPAGE="http://armagetronad.net/"
 
 OPT_CLIENTSRC="

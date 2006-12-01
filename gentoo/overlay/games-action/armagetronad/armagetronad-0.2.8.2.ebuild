@@ -79,14 +79,6 @@ aabuild() {
 		--disable-games \
 		--enable-uninstall="emerge --clean =${CATEGORY}/${PF}" \
 		"${@:2}" || die "egamesconf($1) failed"
-	cat >>"config.h" <<EOF
-#define DATA_DIR "${GAMES_DATADIR}/${GameDir}"
-#define CONFIG_DIR "${GAMES_SYSCONFDIR}/${GameDir}"
-#define RESOURCE_DIR "${GAMES_DATADIR}/${GameDir}/resource"
-#define USER_DATA_DIR "~/.${PN}"
-#define AUTORESOURCE_DIR "~/.${PN}/resource/automatic"
-#define INCLUDEDRESOURCE_DIR "${GAMES_DATADIR}/${GameDir}/resource/included"
-EOF
 	emake armabindir="${GAMES_BINDIR}" || die "emake($1) failed"
 }
 

@@ -55,12 +55,6 @@ DEPEND="${RDEPEND}
 	!dedicated? ( ${OPT_CLIENTDEPS} )
 "
 
-src_unpack() {
-	unpack ${A}
-	cd "${S}/batch"
-	epatch "${FILESDIR}/0280_fix-sysinstall.patch"
-}
-
 aabuild() {
 	MyBUILDDIR="${WORKDIR}/build-$1"
 	mkdir -p "${MyBUILDDIR}" || die "error creating build directory($1)"	# -p to allow EEXIST scenario
@@ -69,8 +63,10 @@ aabuild() {
 	use debug && DEBUGLEVEL=3 || DEBUGLEVEL=0
 	export DEBUGLEVEL CODELEVEL=0
 	[ "$SLOT" == "0" ] && myconf="--disable-multiver" || myconf="--enable-multiver=${SLOT}"
+	GameDir="${PN}${ded}${GameSLOT}"
 	egamesconf ${myconf} \
 		--disable-binreloc \
+		--docdir "/usr/share/doc/${PF}/${DOCDESTTREE}" \
 		--disable-master \
 		--enable-main \
 		$(use_enable krawall) \

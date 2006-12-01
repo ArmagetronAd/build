@@ -6,7 +6,8 @@ inherit flag-o-matic eutils games
 
 DESCRIPTION="\"A Tron clone in 3D\""
 HOMEPAGE="http://armagetronad.net/"
-SRC_URI="mirror://sourceforge/armagetronad/${P}.src.tar.bz2
+
+OPT_CLIENTSRC="
 	moviesounds? (
 		http://beta.armagetronad.net/fetch.php/PreResource/moviesounds_fq.zip
 		linguas_es? ( !linguas_en? (
@@ -16,6 +17,10 @@ SRC_URI="mirror://sourceforge/armagetronad/${P}.src.tar.bz2
 	moviepack? (
 		http://beta.armagetronad.net/fetch.php/PreResource/moviepack.zip
 	)
+"
+SRC_URI="mirror://sourceforge/armagetronad/${P}.src.tar.bz2
+	opengl? ( ${OPT_CLIENTSRC} )
+	!dedicated? ( ${OPT_CLIENTSRC} )
 "
 
 LICENSE="GPL-2"
@@ -34,18 +39,22 @@ GLDEPS="
 		media-libs/sdl-image
 		media-libs/jpeg
 		media-libs/libpng
-	"
+"
 RDEPEND="
 		>=dev-libs/libxml2-2.6.12
 		sys-libs/zlib
 		opengl? ( ${GLDEPS} )
 		!dedicated? ( ${GLDEPS} )
-	"
-DEPEND="${RDEPEND}
+"
+OPT_CLIENTDEPS="
 	moviepack? ( app-arch/unzip )
 	moviesounds? ( app-arch/unzip )
 	linguas_es? ( !linguas_en? ( app-arch/unzip ) )
-	"
+"
+DEPEND="${RDEPEND}
+	opengl? ( ${OPT_CLIENTDEPS} )
+	!dedicated? ( ${OPT_CLIENTDEPS} )
+"
 
 src_unpack() {
 	unpack ${A}
@@ -61,6 +70,8 @@ aabuild() {
 	use debug && DEBUGLEVEL=3 || DEBUGLEVEL=0
 	export DEBUGLEVEL CODELEVEL=0
 	[ "$SLOT" == "0" ] && myconf="--disable-multiver" || myconf="--enable-multiver=${SLOT}"
+	[ "$1" == "server" ] && ded='-dedicated' || ded=''
+	GameDir="${PN}${ded}${GameSLOT}"
 	egamesconf ${myconf} \
 		--disable-binreloc \
 		--disable-master \
@@ -73,14 +84,13 @@ aabuild() {
 		--disable-games \
 		--enable-uninstall="emerge --clean =${CATEGORY}/${PF}" \
 		"${@:2}" || die "egamesconf($1) failed"
-	[ "$1" == "server" ] && ded='-dedicated' || ded=''
 	cat >>"config.h" <<EOF
-#define DATA_DIR "${GAMES_DATADIR}/${PN}${ded}${GameSLOT}"
-#define CONFIG_DIR "${GAMES_SYSCONFDIR}/${PN}${ded}${GameSLOT}"
-#define RESOURCE_DIR "${GAMES_DATADIR}/${PN}${ded}${GameSLOT}/resource"
+#define DATA_DIR "${GAMES_DATADIR}/${GameDir}"
+#define CONFIG_DIR "${GAMES_SYSCONFDIR}/${GameDir}"
+#define RESOURCE_DIR "${GAMES_DATADIR}/${GameDir}/resource"
 #define USER_DATA_DIR "~/.${PN}"
 #define AUTORESOURCE_DIR "~/.${PN}/resource/automatic"
-#define INCLUDEDRESOURCE_DIR "${GAMES_DATADIR}/${PN}${ded}${GameSLOT}/resource/included"
+#define INCLUDEDRESOURCE_DIR "${GAMES_DATADIR}/${GameDir}/resource/included"
 EOF
 	emake armabindir="${GAMES_BINDIR}" || die "emake($1) failed"
 }
@@ -141,8 +151,8 @@ src_install() {
 		dosym "${GAMES_STATEDIR}/${PN}-dedicated${GameSLOT}" "${DedHOME}/.${PN}"
 	fi
 	# Ok, so we screwed up on doc installation... so for now, the ebuild does this manually
-	dohtml -r "${D}${GAMES_PREFIX}/share/doc/${PN}${ded}${GameSLOT}/html/"*
-	dodoc "${D}${GAMES_PREFIX}/share/doc/${PN}${ded}${GameSLOT}/html/"*.txt
+	dohtml -r "${D}${GAMES_PREFIX}/share/doc/${GameDir}/html/"*
+	dodoc "${D}${GAMES_PREFIX}/share/doc/${GameDir}/html/"*.txt
 	rm -r "${D}${GAMES_PREFIX}/share/doc"
 	rmdir "${D}${GAMES_PREFIX}/share" || true	# Supress potential error
 	prepgamesdirs

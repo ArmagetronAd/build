@@ -27,7 +27,7 @@ LICENSE="GPL-2"
 SLOT="0"
 	# Note: This *should* be an 'experimental' SLOT, but 0.3.0 has a broken multislot...
 KEYWORDS="~amd64 ~ppc ~x86"
-IUSE="debug dedicated opengl moviepack moviesounds"
+IUSE="debug dedicated linguas_es linguas_en moviepack moviesounds opengl"
 
 GLDEPS="
 	|| (

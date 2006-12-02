@@ -26,7 +26,7 @@ SRC_URI="mirror://sourceforge/armagetronad/${P}.src.tar.bz2
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 ppc x86"
-IUSE="debug dedicated opengl moviepack moviesounds"
+IUSE="debug dedicated linguas_es linguas_en moviepack moviesounds opengl"
 
 GLDEPS="
 		|| (

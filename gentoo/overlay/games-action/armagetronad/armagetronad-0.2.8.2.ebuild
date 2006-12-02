@@ -56,6 +56,26 @@ DEPEND="${RDEPEND}
 	!dedicated? ( ${OPT_CLIENTDEPS} )
 "
 
+pkg_setup() {
+	if use debug; then
+		ewarn
+		ewarn 'The "debug" USE flag will enable debugging code. This will cause AI'
+		ewarn ' players to chat debugging information, debugging lines to be drawn'
+		ewarn ' on the grid and at wall angles, and probably most relevant to your'
+		ewarn ' decision to keep the USE flag:'
+		ewarn '         FULL SCREEN MODE AND SOUND WILL BE DISABLED'
+		ewarn
+		ewarn "If you don't like this, add this line to /etc/portage/package.use:"
+		ewarn '    games-action/armagetronad -debug'
+		ewarn
+		ewarn 'If you ignore this warning and complain about any of the above'
+		ewarn ' effects, the Armagetron Advanced team will either ignore you or'
+		ewarn ' delete your complaint.'
+		ewarn
+		ebeep 5
+	fi
+}
+
 aabuild() {
 	MyBUILDDIR="${WORKDIR}/build-$1"
 	mkdir -p "${MyBUILDDIR}" || die "error creating build directory($1)"	# -p to allow EEXIST scenario

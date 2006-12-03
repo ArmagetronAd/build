@@ -85,12 +85,12 @@ aabuild() {
 	MyBUILDDIR="${WORKDIR}/build-$1"
 	mkdir -p "${MyBUILDDIR}" || die "error creating build directory($1)"	# -p to allow EEXIST scenario
 	cd "${MyBUILDDIR}"
-	export ECONF_SOURCE="../${P}"
 	use debug && DEBUGLEVEL=3 || DEBUGLEVEL=0
 	export DEBUGLEVEL CODELEVEL=0
 	[ "$SLOT" == "0" ] && myconf="--disable-multiver" || myconf="--enable-multiver=${SLOT}"
 	[ "$1" == "server" ] && ded='-dedicated' || ded=''
 	GameDir="${PN}${ded}${GameSLOT}"
+	ECONF_SOURCE="${S}" \
 	egamesconf ${myconf} \
 		--disable-binreloc \
 		--disable-master \

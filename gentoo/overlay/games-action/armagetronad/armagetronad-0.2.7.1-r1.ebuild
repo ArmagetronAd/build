@@ -5,20 +5,31 @@
 inherit eutils games
 
 DESCRIPTION="3d tron lightcycles, just like the movie"
-HOMEPAGE="http://armagetronad.sourceforge.net/"
+HOMEPAGE="http://armagetronad.net/"
+
+OPT_CLIENTSRC="
+	moviesounds? (
+		http://beta.armagetronad.net/fetch.php/PreResource/moviesounds_fq.zip
+		linguas_es? ( !linguas_en? (
+			http://beta.armagetronad.net/fetch.php/PreResource/spanishvoices.zip
+		) )
+	)
+	moviepack? (
+		http://beta.armagetronad.net/fetch.php/PreResource/moviepack.zip
+	)
+"
 SRC_URI="mirror://sourceforge/armagetronad/${P}.tar.bz2
+	opengl? ( ${OPT_CLIENTSRC} )
 	!dedicated? (
-		http://armagetron.sourceforge.net/addons/moviesounds_fq.zip
-		http://armagetron.sourceforge.net/addons/moviepack.zip
+		${OPT_CLIENTSRC}
 	)"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 ppc x86"
-IUSE="dedicated"
+IUSE="dedicated linguas_es linguas_en moviepack moviesounds opengl"
 
-RDEPEND="
-	!dedicated? (
+GLDEPS="
 		sys-libs/zlib
 		virtual/opengl
 		virtual/glu
@@ -26,59 +37,115 @@ RDEPEND="
 		media-libs/sdl-image
 		media-libs/jpeg
 		media-libs/libpng
-	)"
+"
+RDEPEND="
+	opengl? ( ${GLDEPS} )
+	!dedicated? ( ${GLDEPS} )
+"
+OPT_CLIENTDEPS="
+	moviepack? ( app-arch/unzip )
+	moviesounds? ( app-arch/unzip )
+"
 DEPEND="${RDEPEND}
-	!dedicated? ( app-arch/unzip )"
+	opengl? ( ${OPT_CLIENTDEPS} )
+	!dedicated? ( ${OPT_CLIENTDEPS} )
+"
 
 src_unpack() {
 	unpack ${A}
 	cd "${S}"
 	epatch "${FILESDIR}"/${P}-gcc4.patch
 	epatch "${FILESDIR}"/${P}-security-1.patch
-	cp "${FILESDIR}"/${PN}-ded "${FILESDIR}"/${PN} . || die
-	sed -i \
+}
+
+aabuild() {
+	MyBUILDDIR="${WORKDIR}/build-$1"
+	mkdir -p "${MyBUILDDIR}" || die "error creating build directory($1)"	# -p to allow EEXIST scenario
+	cd "${MyBUILDDIR}"
+	export ECONF_SOURCE="../${P}"
+	[ "$1" == "server" ] && ded='-dedicated' || ded=''
+	GameDir="${PN}${ded}${GameSLOT}"
+	egamesconf ${myconf} \
+		--disable-music \
+		--disable-krawall \
+		--enable-etc \
+		"${@:2}" || die "egamesconf($1) failed"
+	emake || die "emake($1) failed"
+	make documentation || die "make documentation($1) failed"
+	mkdir startscript
+	sed \
 		-e "s:@GAMES_SYSCONFDIR@:${GAMES_SYSCONFDIR}:" \
 		-e "s:@GAMES_LIBDIR@:${GAMES_LIBDIR}:" \
 		-e "s:@GAMES_DATADIR@:${GAMES_DATADIR}:" \
-		${PN}-ded ${PN}
+		< "${FILESDIR}/027-startscript.sh" \
+		> "startscript/${PN}${ded}" || die 'sed failed'
 }
 
 src_compile() {
-	local myconf=""
-	use dedicated && myconf="--disable-glout"
-	egamesconf ${myconf} || die "egamesconf failed"
-	emake || die "emake failed"
-	make documentation || "make doc failed"
+	# Assume client if they don't want a server
+	use opengl || ! use dedicated && build_client=true || build_client=false
+	use dedicated && build_server=true || build_server=false
+
+	GameSLOT=""
+	if ${build_client}; then
+		einfo "Building game client"
+		aabuild client  --enable-glout
+	fi
+	if ${build_server}; then
+		einfo "Building dedicated server"
+		aabuild server --disable-glout
+	fi
 }
 
 src_install() {
+	if ${build_client} && ${build_server}; then
+		# Setup symlink so both client and server share their common data
+		dodir "${GAMES_DATADIR}"
+		dosym "${PN}${GameSLOT}" "${GAMES_DATADIR}/${PN}-dedicated${GameSLOT}"
+		dodir "${GAMES_SYSCONFDIR}"
+		dosym "${PN}${GameSLOT}" "${GAMES_SYSCONFDIR}/${PN}-dedicated${GameSLOT}"
+	fi
+	exeinto "${GAMES_LIBDIR}/${PN}"
+	if ${build_client}; then
+		einfo "Installing game client"
+		cd "${S}"
+	newicon tron.ico ${PN}.ico
+	insinto "${GAMES_DATADIR}/${PN}"
+		doins -r models sound textures music || die "copying files"
+		cd "${WORKDIR}/build-client"
+		doexe src/tron/${PN} || die "copying files"
+		make_desktop_entry armagetronad "Armagetron Advanced" ${PN}.ico
+		dogamesbin startscript/${PN} || die
+		
+		# copy moviepacks/sounds
+		cd "${WORKDIR}"
+		insinto "${GAMES_DATADIR}/${PN}${GameSLOT}"
+		if use moviepack; then
+			einfo 'Installing moviepack'
+			doins -r moviepack || die "copying moviepack"
+		fi
+		if use moviesounds; then
+			einfo 'Installing moviesounds'
+			doins -r moviesounds || die "copying moviesounds"
+			if use linguas_es && ! use linguas_en; then
+				einfo 'Installing Spanish moviesounds'
+				doins -r ArmageTRON/moviesounds || die "copying spanish moviesounds"
+			fi
+		fi
+	fi
+	if ${build_server}; then
+		einfo "Installing dedicated server"
+		cd "${WORKDIR}/build-server"
+		doexe src/tron/${PN}-dedicated || die "copying files"
+		dogamesbin startscript/${PN}-dedicated || die
+	fi
 	dohtml doc/*.html
 	docinto html/net
 	dohtml doc/net/*.html
-	newicon tron.ico ${PN}.ico
-	exeinto "${GAMES_LIBDIR}/${PN}"
-	if use dedicated ; then
-		doexe src/tron/${PN}-dedicated || die "copying files"
-	else
-		doexe src/tron/${PN} || die "copying files"
-	fi
-	doexe src/network/armagetronad-* || die "copying files"
 	insinto "${GAMES_DATADIR}/${PN}"
-	doins -r log language || die "copying files"
-	if ! use dedicated ; then
-		doins -r arenas models sound textures music || die "copying files"
-	fi
+	doins -r language || die "copying files"
 	insinto "${GAMES_SYSCONFDIR}/${PN}"
 	doins -r config/* || die "copying files"
-	cd "${S}"
-	if ! use dedicated ; then
-		insinto "${GAMES_DATADIR}/${PN}"
-		dogamesbin ${PN} || die
-		insinto "${GAMES_DATADIR}/${PN}"
-		doins -r ../moviepack ../moviesounds || die "copying movies"
-		make_desktop_entry armagetronad "Armagetron Advanced" ${PN}.ico
-	else
-		dogamesbin ${PN}-ded || die
-	fi
+	
 	prepgamesdirs
 }

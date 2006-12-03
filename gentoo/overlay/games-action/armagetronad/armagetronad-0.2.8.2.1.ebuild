@@ -49,7 +49,6 @@ RDEPEND="
 OPT_CLIENTDEPS="
 	moviepack? ( app-arch/unzip )
 	moviesounds? ( app-arch/unzip )
-	linguas_es? ( !linguas_en? ( app-arch/unzip ) )
 "
 DEPEND="${RDEPEND}
 	opengl? ( ${OPT_CLIENTDEPS} )

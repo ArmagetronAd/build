@@ -26,7 +26,7 @@ SRC_URI="mirror://sourceforge/armagetronad/${P}.src.tar.bz2
 LICENSE="GPL-2"
 SLOT="0"
 	# Note: This *should* be an 'experimental' SLOT, but 0.3.0 has a broken multislot...
-KEYWORDS="~amd64 ~ppc ~x86"
+KEYWORDS="~amd64 ~ppc ~sparc ~x86"
 IUSE="debug dedicated linguas_es linguas_en moviepack moviesounds opengl"
 
 GLDEPS="

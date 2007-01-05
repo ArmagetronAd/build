@@ -111,7 +111,7 @@ src_install() {
 		cd "${S}"
 	newicon tron.ico ${PN}.ico
 	insinto "${GAMES_DATADIR}/${PN}"
-		doins -r models sound textures || die "copying files"
+		doins -r models sound textures music || die "copying files"
 		cd "${WORKDIR}/build-client"
 		doexe src/tron/${PN} || die "copying files"
 		make_desktop_entry armagetronad "Armagetron Advanced" ${PN}.ico

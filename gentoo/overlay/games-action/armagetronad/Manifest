@@ -38,10 +38,10 @@ EBUILD armagetronad-0.2.8.2.ebuild 5317 RMD160 d3c36648e2e6c9c639343e187af48754d
 MD5 6e9daf278c429b3607bba5feaa391256 armagetronad-0.2.8.2.ebuild 5317
 RMD160 d3c36648e2e6c9c639343e187af48754def702bd armagetronad-0.2.8.2.ebuild 5317
 SHA256 2a84bc905e1bdb67be867591e3045a83a2fb2c8ef0eeb3b6b7aef33327df3ae5 armagetronad-0.2.8.2.ebuild 5317
-EBUILD armagetronad-0.3.0.ebuild 5610 RMD160 e6935c02283b0ffccd3dbfd9c111962fe08c3ce5 SHA1 e1f5ef299400af12ed4a9b3df71e087a8f4e0509 SHA256 1e81ea38b5e3c8422273e59e1c09d480ef0fbb9b90314e780e2058f4500ebcce
-MD5 df3ce4aa10ccbdd69983dbdde3daac25 armagetronad-0.3.0.ebuild 5610
-RMD160 e6935c02283b0ffccd3dbfd9c111962fe08c3ce5 armagetronad-0.3.0.ebuild 5610
-SHA256 1e81ea38b5e3c8422273e59e1c09d480ef0fbb9b90314e780e2058f4500ebcce armagetronad-0.3.0.ebuild 5610
+EBUILD armagetronad-0.3.0-r1.ebuild 5610 RMD160 e6935c02283b0ffccd3dbfd9c111962fe08c3ce5 SHA1 e1f5ef299400af12ed4a9b3df71e087a8f4e0509 SHA256 1e81ea38b5e3c8422273e59e1c09d480ef0fbb9b90314e780e2058f4500ebcce
+MD5 df3ce4aa10ccbdd69983dbdde3daac25 armagetronad-0.3.0-r1.ebuild 5610
+RMD160 e6935c02283b0ffccd3dbfd9c111962fe08c3ce5 armagetronad-0.3.0-r1.ebuild 5610
+SHA256 1e81ea38b5e3c8422273e59e1c09d480ef0fbb9b90314e780e2058f4500ebcce armagetronad-0.3.0-r1.ebuild 5610
 MISC ChangeLog 1247 RMD160 da2bcec1e7d10657203aa5359a18e75fbe312485 SHA1 b14f5420710d996c8f88505c560430f20d2cdbdb SHA256 61936d64d70efa7f6c6a59b285a23356a89832d9c75b6f16716b766df229f0db
 MD5 0279be7c2bfe3bb641c994c8a3321490 ChangeLog 1247
 RMD160 da2bcec1e7d10657203aa5359a18e75fbe312485 ChangeLog 1247
@@ -62,6 +62,6 @@ SHA256 cd9b3f81d5419a44c405410a3c8ef6f62148b74b4701992057710808f52033fe files/di
 MD5 20dca9e686b13db49f6a27495c013bae files/digest-armagetronad-0.2.8.2.1 976
 RMD160 19ad25ea8d595b87818f77ff13b3c48cdc4f3a69 files/digest-armagetronad-0.2.8.2.1 976
 SHA256 35ed4ceec09d574f4c3cfb702301ceae6dbd3c364ad3864a8a4a272a9a72d3c1 files/digest-armagetronad-0.2.8.2.1 976
-MD5 aa5ebbc4bc2998115ed19b90646f07cc files/digest-armagetronad-0.3.0 964
-RMD160 3b21e4f2a0e05f18af883956db0b35337316bdeb files/digest-armagetronad-0.3.0 964
-SHA256 c90682eed27089d650fcd5995b3558548266961ea33e815b9ded5a2bdf14c256 files/digest-armagetronad-0.3.0 964
+MD5 aa5ebbc4bc2998115ed19b90646f07cc files/digest-armagetronad-0.3.0-r1 964
+RMD160 3b21e4f2a0e05f18af883956db0b35337316bdeb files/digest-armagetronad-0.3.0-r1 964
+SHA256 c90682eed27089d650fcd5995b3558548266961ea33e815b9ded5a2bdf14c256 files/digest-armagetronad-0.3.0-r1 964

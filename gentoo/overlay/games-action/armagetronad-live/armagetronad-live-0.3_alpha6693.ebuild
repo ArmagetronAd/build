@@ -24,10 +24,9 @@ SRC_URI="mirror://sourceforge/armagetronad/${P}.src.tar.bz2
 "
 
 LICENSE="GPL-2"
-SLOT="0"
-	# Note: This *should* be an 'experimental' SLOT, but 0.3.0 has a broken multislot...
+SLOT="experimental"
 KEYWORDS="~amd64 ~ppc ~sparc ~x86"
-IUSE="debug dedicated linguas_es linguas_en moviepack moviesounds opengl"
+IUSE="debug dedicated linguas_es linguas_en moviepack moviesounds opengl ruby"
 
 GLDEPS="
 	|| (
@@ -47,6 +46,7 @@ RDEPEND="
 	sys-libs/zlib
 	opengl? ( ${GLDEPS} )
 	!dedicated? ( ${GLDEPS} )
+	ruby? ( virtual/ruby >=dev-lang/swig-1.3.27 )
 "
 OPT_CLIENTDEPS="
 	moviepack? ( app-arch/unzip )
@@ -58,6 +58,14 @@ DEPEND="${RDEPEND}
 "
 
 pkg_setup() {
+	if use ruby && ! built_with_use dev-lang/swig ruby ; then
+		eerror "You are trying to compile ${CATEGORY}/${PF} with the \"ruby\" USE flag enabled."
+		eerror "However, $(best_version dev-lang/swig) was compiled with the ruby flag disabled."
+		eerror
+		eerror "You must either disable this use flag, or recompile"
+		eerror "$(best_version dev-lang/swig) with this ruby use flag enabled."
+		die 'swig missing ruby'
+	fi
 	if use debug; then
 		ewarn
 		ewarn 'The "debug" USE flag will enable debugging code. This will cause AI'
@@ -165,3 +173,8 @@ src_install() {
 	rmdir "${D}${GAMES_PREFIX}/share" || true	# Supress potential error
 	prepgamesdirs
 }
+
+pkg_postinst() {
+	# TODO: symlink a new rev to me
+}
+

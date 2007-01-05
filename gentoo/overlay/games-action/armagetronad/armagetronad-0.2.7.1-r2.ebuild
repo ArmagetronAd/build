@@ -132,6 +132,7 @@ src_install() {
 				doins -r ArmageTRON/moviesounds || die "copying spanish moviesounds"
 			fi
 		fi
+		cd "${WORKDIR}/build-client"
 	fi
 	if ${build_server}; then
 		einfo "Installing dedicated server"

@@ -40,6 +40,7 @@ GLDEPS="
 	media-libs/sdl-image
 	media-libs/jpeg
 	media-libs/libpng
+	media-libs/ftgl
 "
 RDEPEND="
 	>=dev-libs/libxml2-2.6.12

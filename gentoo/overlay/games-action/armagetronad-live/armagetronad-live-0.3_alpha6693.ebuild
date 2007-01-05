@@ -94,7 +94,7 @@ pkg_setup() {
 
 src_unpack() {
 	subversion_src_unpack
-	unpack "${A}"
+	[ -z "${A}" ] || unpack "${A}"
 }
 
 aabuild() {

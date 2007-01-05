@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd>games</herd>
+	<maintainer>
+		<email>luke+armagetronad@dashjr.org</email>
+		<name>Luke-Jr</name>
+		<description>Please send bugs and changes upstream where I maintain the ebuild.</description>
+	</maintainer>
+	<longdescription>
+		Armagetron Advanced is a Tron lightcycle clone in 3D.
+		In the game, you control a lightcycle in a digital grid, and you battle gladiatorial style against your opponents; one of you must die for the game to end.
+	</longdescription>
+</pkgmetadata>

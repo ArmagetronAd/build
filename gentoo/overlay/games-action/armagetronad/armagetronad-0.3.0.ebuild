@@ -85,7 +85,7 @@ aabuild() {
 	cd "${MyBUILDDIR}"
 	use debug && DEBUGLEVEL=3 || DEBUGLEVEL=0
 	export DEBUGLEVEL CODELEVEL=0
-	myconf="--enable-multiver=experimental"	# HACK
+	[ "$SLOT" == "0" ] && myconf="--disable-multiver" || myconf="--enable-multiver=${SLOT}"
 	[ "$1" == "server" ] && ded='-dedicated' || ded=''
 	GameDir="${PN}${ded}${GameSLOT}"
 	ECONF_SOURCE="${S}" \
@@ -110,7 +110,7 @@ src_compile() {
 	use opengl || ! use dedicated && build_client=true || build_client=false
 	use dedicated && build_server=true || build_server=false
 
-	GameSLOT="-experimental"	# HACK
+	[ "$SLOT" == "0" ] && GameSLOT="" || GameSLOT="-${SLOT}"
 	filter-flags -fno-exceptions
 	if ${build_client}; then
 		einfo "Building game client"

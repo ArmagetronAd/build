@@ -184,6 +184,6 @@ src_install() {
 }
 
 pkg_postinst() {
-	# TODO: symlink a new rev to me
+	# symlink a new rev to me to force update
+	ln -s "${P}.ebuild" "${FILESDIR}/../${CATEGORY}/${P}-r$((${PR:1} + 1)).ebuild"
 }
-

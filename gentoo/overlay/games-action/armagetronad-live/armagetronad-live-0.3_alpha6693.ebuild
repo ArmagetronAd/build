@@ -49,6 +49,7 @@ RDEPEND="
 	opengl? ( ${GLDEPS} )
 	!dedicated? ( ${GLDEPS} )
 	ruby? ( virtual/ruby >=dev-lang/swig-1.3.27 )
+	>=dev-libs/boost-1.33.1
 "
 OPT_CLIENTDEPS="
 	moviepack? ( app-arch/unzip )

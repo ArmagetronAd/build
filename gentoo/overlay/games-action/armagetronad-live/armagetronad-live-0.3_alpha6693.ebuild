@@ -39,6 +39,7 @@ GLDEPS="
 	virtual/opengl
 	media-libs/libsdl
 	media-libs/sdl-image
+	media-libs/sdl-mixer
 	media-libs/jpeg
 	media-libs/libpng
 	media-libs/ftgl
@@ -120,6 +121,7 @@ aabuild() {
 		--disable-restoreold \
 		--disable-games \
 		--enable-uninstall="emerge --clean =${CATEGORY}/${PF}" \
+		$(use_enable ruby) \
 		"${@:2}" || die "egamesconf($1) failed"
 	emake armabindir="${GAMES_BINDIR}" || die "emake($1) failed"
 }

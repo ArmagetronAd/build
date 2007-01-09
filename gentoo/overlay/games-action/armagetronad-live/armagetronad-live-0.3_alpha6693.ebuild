@@ -127,7 +127,7 @@ aabuild() {
 }
 
 src_compile() {
-	[ "${PN/-live/}" != "${PN}" ] && ./bootstrap.sh
+	[ "${PN/-live/}" != "${PN}" ] && WANT_AUTOMAKE=1.9 ./bootstrap.sh
 	
 	# Assume client if they don't want a server
 	use opengl || ! use dedicated && build_client=true || build_client=false

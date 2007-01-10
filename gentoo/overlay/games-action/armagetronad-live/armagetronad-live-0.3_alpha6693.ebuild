@@ -200,9 +200,9 @@ pkg_postinst() {
 	
 	ewarn
 	ewarn "${CATEGORY}/${P} has installed a new revision bump of itself to prompt"
-	ewarn ' future updating.'
-	ewarn 'This features is UNSUPPORTED by Gentoo, please DO NOT report ANY bugs'
-	ewarn ' regarding Manifest to them, but rather to us via the forum:'
+	ewarn ' future updating for your convenience.'
+	ewarn 'This feature is UNSUPPORTED by Gentoo, please DO NOT report ANY bugs'
+	ewarn ' regarding "Manifest" to them, but rather to us via the forum:'
 	ewarn '        http://forum.armagetronad.net'
 	ewarn 'If you wish to disable this functionality, please add'
 	ewarn ' "SUBVERSION_REVBUMP=no" to your make.conf, and REMOVE the armagetron'

@@ -1,2 +1,4 @@
 games-action/armagetronad:moviepack - install graphics based on the TRON movie
 games-action/armagetronad:moviesounds - install sound effects extracted from the TRON movie
+games-action/armagetronad-live:moviepack - install graphics based on the TRON movie
+games-action/armagetronad-live:moviesounds - install sound effects extracted from the TRON movie

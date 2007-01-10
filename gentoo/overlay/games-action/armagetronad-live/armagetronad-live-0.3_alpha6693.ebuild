@@ -190,7 +190,7 @@ src_install() {
 
 pkg_postinst() {
 	# symlink a new rev to me to force update
-	local newlink="${FILESDIR}/../${CATEGORY}/${P}-r$((${PR:1} + 1)).ebuild"
+	local newlink="${FILESDIR}/../${PN}/${P}-r$((${PR:1} + 1)).ebuild"
 	ln -s "${P}.ebuild" "${newlink}"
 	ebuild "${newlink}" digest
 }

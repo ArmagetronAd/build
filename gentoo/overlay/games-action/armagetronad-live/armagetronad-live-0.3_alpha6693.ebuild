@@ -191,9 +191,23 @@ src_install() {
 }
 
 pkg_postinst() {
+	[ "$SUBVERSION_REVBUMP" == "no" ] && return
 	# symlink a new rev to me to force update
 	NewPF="${P}-r$((${PR:1} + 1))"
 	local newlink="${FILESDIR}/../${NewPF}.ebuild"
 	ln -s "${P}.ebuild" "${newlink}"
 	ln -s "digest-${P}" "${FILESDOR}/digest-${NewPF}"
+	
+	ewarn
+	ewarn "${CATEGORY}/${P} has installed a new revision bump of itself to prompt"
+	ewarn ' future updating.'
+	ewarn 'This features is UNSUPPORTED by Gentoo, please DO NOT report ANY bugs'
+	ewarn ' regarding Manifest to them, but rather to us via the forum:'
+	ewarn '        http://forum.armagetronad.net'
+	ewarn 'If you wish to disable this functionality, please add'
+	ewarn ' "SUBVERSION_REVBUMP=no" to your make.conf, and REMOVE the armagetron'
+	ewarn ' overlay with "layman -d armagetron". Once this is done, you may add the'
+	ewarn ' it back with "layman -ka armagetron".'
+	ewarn
+	ebeep 5
 }

@@ -199,8 +199,8 @@ pkg_postinst() {
 	ln -s "digest-${P}" "${FILESDOR}/digest-${NewPF}"
 	
 	ewarn
-	ewarn "${CATEGORY}/${P} has installed a new revision bump of itself to prompt"
-	ewarn ' future updating for your convenience.'
+	ewarn "${CATEGORY}/${P} has installed a new"
+	ewarn ' revision bump of itself to prompt future updating for your convenience.'
 	ewarn 'This feature is UNSUPPORTED by Gentoo, please DO NOT report ANY bugs'
 	ewarn ' regarding "Manifest" to them, but rather to us via the forum:'
 	ewarn '        http://forum.armagetronad.net'

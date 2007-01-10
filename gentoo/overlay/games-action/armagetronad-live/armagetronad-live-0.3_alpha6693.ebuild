@@ -190,7 +190,8 @@ src_install() {
 
 pkg_postinst() {
 	# symlink a new rev to me to force update
-	local newlink="${FILESDIR}/../${P}-r$((${PR:1} + 1)).ebuild"
+	NewPF="${P}-r$((${PR:1} + 1))"
+	local newlink="${FILESDIR}/../${NewPF}.ebuild"
 	ln -s "${P}.ebuild" "${newlink}"
-	ebuild "${newlink}" digest
+	ln -s "digest-${P}" "${FILESDOR}/digest-${NewPF}"
 }

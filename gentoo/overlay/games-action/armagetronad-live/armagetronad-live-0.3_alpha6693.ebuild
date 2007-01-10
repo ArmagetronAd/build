@@ -95,10 +95,10 @@ pkg_setup() {
 }
 
 src_unpack() {
-	subversion_src_unpack
 	for f in ${A}; do
 		unpack "$f"
 	done
+	subversion_src_unpack
 }
 
 aabuild() {
@@ -174,6 +174,7 @@ src_install() {
 				doins -r ArmageTRON/moviesounds || die "copying spanish moviesounds"
 			fi
 		fi
+		cd "${WORKDIR}/build-client"
 	fi
 	if ${build_server}; then
 		einfo "Installing dedicated server"

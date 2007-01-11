@@ -349,7 +349,7 @@ autopackage-client: $(APFILE).client
 autopackage-server: $(APFILE).server
 autopackage-legacyserver: $(APFILE).legacyserver
 autopackage: autopackage-client autopackage-server
-$(APFILE).%: $(SOURCEDIR)/.tag autopackage/Makefile autopackage/default.apspec $(UPLOAD)/.tag
+$(APFILE).%: $(SOURCEDIR)/.tag package/Makefile package/default.apspec $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  build autopackage $*

@@ -356,7 +356,7 @@ $(APFILE).%: $(SOURCEDIR)/.tag autopackage/Makefile autopackage/default.apspec $
 	# *****************************************
 	#
 	rm -rf ap-$*
-	SOURCEDIR=$(SOURCEDIR) $(MAKE) -C autopackage release-$*
+	SOURCEDIR=$(SOURCEDIR) $(MAKE) -C package release-$*
 	mv ap-$*/*.package $(UPLOAD)/$(RCNAME.$*).$(OSTAG_GENERIC).package
 	rm -rf ap-$*
 	touch $@

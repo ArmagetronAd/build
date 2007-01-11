@@ -33,6 +33,16 @@ rpm
 debian
  builds debian packages ( not yet complete )
 
+autopackage.client and autopackage.server
+ builds autopackage client resp. server. Note: libxml2 is linked statically. You should
+ therefore have a version of libxml2 compiled with apgcc. Use
+ CC=apgcc ./configure --prefix=/usr/local/autopackage 
+ (in the libxml2 sources, of course, followed by "make; make install") to build one that
+ will only be used during autopackage builds.
+
+autopackage
+ builds autopackage client and server
+
 windoc/webdoc (requires CVS sources in ../armagetronad)
  build documentation directories for windows resp. the web
 

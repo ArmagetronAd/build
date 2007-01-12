@@ -45,7 +45,7 @@ GLDEPS="
 	media-libs/ftgl
 "
 RDEPEND="
-	>=dev-libs/libxml2-2.6.12
+	>=dev-libs/libxml2-2.6.11
 	sys-libs/zlib
 	opengl? ( ${GLDEPS} )
 	!dedicated? ( ${GLDEPS} )

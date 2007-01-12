@@ -1,3 +1,5 @@
+-games-action/armagetronad
+
 # Luke-Jr <luke_armagetron@dashjr.org> (10 Jan 2007)
 # WORK IN PROGRESS, but ready for testing
 # Please email me if you have ANY problems

@@ -2,6 +2,7 @@
 # WORK IN PROGRESS, but ready for testing
 # Please email me if you have ANY problems
 # Thanks
-# To install:
-#     echo games-action/armagetronad-live >>/etc/portage/package.unmask
+# To install/test:
+#     echo 'games-action/armagetronad-live' >>/etc/portage/package.unmask
+#     echo 'games-action/armagetronad-live ~x86' >>/etc/portage/package.keywords
 games-action/armagetronad-live

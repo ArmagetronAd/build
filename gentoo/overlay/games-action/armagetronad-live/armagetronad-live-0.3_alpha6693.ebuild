@@ -203,6 +203,9 @@ pkg_postinst() {
 	ewarn "${CATEGORY}/${P} has installed a new"
 	ewarn ' revision bump of itself to prompt future updating for your convenience.'
 	ewarn
+	ewarn '                THIS DOES NOT WORK WITH FEATURES=strict !!!'
+	ewarn '               Please add FEATURES=-strict to your make.conf'
+	ewarn
 	ewarn 'This feature is UNSUPPORTED by Gentoo, please DO NOT report ANY bugs'
 	ewarn ' regarding "Manifest" to them, but rather to us via the forum:'
 	ewarn '        http://forum.armagetronad.net'

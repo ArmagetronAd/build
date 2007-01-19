@@ -99,6 +99,7 @@ src_unpack() {
 		unpack "$f"
 	done
 	subversion_src_unpack
+	rsync -rlpgo "${ESVN_STORE_DIR}/${ESVN_PROJECT}/${ESVN_REPO_URI##*/}/.svn" "${S}" || ewarn ".svn directory couldn't be copied; your version number will use the current date instead of revision"
 }
 
 aabuild() {
@@ -195,9 +196,8 @@ pkg_postinst() {
 	[ "$SUBVERSION_REVBUMP" == "no" ] && return
 	# symlink a new rev to me to force update
 	NewPF="${P}-r$((${PR:1} + 1))"
-	local newlink="${FILESDIR}/../${NewPF}.ebuild"
-	ln -s "${P}.ebuild" "${newlink}"
-	ln -s "digest-${P}" "${FILESDOR}/digest-${NewPF}"
+	if ln -s "${P}.ebuild" "$(dirname ${FILESDIR})/${NewPF}.ebuild" &&
+	   ln -s "digest-${P}" "${FILESDIR}/digest-${NewPF}"; then
 	
 	ewarn
 	ewarn "${CATEGORY}/${P} has installed a new"
@@ -216,4 +216,10 @@ pkg_postinst() {
 	ewarn ' it back with "layman -ka armagetron".'
 	ewarn
 	ebeep 5
+	
+	else
+		ewarn "${CATEGORY}/${P} tried to install"
+		ewarn " a new revision bump of itself, but failed. You will need to execute"
+		ewarn " updates manually: emerge --oneshot ${CATEGORY}/${PN}"
+	fi
 }

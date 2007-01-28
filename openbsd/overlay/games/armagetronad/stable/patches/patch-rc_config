@@ -1,0 +1,26 @@
+--- config/rc.config.orig	Fri Aug  4 21:20:58 2006
++++ config/rc.config	Fri Jan 19 17:00:12 2007
+@@ -1,4 +1,4 @@
+-# configuration for armagetronad rc scripts
++# configuration for armagetronad-dedicated rc scripts
+ 
+ # The defaults assume that you want to run as user armagetronad
+ # and store the variable files in /var/log and /var/run where it needs
+@@ -10,7 +10,7 @@
+ 
+ # user to run as
+ 
+-user=armagetronad
++user=_armagetronad
+ #user=$USER
+ 
+ # directories for variable data, defaults to
+@@ -19,7 +19,7 @@ user=armagetronad
+ # Don't make it simply / or /var or anything other processes need to access.
+ 
+ #VARDIR=@aa_localstatedir_reloc@
+-#VARDIR=$HOME/./armagetronad
++#VARDIR=$HOME/./armagetronad-dedicated
+ 
+ # directories for PID files and logs
+ PIDDIR=@rundir_reloc@

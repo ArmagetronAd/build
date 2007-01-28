@@ -1,0 +1,11 @@
+--- src/tools/tSafePTR.h.orig	Mon Jun 12 08:50:49 2006
++++ src/tools/tSafePTR.h	Sat Jan 20 14:35:29 2007
+@@ -31,7 +31,7 @@ Foundation, Inc., 59 Temple Place - Suit
+ #include "config.h"
+ #include <stddef.h>
+ #if HAVE_UNISTD_H
+-// #include <unistd.h>
++#include <unistd.h>
+ #endif
+ 
+ #include "tError.h"

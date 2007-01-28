@@ -1,0 +1,11 @@
+--- src/network/nServerInfo.cpp.orig	Mon Jun 12 08:50:42 2006
++++ src/network/nServerInfo.cpp	Sun Jan 21 20:17:54 2007
+@@ -2581,7 +2581,7 @@ void nServerInfo::DoGetFrom( nSocket con
+     release_ += " mac";
+ #else
+ #endif
+-    release_ += " unix";
++    release_ += " OpenBSD";
+ #endif
+ 
+ #ifdef DEDICATED

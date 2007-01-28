@@ -1,0 +1,11 @@
+--- src/network/nSocket.cpp.orig	Sat Jul  1 21:53:13 2006
++++ src/network/nSocket.cpp	Sat Jan 20 14:35:28 2007
+@@ -101,7 +101,7 @@ Foundation, Inc., 59 Temple Place - Suit
+ #endif
+ 
+ #if HAVE_UNISTD_H
+-// #include <unistd.h>
++#include <unistd.h>
+ #endif
+ 
+ #include "tConfiguration.h"

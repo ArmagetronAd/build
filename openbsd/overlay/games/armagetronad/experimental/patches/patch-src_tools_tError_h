@@ -1,0 +1,11 @@
+--- src/tools/tError.h.orig	Mon Jun 12 08:50:49 2006
++++ src/tools/tError.h	Sat Jan 20 14:35:28 2007
+@@ -37,7 +37,7 @@ Foundation, Inc., 59 Temple Place - Suit
+ #include <iosfwd>
+ #include <string>
+ #if HAVE_UNISTD_H
+-// #include <unistd.h>
++#include <unistd.h>
+ #endif
+ 
+ #define tVERIFY( x ) { if ( !( x ) ){ char* mess = "Assertion " #x " failed";  tERR_ERROR_INT( mess ); } }

@@ -1,0 +1,12 @@
+You will have to edit /etc/rc.local as appropriate and add a
+section similar to the following so that the server is started
+automatically:
+
+if [ -x /usr/local/share/armagetronad-dedicated/scripts/rcd_server ]; then
+	echo -n ' armagetronad'
+	/usr/local/share/armagetronad-dedicated/scripts/rcd_server start
+fi
+
+The documentation can be found at:
+/usr/local/share/doc/armagetronad-dedicated/html/
+

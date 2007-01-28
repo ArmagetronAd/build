@@ -1,0 +1,28 @@
+--- src/tron/gGame.cpp.orig	Fri Jun  2 22:38:10 2006
++++ src/tron/gGame.cpp	Mon Jan 22 16:27:21 2007
+@@ -1235,15 +1235,14 @@ void exit_game_objects(eGrid *grid){
+             tDESTROY(ePlayer::PlayerConfig(i)->cam);
+     }
+ 
++    eGameObject::DeleteAll(grid);
+ 
+-    gNetPlayerWall::Clear();
+-
+     if (sn_GetNetState()!=nCLIENT)
+         for(int i=se_PlayerNetIDs.Len()-1;i>=0;i--)
+             if(se_PlayerNetIDs(i))
+                 se_PlayerNetIDs(i)->ClearObject();
+ 
+-    eGameObject::DeleteAll(grid);
++    gNetPlayerWall::Clear();
+ 
+     exit_game_grid(grid);
+ }
+@@ -2868,6 +2867,7 @@ void gGame::StateUpdate(){
+             //				for (unsigned short int mycy = 0; mycy > sg_roundConsoleMessage5.Len(); c++)
+ 
+             exit_game_objects(grid);
++            nNetObject::ClearAllDeleted();
+ 
+             if (goon)
+                 SetState(GS_TRANSFER_SETTINGS,GS_CREATE_GRID);

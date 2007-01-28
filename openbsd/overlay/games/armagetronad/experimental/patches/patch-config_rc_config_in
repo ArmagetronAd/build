@@ -1,0 +1,11 @@
+--- config/rc.config.in.orig	Sat Jan 20 15:53:32 2007
++++ config/rc.config.in	Sat Jan 20 15:53:49 2007
+@@ -10,7 +10,7 @@
+ 
+ # user to run as
+ 
+-user=@prognamebase@
++user=_@prognamebase@
+ #user=$USER
+ 
+ # directories for variable data, defaults to

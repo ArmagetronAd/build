@@ -1,0 +1,11 @@
+--- config/rc.config.orig	Sat Jan 20 15:53:24 2007
++++ config/rc.config	Sat Jan 20 15:53:40 2007
+@@ -10,7 +10,7 @@
+ 
+ # user to run as
+ 
+-user=armagetronad
++user=_armagetronad
+ #user=$USER
+ 
+ # directories for variable data, defaults to

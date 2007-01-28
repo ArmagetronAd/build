@@ -1,0 +1,11 @@
+--- config/settings_dedicated.cfg.orig	Sat Jul  1 21:53:14 2006
++++ config/settings_dedicated.cfg	Sat Jan 20 15:15:58 2007
+@@ -198,7 +198,7 @@ PING_FLOOD_GLOBAL   .1    # The same tim
+ #
+ ############################################################################################
+ 
+-WEB_USE_INTERNAL 1   # use internal web server?  Recommended if you intend to serve your own resources
++WEB_USE_INTERNAL 0   # use internal web server?  Recommended if you intend to serve your own resources
+                      # 1 = yes, 0 = no.
+ 
+ WEB_REMOTE_ADMIN 0   # Allow to use the server administration pages in the web interface.  The pages

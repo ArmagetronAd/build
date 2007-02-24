@@ -1,25 +1,19 @@
 # Copyright 1999-2007 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/games-strategy/freeciv/freeciv-2.0.9.ebuild,v 1.2 2007/02/14 02:18:43 mr_bones_ Exp $
+# $Header: $
 
 inherit eutils games
 
 MY_P=${PN}-${PV/_/-}
 DESCRIPTION="multiplayer strategy game (Civilization Clone)"
 HOMEPAGE="http://www.freeciv.org/"
-SRC_URI="ftp://ftp.freeciv.org/pub/freeciv/stable/${MY_P}.tar.bz2
+SRC_URI="ftp://ftp.freeciv.org/pub/freeciv/beta/${MY_P}.tar.bz2
 	mirror://gentoo/${PN}.png
-	!dedicated? (
-		alsa? (
-			http://www.freeciv.org/ftp/contrib/sounds/sets/stdsounds3.tar.gz )
-		esd? (
-			http://www.freeciv.org/ftp/contrib/sounds/sets/stdsounds3.tar.gz )
-		sdl? (
-			http://www.freeciv.org/ftp/contrib/sounds/sets/stdsounds3.tar.gz ) )"
+	"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 mips ppc ppc64 sparc x86"
+KEYWORDS="~alpha ~amd64 ~mips ~ppc ~ppc64 ~sparc ~x86"
 IUSE="alsa auth dedicated esd gtk nls readline sdl Xaw3d"
 
 RDEPEND="readline? ( sys-libs/readline )
@@ -53,6 +47,8 @@ pkg_setup() {
 	if ! use dedicated ; then
 		if use gtk ; then
 			einfo "The Freeciv Client will be built with the GTK+-2 toolkit"
+		elif use sdl ; then
+			einfo "The Freeciv Client will be built with the SDL toolkit"
 		elif use Xaw3d ; then
 			einfo "The Freeciv Client will be built with the Xaw3d toolkit"
 		else
@@ -112,6 +108,7 @@ src_compile() {
 	else
 		myclient="xaw"
 		use Xaw3d && myclient="xaw3d"
+		use sdl && myclient="sdl"
 		if use gtk ; then
 			myclient="gtk-2.0"
 		fi

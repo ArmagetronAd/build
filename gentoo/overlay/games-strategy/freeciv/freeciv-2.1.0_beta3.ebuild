@@ -13,7 +13,7 @@ SRC_URI="ftp://ftp.freeciv.org/pub/freeciv/beta/${MY_P}.tar.bz2
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~mips ~ppc ~ppc64 ~sparc ~x86"
+KEYWORDS="-*"
 IUSE="alsa auth dedicated esd gtk nls readline sdl Xaw3d"
 
 RDEPEND="readline? ( sys-libs/readline )

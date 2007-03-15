@@ -30,7 +30,7 @@ SLOT="live"
 KEYWORDS="amd64 ppc sparc x86"
 IUSE="debug dedicated linguas_es linguas_en moviepack moviesounds opengl"
 
-ESVN_PROJECT="${MY_PN}-${SLOT}"
+ESVN_PROJECT="${P/_*}"
 
 GLDEPS="
 	|| (

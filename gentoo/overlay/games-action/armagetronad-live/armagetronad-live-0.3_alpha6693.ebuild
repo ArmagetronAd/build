@@ -208,7 +208,7 @@ pkg_postinst() {
 	ewarn
 	ewarn 'This feature is UNSUPPORTED by Gentoo, please DO NOT report ANY bugs'
 	ewarn ' regarding "Manifest" to them, but rather to us via the forum:'
-	ewarn '        http://forum.armagetronad.net'
+	ewarn '        http://forums.armagetronad.net'
 	ewarn
 	ewarn 'If you wish to disable this functionality, please add'
 	ewarn ' "SUBVERSION_REVBUMP=no" to your make.conf, and REMOVE the armagetron'

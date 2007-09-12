@@ -190,7 +190,7 @@ pkg_postinst() {
 	ewarn
 	ewarn 'This feature is UNSUPPORTED by Gentoo, please DO NOT report ANY'
 	ewarn ' related bugs to them, but rather to us via the forum:'
-	ewarn '        http://forum.armagetronad.net'
+	ewarn '        http://forums.armagetronad.net'
 	ewarn
 	ewarn 'If you wish to disable this functionality, please add "ManualSCM"'
 	ewarn ' to your FEATURES.'

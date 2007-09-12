@@ -5,6 +5,10 @@ EBUILD armagetronad-live-0.2.8_alpha7160.ebuild 7105 RMD160 a5da2721bb5bf13785a6
 MD5 5ad987f41c509df9154eff534503e358 armagetronad-live-0.2.8_alpha7160.ebuild 7105
 RMD160 a5da2721bb5bf13785a687aecb0879d922346c6e armagetronad-live-0.2.8_alpha7160.ebuild 7105
 SHA256 80bff0f22345dfba1cb87440cf4b4f14afd240edd8c98002039cb2f08e973fc2 armagetronad-live-0.2.8_alpha7160.ebuild 7105
+EBUILD armagetronad-live-0.2.8_alpha7326.ebuild 6469 RMD160 23d59d931d9f544c842d63af220d5c1269a9764a SHA1 8aa8d7c3eaaeba08b2f036ef40d292c64d4eb16c SHA256 a7da434309b47e0590fe6cc2ef767790b51d65bd01a303b7d9f27f7fde41e3a6
+MD5 2216ce16443ea8d6af2e98447782ce12 armagetronad-live-0.2.8_alpha7326.ebuild 6469
+RMD160 23d59d931d9f544c842d63af220d5c1269a9764a armagetronad-live-0.2.8_alpha7326.ebuild 6469
+SHA256 a7da434309b47e0590fe6cc2ef767790b51d65bd01a303b7d9f27f7fde41e3a6 armagetronad-live-0.2.8_alpha7326.ebuild 6469
 EBUILD armagetronad-live-0.3_alpha6693.ebuild 7843 RMD160 d7977c485ee752c3b9de870716f6ffac4c7730cc SHA1 3555f7ef5ef12131ca951c32f024b81712b63b98 SHA256 e01b7795bbbc098ebf008ae3c3e97485841c51cd99fb92d98514615db2c671b9
 MD5 ea1a34ae746ea8d11fda0d19b9f1ddd2 armagetronad-live-0.3_alpha6693.ebuild 7843
 RMD160 d7977c485ee752c3b9de870716f6ffac4c7730cc armagetronad-live-0.3_alpha6693.ebuild 7843
@@ -20,6 +24,9 @@ SHA256 cc7cf91fde84ba405545cd048c420856c896494de3b33d70b3d869c7f0ed3f37 metadata
 MD5 78fb2de6a9611eb1fb2aa970cba6dba9 files/digest-armagetronad-live-0.2.8_alpha7160 690
 RMD160 423a57a87eeb8949492d27fb555a25d4c38d005b files/digest-armagetronad-live-0.2.8_alpha7160 690
 SHA256 419fd728d425d7267047c72b08903f7828f4f55411f76620ddde7ec56e38c931 files/digest-armagetronad-live-0.2.8_alpha7160 690
+MD5 78fb2de6a9611eb1fb2aa970cba6dba9 files/digest-armagetronad-live-0.2.8_alpha7326 690
+RMD160 423a57a87eeb8949492d27fb555a25d4c38d005b files/digest-armagetronad-live-0.2.8_alpha7326 690
+SHA256 419fd728d425d7267047c72b08903f7828f4f55411f76620ddde7ec56e38c931 files/digest-armagetronad-live-0.2.8_alpha7326 690
 MD5 78fb2de6a9611eb1fb2aa970cba6dba9 files/digest-armagetronad-live-0.3_alpha6693 690
 RMD160 423a57a87eeb8949492d27fb555a25d4c38d005b files/digest-armagetronad-live-0.3_alpha6693 690
 SHA256 419fd728d425d7267047c72b08903f7828f4f55411f76620ddde7ec56e38c931 files/digest-armagetronad-live-0.3_alpha6693 690

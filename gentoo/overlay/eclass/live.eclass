@@ -1,4 +1,4 @@
-EXPORT_FUNCTIONS pkg_postinst
+EXPORT_FUNCTIONS pkg_postinst pkg_preinst src_unpack
 
 live_svn_currentrev() {
 	# NOTE: we use $(which sed) to pass QA checks
@@ -110,6 +110,7 @@ live() {
 }
 
 live_pkg_postinst() {
+	touch "${BASH_SOURCE[0]}" 2>/dev/null || true
 	[ "$SUBVERSION_REVBUMP" == "no" ] && return
 	has ManualSCM ${FEATURES} && return
 	[ "${LIVE_UPDATES}" = 'never' ] && return
@@ -134,4 +135,8 @@ live_pkg_postinst() {
 	ewarn ' updated unless you set LIVE_UPDATES=never and remerge.'
 	ewarn
 	ebeep 5
+}
+
+live_pkg_preinst() {
+	touch "${BASH_SOURCE[0]}" 2>/dev/null || true
 }

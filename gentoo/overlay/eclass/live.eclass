@@ -1,5 +1,7 @@
 EXPORT_FUNCTIONS pkg_postinst
 
+RESTRICT="${RESTRICT} userpriv"
+
 live_svn_currentrev() {
 	# NOTE: we use $(which sed) to pass QA checks
 	LC_ALL=C svn info "${1}" |

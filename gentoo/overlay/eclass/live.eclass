@@ -38,13 +38,15 @@ live_want_update() {
 		return 1 # always false
 	[ "${LIVE_UPDATES}" = 'manual' ] &&
 		return 1 # always false
+	
+	local ENVFILE="${ROOT}/var/db/pkg/${CATEGORY}/${P}/environment.bz2"
+	[ -r "${ENVFILE}" ] || return 1	# false if no existing install
+	
 	[ "${LIVE_UPDATES}" = 'always' ] &&
 		__live_why='-Always' &&
 		return 0 # always true
 	
 	# Then/Now logic
-	local ENVFILE="${ROOT}/var/db/pkg/${CATEGORY}/${P}/environment.bz2"
-	[ -r "${ENVFILE}" ] || return 0	# true if no earlier install
 	local Then Now
 	
 	case "${LIVE_UPDATES}" in

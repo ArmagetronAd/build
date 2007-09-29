@@ -1,7 +1,5 @@
 EXPORT_FUNCTIONS pkg_postinst
 
-RESTRICT="${RESTRICT} userpriv"
-
 live_svn_currentrev() {
 	# NOTE: we use $(which sed) to pass QA checks
 	LC_ALL=C svn info "${1}" |
@@ -94,7 +92,7 @@ live_src_unpack() {
 
 live() {
 	# Activate Live if appropriate
-[ "$EBUILD_PHASE" == 'depend' ] &&
+	if [ "$EBUILD_PHASE" == 'depend' ]; then
 	 live_want_update &&
 	 IUSE="$IUSE z~Live${__live_why}"
 	# 'z~' to make sure it's listed last :)
@@ -102,6 +100,7 @@ live() {
 	# Disable caching to get LIVE_UPDATES changes effective
 	addwrite "${BASH_SOURCE[0]}"
 	touch "${BASH_SOURCE[0]}"
+	fi
 	
 	true
 }

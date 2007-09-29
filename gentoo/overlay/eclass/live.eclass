@@ -28,7 +28,7 @@ live_want_update() {
 		if has ManualSCM ${FEATURES}; then
 			LIVE_UPDATES=manual
 		elif [ "${SUBVERSION_REVBUMP}" = 'no' ]; then
-			LIVE_UPDATES=manual
+			LIVE_UPDATES=never
 		else
 			LIVE_UPDATES=revision
 		fi
@@ -36,6 +36,14 @@ live_want_update() {
 	
 	[ "${LIVE_UPDATES}" = 'never' ] &&
 		return 1 # always false
+	
+	# Disable caching to get LIVE_UPDATES changes effective
+	addwrite "${BASH_SOURCE[0]}"
+	if ! touch "${BASH_SOURCE[0]}"; then
+		__live_why=-userpriv
+		return 0 # always true, because userpriv prevents conditionals
+	fi
+	
 	[ "${LIVE_UPDATES}" = 'manual' ] &&
 		return 1 # always false
 	
@@ -96,10 +104,6 @@ live() {
 	 live_want_update &&
 	 IUSE="$IUSE z~Live${__live_why}"
 	# 'z~' to make sure it's listed last :)
-	
-	# Disable caching to get LIVE_UPDATES changes effective
-	addwrite "${BASH_SOURCE[0]}"
-	touch "${BASH_SOURCE[0]}"
 	fi
 	
 	true

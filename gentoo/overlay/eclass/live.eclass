@@ -39,7 +39,7 @@ live_want_update() {
 	
 	# Disable caching to get LIVE_UPDATES changes effective
 	addwrite "${BASH_SOURCE[0]}"
-	if ! touch "${BASH_SOURCE[0]}"; then
+	if ! touch "${BASH_SOURCE[0]}" 2>/dev/null; then
 		__live_why=-userpriv
 		return 0 # always true, because userpriv prevents conditionals
 	fi
@@ -129,8 +129,9 @@ live_pkg_postinst() {
 	ewarn '        date%Y%m - Update once a month'
 	ewarn '                   (other variants also possible)'
 	ewarn '        always   - Always treat as an update'
-	ewarn 'To make your change take effect immediately, you need to run:'
-	ewarn '        emerge --metadata'
+	ewarn
+	ewarn 'If you use FEATURES=userpriv, then packages will always be'
+	ewarn ' updated unless you set LIVE_UPDATES=never and remerge.'
 	ewarn
 	ebeep 5
 }

@@ -47,8 +47,12 @@ live_want_update() {
 	[ "${LIVE_UPDATES}" = 'manual' ] &&
 		return 1 # always false
 	
-	local ENVFILE="${ROOT}/var/db/pkg/${CATEGORY}/${P}/environment.bz2"
-	[ -r "${ENVFILE}" ] || return 1	# false if no existing install
+	local VDBROOT="${ROOT}/var/db/pkg"
+	[ -d "${VDBROOT}" ] || return 0	# always update if no VDB
+	
+	local ENVFILE="${VDBROOT}/${CATEGORY}/${P}/environment.bz2"
+	[ -a "${ENVFILE}" ] || return 1	# false if no existing install
+	[ -r "${ENVFILE}" ] || return 0	# always update if can't read VDB
 	
 	[ "${LIVE_UPDATES}" = 'always' ] &&
 		__live_why='-Always' &&

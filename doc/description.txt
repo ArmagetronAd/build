@@ -14,6 +14,12 @@ warmup game on LAN parties.
 
 ----------------------------------
 
+0.2.8.3:
+Lots of small improvements went into this release. There are new cycle 
+physics settings, chat can be moderated, new anti-lag code and the 
+lag-o-meter now looks correct. Players joining a server now get a nice 
+fullscreen message, making server specific policies more visible.
+
 0.2.8.2:
 Some smaller improvements and bugfixes went into this release. Console
 and chat now have a history function, spectators are now visible to other

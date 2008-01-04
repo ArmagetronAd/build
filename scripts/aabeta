@@ -21,6 +21,9 @@ fi
 
 rm -f releases*.php*
 
+test -r "Armagetron Advanced.app.dmg" && mv "Armagetron Advanced.app.dmg" armagetronad-$OFFICIAL_VERSION.macosx-universal.dmg
+test -r "Armagetron Advanced Dedicated.dmg" && mv "Armagetron Advanced Dedicated.dmg" armagetronad-dedicated-$OFFICIAL_VERSION.macosx-universal.dmg
+
 for f in *; do
     # ignore old-libxml files
     if echo "$f" | grep "libxml2" >/dev/null; then
@@ -70,9 +73,14 @@ for f in *; do
         SYSTEM_AABETA=windows
         SYSTEM_AABETA_FULL=\(Source\)
         EXT_AABETA=zip
+    # test if this is a mac build
+    elif test "${REST}" = "macosx-universal.dmg"; then
+        TARGET=${PRODUCT}-${VERSION}.macosx-universal.dmg
+        SYSTEM_AABETA_FULL="Mac OS X 10.3+"
+        SYSTEM_AABETA=macosx
+        ARCH_AABETA="ppc_32 & x86_32"
+        EXT_AABETA=dmg
     else
-        # TODO: mac files
-
         # assume it's unix
 
         # nothing needs to be done for source packages
@@ -146,7 +154,7 @@ grep < releases.php.proto > releases.php -v "'doesnotapply'"
 # build in new elements into releases.php
 REALRELEASES=../../../../../../www-aabeta/releases.php
 if test -r ${REALRELEASES}; then
-    insertat=2
+    insertat=$( grep -n "INSERT NEW" $REALRELEASES | sed -e s/:.*//g | head -n 1 )
     totallines=`wc -l < ${REALRELEASES}`
     lines=$(( ${totallines} - ${insertat} ))
     tail -n ${lines} ${REALRELEASES} > releases_tail.php

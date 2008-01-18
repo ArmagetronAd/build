@@ -9,7 +9,7 @@ rpm-mdk: mandriva
 rpm-mdkded: mandriva-dedicated
 
 # everything z-man can build at home and work
-z-man-home: tarsource zipsource webdoc windoc rpm autopackage
+z-man-home: tarsource zipsource webdoc windoc autopackage
 z-man-work: autopackage-legacyserver autopackage-client
 
 # other builders are invited to add their build sets.

@@ -41,6 +41,7 @@ GLDEPS="
 	virtual/opengl
 	media-libs/libsdl
 	media-libs/sdl-image
+	media-libs/sdl-mixer
 	media-libs/jpeg
 	media-libs/libpng
 "

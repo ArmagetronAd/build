@@ -86,7 +86,7 @@ src_unpack() {
 	for f in ${A}; do
 		unpack "$f"
 	done
-	use auth && ESVN_REPO_URI="${ESVN_REPO_URI/0.2.8/0.2.8-auth}"
+	use dedicated && use auth && ESVN_REPO_URI="${ESVN_REPO_URI/0.2.8/0.2.8-auth}"
 	live_src_unpack
 	rsync -rlpgo "${ESVN_STORE_DIR}/${ESVN_PROJECT}/${ESVN_REPO_URI##*/}/.svn" "${S}" || ewarn ".svn directory couldn't be copied; your version number will use the current date instead of revision"
 }
@@ -98,6 +98,11 @@ aabuild() {
 	use debug && DEBUGLEVEL=3 || DEBUGLEVEL=0
 	export DEBUGLEVEL CODELEVEL=0
 	[ "$SLOT" == "0" ] && myconf="--disable-multiver" || myconf="--enable-multiver=${SLOT}"
+	if use dedicated && use auth; then
+		myconf="${myconf} --enable-krawall"
+	else
+		myconf="${myconf} --disable-krawall"
+	fi
 	[ "$1" == "server" ] && ded='-dedicated' || ded=''
 	GameDir="${MY_PN}${ded}${GameSLOT}"
 	ECONF_SOURCE="${S}" \
@@ -106,7 +111,6 @@ aabuild() {
 		--docdir "/usr/share/doc/${PF}/${DOCDESTTREE}" \
 		--disable-master \
 		--enable-main \
-		$(use_enable auth krawall) \
 		--enable-sysinstall \
 		--disable-useradd \
 		--enable-etc \

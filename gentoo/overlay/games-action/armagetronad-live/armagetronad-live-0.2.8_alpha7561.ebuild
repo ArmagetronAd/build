@@ -99,9 +99,9 @@ aabuild() {
 	export DEBUGLEVEL CODELEVEL=0
 	[ "$SLOT" == "0" ] && myconf="--disable-multiver" || myconf="--enable-multiver=${SLOT}"
 	if use dedicated && use auth; then
-		myconf="${myconf} --enable-krawall"
+		myconf="${myconf} --enable-krawallserver"
 	else
-		myconf="${myconf} --disable-krawall"
+		myconf="${myconf} --disable-krawallserver"
 	fi
 	[ "$1" == "server" ] && ded='-dedicated' || ded=''
 	GameDir="${MY_PN}${ded}${GameSLOT}"
@@ -111,6 +111,7 @@ aabuild() {
 		--docdir "/usr/share/doc/${PF}/${DOCDESTTREE}" \
 		--disable-master \
 		--enable-main \
+		--disable-krawall \
 		--enable-sysinstall \
 		--disable-useradd \
 		--enable-etc \

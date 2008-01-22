@@ -179,7 +179,7 @@ src_install() {
 		dosed "s,^\(user=\).*$,\1${GAMES_USER_DED},; s,^#\(VARDIR=/.*\)$,\\1," "${GAMES_SYSCONFDIR}/${MY_PN}-dedicated${GameSLOT}/rc.config" || ewarn 'adjustments for rc.config FAILED; the defaults may not be suited for your system!'
 	fi
 	
-	local LangDir="${D}${GAMES_DATADIR}/${MY_PN}${GameSLOT}/language/"
+	local LangDir="${D}${GAMES_DATADIR}/${GameDir}/language/"
 	use linguas_de || rm -v "${LangDir}deutsch.txt"
 	use linguas_fr || rm -v "${LangDir}french.txt"
 	local en_GB='true' en_US='true'

@@ -27,7 +27,7 @@ SRC_URI="mirror://sourceforge/armagetronad/${P}.tar.bz2
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 ppc sparc x86"
-IUSE="dedicated linguas_es linguas_en moviepack moviesounds opengl"
+IUSE="dedicated linguas_de linguas_es linguas_en moviepack moviesounds opengl"
 
 GLDEPS="
 		sys-libs/zlib
@@ -140,6 +140,11 @@ src_install() {
 		doexe src/tron/${PN}-dedicated || die "copying files"
 		dogamesbin startscript/${PN}-dedicated || die
 	fi
+	
+	local LangDir="${D}${GAMES_DATADIR}/${GameDir}/language/"
+	use linguas_de || rm -v "${LangDir}deutsch.txt"
+	use linguas_en || ! use linguas_de || rm -v "${LangDir}english.txt"
+	
 	dohtml doc/*.html
 	docinto html/net
 	dohtml doc/net/*.html

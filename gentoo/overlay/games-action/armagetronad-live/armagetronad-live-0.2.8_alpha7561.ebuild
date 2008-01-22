@@ -28,7 +28,7 @@ SRC_URI="
 LICENSE="GPL-2"
 SLOT="live"
 KEYWORDS="amd64 ppc sparc x86"
-IUSE="auth debug dedicated linguas_es linguas_en moviepack moviesounds opengl"
+IUSE="auth debug dedicated linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es moviepack moviesounds opengl"
 
 ESVN_PROJECT="${P/_*}"
 
@@ -178,6 +178,30 @@ src_install() {
 		einfo 'Adjusting dedicated server configuration'
 		dosed "s,^\(user=\).*$,\1${GAMES_USER_DED},; s,^#\(VARDIR=/.*\)$,\\1," "${GAMES_SYSCONFDIR}/${MY_PN}-dedicated${GameSLOT}/rc.config" || ewarn 'adjustments for rc.config FAILED; the defaults may not be suited for your system!'
 	fi
+	
+	local LangDir="${D}${GAMES_DATADIR}/${MY_PN}${GameSLOT}/language/"
+	use linguas_de || rm -v "${LangDir}deutsch.txt"
+	use linguas_fr || rm -v "${LangDir}french.txt"
+	local en_GB='true' en_US='true'
+	use linguas_en_GB || en_GB='false'
+	use linguas_en_US || en_US='false'
+	# Force both on if:
+	# # linguas_en is set, but neither subset is
+	# # no other supported linguas is set
+	{ { ! $en_GB && ! $en_US; } && {
+		use linguas_en ||
+		! {
+			use linguas_de ||
+			use linguas_fr ||
+			use linguas_es ||
+			false;
+		};
+	}; } &&
+		en_GB='true' en_US='true'
+	$en_GB || rm -v "${LangDir}british.txt"
+	$en_US || rm -v "${LangDir}american.txt"
+	use linguas_es || rm -v "${LangDir}spanish.txt"
+	
 	# Ok, so we screwed up on doc installation... so for now, the ebuild does this manually
 	dohtml -r "${D}${GAMES_PREFIX}/share/doc/${GameDir}/html/"*
 	dodoc "${D}${GAMES_PREFIX}/share/doc/${GameDir}/html/"*.txt

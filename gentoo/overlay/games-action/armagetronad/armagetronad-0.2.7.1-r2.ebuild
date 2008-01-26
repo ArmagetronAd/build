@@ -143,7 +143,6 @@ src_install() {
 	
 	local LangDir="${D}${GAMES_DATADIR}/${GameDir}/language/"
 	use linguas_de || rm -v "${LangDir}deutsch.txt"
-	use linguas_en || ! use linguas_de || rm -v "${LangDir}english.txt"
 	
 	dohtml doc/*.html
 	docinto html/net

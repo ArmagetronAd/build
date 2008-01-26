@@ -207,7 +207,6 @@ src_install() {
 		};
 	}; } &&
 		en_GB='true' en_US='true'
-	$en_GB || rm -v "${LangDir}british.txt"
 	$en_US || rm -v "${LangDir}american.txt"
 	use linguas_es || rm -v "${LangDir}spanish.txt"
 	

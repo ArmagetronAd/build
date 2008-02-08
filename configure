@@ -43,7 +43,7 @@ shift $(($OPTIND - 1))
 echo -n Determining source directory...  
 
 AA_SOURCE=""
-for CANDIDATE in ../armagetronad ../armagetron; do
+for CANDIDATE in ../*armagetronad*  ../*armagetronad-work ../armagetronad ../armagetron; do
 	test -d $CANDIDATE && test -z "$AA_SOURCE" && AA_SOURCE=$CANDIDATE
 done
 

@@ -43,7 +43,7 @@ shift $(($OPTIND - 1))
 echo -n Determining source directory...  
 
 AA_SOURCE=""
-for CANDIDATE in ../armagetronad ../armagetron; do
+for CANDIDATE in ../*armagetronad*  ../*armagetronad-work ../armagetronad ../armagetron; do
 	test -d $CANDIDATE && test -z "$AA_SOURCE" && AA_SOURCE=$CANDIDATE
 done
 
@@ -115,16 +115,11 @@ if test -z "$AA_WINLIBS_SOURCE"; then
 fi
 
 # get aabeta username
-if test -r "../../www-aabeta/CVS/Root"; then
-    echo -n Determining aabeta user name...
+echo "# aabeta user name" >> make.conf
+echo "USERNAME_AABETA=\"z-man\"" >> make.conf
+echo "" >> make.conf
 
-	USERNAME_AABETA=`cat "../../www-aabeta/CVS/Root" | sed -e "s|^:ext:||" -e "s|@.*$||"`
-    echo "# aabeta user name" >> make.conf
-    echo "USERNAME_AABETA=\"$USERNAME_AABETA\"" >> make.conf
-    echo "" >> make.conf
-
-    echo " $USERNAME_AABETA"
-fi
+echo "Set default aabeta username (z-man, he is lazy)"
 
 # guess packager name
 

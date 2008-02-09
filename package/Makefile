@@ -53,7 +53,9 @@ DEBUGSED=-e "s,DEBUGLEVEL=0,DEBUGLEVEL=1,g"
 
 SRCSED=-e "s,../../armagetronad,../$(SOURCEDIR),g"
 
-hack-t=for f in *.package; do sed -e 's,"$$meta_dir/apkg-installer" "$$@","$$meta_dir/apkg-installer" "$$@" -t,' < $$f > $$f.out; mv -f $$f.out $$f; chmod 755 $$f; done
+# hack package to use text-only mode
+#hack-t=for f in *.package; do sed -e 's,"$$meta_dir/apkg-installer" "$$@","$$meta_dir/apkg-installer" "$$@" -t,' < $$f > $$f.out; mv -f $$f.out $$f; chmod 755 $$f; done
+hack-t=echo no hacking
 
 test-%:
 	mkdir -p $(BUILDDIR)-test-$*/autopackage

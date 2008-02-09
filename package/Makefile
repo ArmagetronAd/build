@@ -22,7 +22,7 @@ INVERT.no = yes
 XMLSTATIC = ${INVERT.${ALLOW_OLDLIBXML2}}
 #XMLSTATIC = yes
 
-XMLSED_STATIC.no = -e "s,APBUILD_STATIC=\"xml2\" ,,"
+XMLSED_STATIC.no = -e "s,APBUILD_STATIC=\"xml2,APBUILD_STATIC=\","
 XMLSED_STATIC.yes = -e "s,require @xmlsoft.org/libxml2 ...,,"
 
 XMLSED_ALLOWOLD.yes = -e "s,CPPFLAGS=\",CPPFLAGS=\"-DHAVE_LIBXML2_WO_PIBCREATE=1 ,"
@@ -39,7 +39,7 @@ ${XMLSED_ALLOWOLD.${ALLOW_OLDLIBXML2}}
 
 COMMONSED=${STATICSED} ${XMLSED}
 
-CLIENTSED=-e "s,-dedicated,,g" -e "s,Advanced Server,Advanced,g" -e "s,--disable-glout,," -e "s,^\#client_,," -e "s,--enable-initscripts,--disable-initscripts,"
+CLIENTSED=-e "s,-dedicated,,g" -e "s,Advanced Server,Advanced,g" -e "s,--disable-glout,," -e "s,^\#client_,," -e "s,--enable-initscripts,--disable-initscripts," -e "s,--enable-armathentication,,"
 SERVERSED=
 
 # regular server and client builds, static/dynamic linking of libxml as is best
@@ -58,11 +58,11 @@ hack-t=for f in *.package; do sed -e 's,"$$meta_dir/apkg-installer" "$$@","$$met
 test-%:
 	mkdir -p $(BUILDDIR)-test-$*/autopackage
 	sed < default.apspec > $(BUILDDIR)-test-$*/autopackage/default.apspec ${SED.$*} ${DEBUGSED}
-	cd $(BUILDDIR)-test-$*; makeinstaller; ${hack-t}
+	cd $(BUILDDIR)-test-$*; makeinstaller || makepackage; ${hack-t}
     
 
 release-%:
 	mkdir -p $(BUILDDIR)-$*/autopackage
 	sed < default.apspec > $(BUILDDIR)-$*/autopackage/default.apspec ${SED.$*} ${SRCSED}
-	cd $(BUILDDIR)-$*; makeinstaller; ${hack-t}
+	cd $(BUILDDIR)-$*; makeinstaller || makepackage; ${hack-t}
 

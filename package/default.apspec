@@ -41,7 +41,7 @@ challenging AI opponents for a quick training match.
 # should be removed before building.
 
 export CPPFLAGS="-DDEFAULT_SDL_AUDIODRIVER=alsa" 
-APBUILD_STATIC="xml2" DEBUGLEVEL=0 prepareBuild --src ../../armagetronad --disable-sysinstall --disable-restoreold --disable-desktop --disable-glout --enable-uninstall="package remove armagetronad-dedicated" --localstatedir=/var --enable-etc --enable-initscripts --enable-automakedefaults --enable-useradd
+APBUILD_STATIC="xml2 ZThread" DEBUGLEVEL=0 prepareBuild --src ../../armagetronad --disable-sysinstall --disable-restoreold --disable-desktop --disable-glout --enable-uninstall="package remove armagetronad-dedicated" --localstatedir=/var --enable-etc --enable-initscripts --enable-automakedefaults --enable-useradd --enable-armathentication
 
 [BuildUnprepare]
 unprepareBuild

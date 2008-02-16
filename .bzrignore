@@ -1,3 +1,5 @@
 ./make.conf
 ./tarballs
 ./builds
+./ap-client
+./make.conf.bak

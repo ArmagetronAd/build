@@ -60,11 +60,10 @@ hack-t=echo no hacking
 test-%:
 	mkdir -p $(BUILDDIR)-test-$*/autopackage
 	sed < default.apspec > $(BUILDDIR)-test-$*/autopackage/default.apspec ${SED.$*} ${DEBUGSED}
-	cd $(BUILDDIR)-test-$*; makeinstaller || makepackage; ${hack-t}
-    
+	cd $(BUILDDIR)-test-$*; makepackage || makeinstaller; ${hack-t}
 
 release-%:
 	mkdir -p $(BUILDDIR)-$*/autopackage
 	sed < default.apspec > $(BUILDDIR)-$*/autopackage/default.apspec ${SED.$*} ${SRCSED}
-	cd $(BUILDDIR)-$*; makeinstaller || makepackage; ${hack-t}
+	cd $(BUILDDIR)-$*; makepackage || makeinstaller; ${hack-t}
 

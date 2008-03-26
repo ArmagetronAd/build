@@ -63,6 +63,12 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${MY_PN}"
 
 pkg_setup() {
+	if ! built_with_use media-libs/sdl-image png; then
+		local msg="You must install dev-libs/libxml2 with USE=png"
+		eerror "$msg"
+		die "$msg"
+	fi
+	
 	if use debug; then
 		ewarn
 		ewarn 'The "debug" USE flag will enable debugging code. This will cause AI'

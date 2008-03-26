@@ -65,6 +65,12 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${MY_PN}"
 
 pkg_setup() {
+	if ! built_with_use media-libs/sdl-image png; then
+		local msg="You must install dev-libs/libxml2 with USE=png"
+		eerror "$msg"
+		die "$msg"
+	fi
+	
 	if use ruby && ! built_with_use dev-lang/swig ruby ; then
 		eerror "You are trying to compile ${CATEGORY}/${PF} with the \"ruby\" USE flag enabled."
 		eerror "However, $(best_version dev-lang/swig) was compiled with the ruby flag disabled."

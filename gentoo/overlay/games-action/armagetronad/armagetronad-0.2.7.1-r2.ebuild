@@ -51,6 +51,14 @@ DEPEND="${RDEPEND}
 	!dedicated? ( ${OPT_CLIENTDEPS} )
 "
 
+pkg_setup() {
+	if ! built_with_use media-libs/sdl-image png; then
+		local msg="You must install dev-libs/libxml2 with USE=png"
+		eerror "$msg"
+		die "$msg"
+	fi
+}
+
 src_unpack() {
 	unpack ${A}
 	cd "${S}"

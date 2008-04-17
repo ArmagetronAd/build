@@ -86,6 +86,12 @@ pkg_setup() {
 	ewarn '                    PLAY AT YOUR OWN RISK'
 }
 
+src_unpack() {
+	unpack ${A}
+	cd "${S}"
+	epatch "${FILESDIR}/030_fix-freetype-check.patch"
+}
+
 aabuild() {
 	MyBUILDDIR="${WORKDIR}/build-$1"
 	mkdir -p "${MyBUILDDIR}" || die "error creating build directory($1)"	# -p to allow EEXIST scenario

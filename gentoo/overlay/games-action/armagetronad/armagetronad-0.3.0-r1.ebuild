@@ -90,6 +90,7 @@ src_unpack() {
 	unpack ${A}
 	cd "${S}"
 	epatch "${FILESDIR}/030_fix-freetype-check.patch"
+	./bootstrap || die 'failed to rebootstrap'
 }
 
 aabuild() {

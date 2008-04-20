@@ -6,9 +6,5 @@
 # Thanks
 # To install/test:
 #     echo 'games-action/armagetronad-live' >>/etc/portage/package.unmask
-#     echo 'games-action/armagetronad-live ~x86' >>/etc/portage/package.keywords
+#     echo 'games-action/armagetronad-live' >>/etc/portage/package.keywords
 games-action/armagetronad-live
-
-# Luke-Jr <luke_armagetron@dashjr.org> (19 Feb 2007)
-# Incomplete, just playing around
-overlay-armagetron/news

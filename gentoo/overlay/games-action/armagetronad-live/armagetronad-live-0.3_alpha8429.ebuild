@@ -19,18 +19,16 @@ OPT_CLIENTSRC="
 		http://beta.armagetronad.net/fetch.php/PreResource/moviepack.zip
 	)
 "
-ESVN_REPO_URI="https://${MY_PN}.svn.sourceforge.net/svnroot/${MY_PN}/${MY_PN}/branches/0.2.8/${MY_PN}"
+ESVN_REPO_URI="https://${MY_PN}.svn.sourceforge.net/svnroot/${MY_PN}/${MY_PN}/trunk/${MY_PN}"
 SRC_URI="
 	opengl? ( ${OPT_CLIENTSRC} )
 	!dedicated? ( ${OPT_CLIENTSRC} )
 "
 
 LICENSE="GPL-2"
-SLOT="live"
-KEYWORDS="amd64 ppc sparc x86"
-IUSE="auth debug dedicated linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es moviepack moviesounds opengl"
-
-ESVN_PROJECT="${P/_*}"
+SLOT="experimental-live"
+KEYWORDS="~amd64 ~ppc ~sparc ~x86"
+IUSE="auth debug dedicated glew linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es moviepack moviesounds opengl respawn ruby"
 
 GLDEPS="
 	|| (
@@ -44,12 +42,16 @@ GLDEPS="
 	media-libs/sdl-mixer
 	media-libs/jpeg
 	media-libs/libpng
+	media-libs/ftgl
+	glew? ( media-libs/glew )
 "
 RDEPEND="
 	>=dev-libs/libxml2-2.6.11
 	sys-libs/zlib
 	opengl? ( ${GLDEPS} )
 	!dedicated? ( ${GLDEPS} )
+	ruby? ( virtual/ruby >=dev-lang/swig-1.3.29 )
+	>=dev-libs/boost-1.33.1
 "
 OPT_CLIENTDEPS="
 	moviepack? ( app-arch/unzip )
@@ -69,13 +71,21 @@ pkg_setup() {
 		die "$msg"
 	fi
 	
+	if use ruby && ! built_with_use dev-lang/swig ruby ; then
+		eerror "You are trying to compile ${CATEGORY}/${PF} with the \"ruby\" USE flag enabled."
+		eerror "However, $(best_version dev-lang/swig) was compiled with the ruby flag disabled."
+		eerror
+		eerror "You must either disable this use flag, or recompile"
+		eerror "$(best_version dev-lang/swig) with this ruby use flag enabled."
+		die 'swig missing ruby'
+	fi
 	if use debug; then
 		ewarn
 		ewarn 'The "debug" USE flag will enable debugging code. This will cause AI'
 		ewarn ' players to chat debugging information, debugging lines to be drawn'
 		ewarn ' on the grid and at wall angles, and probably most relevant to your'
 		ewarn ' decision to keep the USE flag:'
-		ewarn '         FULL SCREEN MODE AND SOUND WILL BE DISABLED'
+		ewarn '         FULL SCREEN MODE WILL BE DISABLED'
 		ewarn
 		ewarn "If you don't like this, add this line to /etc/portage/package.use:"
 		ewarn '    games-action/armagetronad -debug'
@@ -86,13 +96,15 @@ pkg_setup() {
 		ewarn
 		ebeep 5
 	fi
+	ewarn 'Please note that this is an EXPERIMENTAL RELEASE of Armagetron Advanced.'
+	ewarn 'It has known bugs, and is not meant to be well-tested or stable.'
+	ewarn '                    PLAY AT YOUR OWN RISK'
 }
 
 src_unpack() {
 	for f in ${A}; do
 		unpack "$f"
 	done
-	use dedicated && use auth && ESVN_REPO_URI="${ESVN_REPO_URI/0.2.8/0.2.8-auth}"
 	live_src_unpack
 	rsync -rlpgo "${ESVN_STORE_DIR}/${ESVN_PROJECT}/${ESVN_REPO_URI##*/}/.svn" "${S}" || ewarn ".svn directory couldn't be copied; your version number will use the current date instead of revision"
 }
@@ -104,11 +116,6 @@ aabuild() {
 	use debug && DEBUGLEVEL=3 || DEBUGLEVEL=0
 	export DEBUGLEVEL CODELEVEL=0
 	[ "$SLOT" == "0" ] && myconf="--disable-multiver" || myconf="--enable-multiver=${SLOT}"
-	if use dedicated && use auth; then
-		myconf="${myconf} --enable-krawallserver"
-	else
-		myconf="${myconf} --disable-krawallserver"
-	fi
 	[ "$1" == "server" ] && ded='-dedicated' || ded=''
 	GameDir="${MY_PN}${ded}${GameSLOT}"
 	ECONF_SOURCE="${S}" \
@@ -123,7 +130,11 @@ aabuild() {
 		--enable-etc \
 		--disable-restoreold \
 		--disable-games \
+		$(use_enable auth armathentication) \
+		$(use_enable respawn) \
 		--enable-uninstall="emerge --clean =${CATEGORY}/${PF}" \
+		$(use_enable ruby) \
+		$(use_with   glew) \
 		"${@:2}" || die "egamesconf($1) failed"
 	emake armabindir="${GAMES_BINDIR}" || die "emake($1) failed"
 }

@@ -4,3 +4,4 @@ games-action/armagetronad-live:auth - Enables server-side authentication support
 games-action/armagetronad-live:glew - Enables fancy graphics effects (motion blur)
 games-action/armagetronad-live:moviepack - install graphics based on the TRON movie
 games-action/armagetronad-live:moviesounds - install sound effects extracted from the TRON movie
+games-action/armagetronad-live:respawn - enable unsupported, hacky, impossible to deactivate at runtime, deathmatch mode. Use at your own risk.

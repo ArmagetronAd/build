@@ -38,6 +38,7 @@ GLDEPS="
 	virtual/opengl
 	media-libs/libsdl
 	media-libs/sdl-image
+	media-libs/sdl-mixer
 	media-libs/jpeg
 	media-libs/libpng
 	media-libs/ftgl
@@ -90,7 +91,8 @@ src_unpack() {
 	unpack ${A}
 	cd "${S}"
 	epatch "${FILESDIR}/030_fix-freetype-check.patch"
-	./bootstrap || die 'failed to rebootstrap'
+	sed -e 's/_AC_SRCPATHS/_AC_SRCDIRS/g' -i "${S}"/accustomdir.m4
+	eautoreconf
 }
 
 aabuild() {

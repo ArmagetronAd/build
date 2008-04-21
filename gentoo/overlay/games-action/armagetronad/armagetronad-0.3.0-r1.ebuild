@@ -91,7 +91,7 @@ src_unpack() {
 	unpack ${A}
 	cd "${S}"
 	epatch "${FILESDIR}/030_fix-freetype-check.patch"
-	sed -e 's/_AC_SRCPATHS/_AC_SRCDIRS/g' -i "${S}"/accustomdir.m4
+	epatch "${FILESDIR}/autoconf-compat.patch"
 	eautoreconf
 }
 

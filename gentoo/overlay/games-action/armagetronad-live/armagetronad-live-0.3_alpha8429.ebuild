@@ -66,7 +66,7 @@ S="${WORKDIR}/${MY_PN}"
 
 pkg_setup() {
 	if ! built_with_use media-libs/sdl-image png; then
-		local msg="You must install dev-libs/libxml2 with USE=png"
+		local msg="You must install media-libs/sdl-image with USE=png"
 		eerror "$msg"
 		die "$msg"
 	fi
@@ -99,6 +99,7 @@ pkg_setup() {
 	ewarn 'Please note that this is an EXPERIMENTAL RELEASE of Armagetron Advanced.'
 	ewarn 'It has known bugs, and is not meant to be well-tested or stable.'
 	ewarn '                    PLAY AT YOUR OWN RISK'
+	games_pkg_setup
 }
 
 src_unpack() {

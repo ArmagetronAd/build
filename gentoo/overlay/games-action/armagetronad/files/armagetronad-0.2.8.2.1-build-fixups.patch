@@ -1,0 +1,828 @@
+Index: src/render/rViewport.cpp
+===================================================================
+--- src/render/rViewport.cpp	(revision 4613)
++++ src/render/rViewport.cpp	(revision 8573)
+@@ -163,7 +163,7 @@
+ rViewportConfiguration *rViewportConfiguration::s_viewportConfigurations[]={
+             &single_vp,&two_vp,&two_b,&three_a,&three_b,&four_vp};
+ 
+-char *rViewportConfiguration::s_viewportConfigurationNames[]=
++char const * rViewportConfiguration::s_viewportConfigurationNames[]=
+     {"$viewport_conf_name_0",
+      "$viewport_conf_name_1",
+      "$viewport_conf_name_2",
+Index: src/render/rViewport.h
+===================================================================
+--- src/render/rViewport.h	(revision 4613)
++++ src/render/rViewport.h	(revision 8573)
+@@ -93,7 +93,7 @@
+ 
+     static rViewportConfiguration *s_viewportConfigurations[];
+     static const int               s_viewportNumConfigurations;
+-    static char                   *s_viewportConfigurationNames[];
++    static char const *            s_viewportConfigurationNames[];
+ 
+     static rViewportConfiguration *CurrentViewportConfiguration();
+ 
+Index: src/render/rTexture.cpp
+===================================================================
+--- src/render/rTexture.cpp	(revision 4613)
++++ src/render/rTexture.cpp	(revision 8573)
+@@ -765,7 +765,7 @@
+ 
+ int rTextureGroups::TextureMode[rTextureGroups::TEX_GROUPS];
+ 
+-char *rTextureGroups::TextureGroupDescription[rTextureGroups::TEX_GROUPS]=
++char const * rTextureGroups::TextureGroupDescription[rTextureGroups::TEX_GROUPS]=
+     {
+         "$texture_mode_0_help",
+         "$texture_mode_1_help",
+Index: src/render/rModel.cpp
+===================================================================
+--- src/render/rModel.cpp	(revision 4613)
++++ src/render/rModel.cpp	(revision 8573)
+@@ -35,8 +35,8 @@
+ #include "tConfiguration.h"
+ #include "tLocale.h"
+ #include "rGL.h"
++#include <string.h>
+ 
+-
+ static rModel *sr_ModelAnchor;
+ 
+ static tConfItem<bool> mod_udl("USE_DISPLAYLISTS", sr_useDisplayLists);
+Index: src/render/rGLRender.cpp
+===================================================================
+--- src/render/rGLRender.cpp	(revision 4613)
++++ src/render/rGLRender.cpp	(revision 8573)
+@@ -199,7 +199,8 @@
+     virtual void MultMatrix(REAL mdata[4][4]){
+         End(true);
+         tASSERT(sizeof(REAL) == sizeof(GLfloat));
+-        glMultMatrixf(reinterpret_cast<GLfloat *>(&mdata));
++	REAL * mdat=&mdata[0][0];
++        glMultMatrixf(reinterpret_cast<GLfloat *>(mdat));
+     };
+ 
+     virtual void IdentityMatrix(){
+Index: src/render/rTexture.h
+===================================================================
+--- src/render/rTexture.h	(revision 4613)
++++ src/render/rTexture.h	(revision 8573)
+@@ -49,7 +49,7 @@
+     };
+ 
+     static int TextureMode[TEX_GROUPS];                 //!< the OpenGL texture modes for the groubs
+-    static char *TextureGroupDescription[TEX_GROUPS];   //!< descriptions for the groups
++    static char const * TextureGroupDescription[TEX_GROUPS];   //!< descriptions for the groups
+ };
+ 
+ //! wrapper for SDL surface
+Index: src/tron/gMenus.cpp
+===================================================================
+--- src/tron/gMenus.cpp	(revision 4613)
++++ src/tron/gMenus.cpp	(revision 8573)
+@@ -90,7 +90,7 @@
+     void NewChoice(uSelectItem<bool> *){};
+     void NewChoice(char *,bool ){};
+ public:
+-    ArmageTron_feature_menuitem(uMenu *m,char *tit,const char *help,int &targ)
++    ArmageTron_feature_menuitem(uMenu *m,char const * tit,char const * help,int &targ)
+             :uMenuItemSelection<int>(m,tit,help,targ){
+         uMenuItemSelection<int>::NewChoice(
+             "$feature_disabled_text",
+@@ -114,7 +114,7 @@
+     void NewChoice(uSelectItem<bool> *){};
+     void NewChoice(char *,bool ){};
+ public:
+-    ArmageTron_texmode_menuitem(uMenu *m,char *tit,int &targ,
++    ArmageTron_texmode_menuitem(uMenu *m,char const * tit,int &targ,
+                                 bool font=false)
+             :uMenuItemSelection<int>
+     (m,tit,"$texture_menuitem_help",targ){
+@@ -555,8 +555,10 @@
+ static uSelectEntry<rSysDep::rSwapMode> swapMode_60Hz(swapMode,"$swapmode_60hz_text","$swapmode_60hz_help",rSysDep::rSwap_60Hz);
+ */
+ 
+-static tConfItem<int> swapModeCI("SWAP_MODE", reinterpret_cast< int & >( rSysDep::swapMode_ ) );
++tCONFIG_ENUM( rSysDep::rSwapMode );
+ 
++static tConfItem< rSysDep::rSwapMode > swapModeCI("SWAP_MODE", rSysDep::swapMode_ );
++
+ static tConfItem<REAL> sgs("SPEED_GAUGE_SIZE",subby_SpeedGaugeSize);
+ static tConfItem<REAL> sgx("SPEED_GAUGE_LOCX",subby_SpeedGaugeLocX);
+ static tConfItem<REAL> sgy("SPEED_GAUGE_LOCY",subby_SpeedGaugeLocY);
+Index: src/tron/gCycle.cpp
+===================================================================
+--- src/tron/gCycle.cpp	(revision 4613)
++++ src/tron/gCycle.cpp	(revision 8573)
+@@ -52,6 +52,7 @@
+ #include "tMath.h"
+ #include <stdlib.h>
+ #include <fstream>
++#include <memory>
+ 
+ #ifndef DEDICATED
+ #define DONTDOIT
+Index: src/tron/gGame.cpp
+===================================================================
+--- src/tron/gGame.cpp	(revision 4613)
++++ src/tron/gGame.cpp	(revision 8573)
+@@ -119,7 +119,7 @@
+ static nSettingItemWatched<tString> conf_mapfile("MAP_FILE",mapfile, nConfItemVersionWatcher::Group_Breaking, 8 );
+ 
+ // bool globalingame=false;
+-tString sg_GetCurrentTime( char *szFormat )
++tString sg_GetCurrentTime( char const * szFormat )
+ {
+     char szTemp[128];
+     time_t     now;
+@@ -130,7 +130,7 @@
+     return tString(szTemp);
+ }
+ 
+-void sg_PrintCurrentTime( char *szFormat )
++void sg_PrintCurrentTime( char const * szFormat )
+ {
+     con << sg_GetCurrentTime(szFormat);
+ }
+@@ -615,7 +615,7 @@
+ protected:
+     tArray<tString> highName;
+ 
+-    char*   highscore_file;
++    char const * highscore_file;
+     tOutput desc;
+     int     maxSize;
+ 
+@@ -728,7 +728,7 @@
+         return found;
+     }
+ 
+-    gHighscoresBase(char *name,char *sd,int max=0)
++    gHighscoresBase(char const * name,char const * sd,int max=0)
+             :id(-1),highscore_file(name),desc(sd),maxSize(max){
+         highscoreList.Add(this,id);
+     }
+@@ -935,7 +935,7 @@
+         }
+     }
+ 
+-    highscores(char *name,char *sd,int max=0)
++    highscores(char const * name,char const * sd,int max=0)
+             :gHighscoresBase(name,sd,max){
+         //		Load();
+     }
+@@ -1145,7 +1145,7 @@
+         }
+     }
+ 
+-    ladder(char *name,char *sd,int max=0)
++    ladder(char const * name,char const * sd,int max=0)
+             :highscores<REAL>(name,sd,max){
+         //		Load();
+     }
+@@ -2323,7 +2323,7 @@
+     if (ingame)
+         sg_IngameMenu = &MainMenu;
+ 
+-    char *extitle,*exhelp;
++    char const * extitle,* exhelp;
+     if (!ingame){
+         extitle="$main_menu_exit_text";
+         exhelp="$main_menu_exit_help";
+@@ -2439,7 +2439,7 @@
+     uMenuItemSubmenu *gamemenuitem = NULL;
+     if (sn_GetNetState() != nCLIENT)
+     {
+-        char *gamehelp;
++        char const * gamehelp;
+         if (!ingame)
+             gamehelp="$game_menu_main_help";
+         else
+Index: src/tron/gAIBase.cpp
+===================================================================
+--- src/tron/gAIBase.cpp	(revision 4613)
++++ src/tron/gAIBase.cpp	(revision 8573)
+@@ -43,6 +43,8 @@
+ #include "tRandom.h"
+ #include "tRecorder.h"
+ #include <stdlib.h>
++#include <cstdlib>
++#include <memory>
+ 
+ #define AI_REACTION          0 
+ #define AI_EMERGENCY         1 
+Index: src/tron/gArmagetron.cpp
+===================================================================
+--- src/tron/gArmagetron.cpp	(revision 4613)
++++ src/tron/gArmagetron.cpp	(revision 8573)
+@@ -455,6 +455,35 @@
+ 
+ static const char * dedicatedSection = "DEDICATED";
+ 
++class gAutoStringArray
++{
++public:
++    ~gAutoStringArray()
++    {
++        for ( std::vector< char * >::iterator i = strings.begin(); i != strings.end(); ++i )
++        {
++            free( *i );
++        }
++    }
++
++    char * Store( char const * s )
++    {
++        char * ret = strdup( s );
++        strings.push_back( ret );
++        return ret;
++    }
++private:
++    std::vector< char * > strings; // the stored raw C strings
++};
++
++// wrapper for putenv, taking care of the peculiarity that the argument
++// is kept in use for the rest of the program's lifetime
++void sg_PutEnv( char const * s )
++{
++    static gAutoStringArray store;
++    putenv( store.Store( s ) );
++}
++
+ int main(int argc,char **argv){
+     //std::cout << "enter\n";
+     //  net_test();
+@@ -561,14 +590,14 @@
+ 		#ifdef linux
+             // Sam 5/23 - Don't ever use DGA, we don't need it for this game.
+             if ( ! getenv("SDL_VIDEO_X11_DGAMOUSE") ) {
+-                putenv("SDL_VIDEO_X11_DGAMOUSE=0");
++                sg_PutEnv( "SDL_VIDEO_X11_DGAMOUSE=0" );
+             }
+ 		#endif
+ 
+ 		#ifdef WIN32
+             // disable DirectX by default; it causes problems with some boards.
+-            if (!use_directx && !getenv("SDL_VIDEODRIVER") ) {
+-                putenv("SDL_VIDEODRIVER=windib");
++            if (!use_directx && !getenv( "SDL_VIDEODRIVER") ) {
++                sg_PutEnv( "SDL_VIDEODRIVER=windib" );
+             }
+ 		#endif
+ 
+Index: src/tron/gServerBrowser.cpp
+===================================================================
+--- src/tron/gServerBrowser.cpp	(revision 4613)
++++ src/tron/gServerBrowser.cpp	(revision 8573)
+@@ -57,7 +57,8 @@
+ static tOutput *sg_StartHelpText = NULL;
+ 
+ nServerInfo::QueryType sg_queryType = nServerInfo::QUERY_OPTOUT;
+-static tSettingItem< int > sg_query_type( "BROWSER_QUERY_FILTER", reinterpret_cast< int & >( sg_queryType ) );
++tCONFIG_ENUM( nServerInfo::QueryType );
++static tSettingItem< nServerInfo::QueryType > sg_query_type( "BROWSER_QUERY_FILTER", sg_queryType );
+ 
+ class gServerMenuItem;
+ 
+@@ -773,7 +774,7 @@
+     return server;
+ }
+ 
+-static char *sg_HelpText = "$network_master_browserhelp";
++static char const * sg_HelpText = "$network_master_browserhelp";
+ 
+ gServerMenuItem::gServerMenuItem(gServerMenu *men)
+         :gBrowserMenuItem(men, sg_HelpText), server(NULL), lastPing_(-100), favorite_(false)
+Index: src/network/nNetObject.h
+===================================================================
+--- src/network/nNetObject.h	(revision 4613)
++++ src/network/nNetObject.h	(revision 8573)
+@@ -31,6 +31,7 @@
+ #include "nNetwork.h"
+ #include "tArray.h"
+ #include "tConsole.h"
++#include <string.h>
+ 
+ class nObserver;
+ 
+@@ -77,7 +78,7 @@
+     bool nextSyncAck:1;         // should the next sync message wait
+         // for it's ack?
+     bool syncReq:1;              // should a sync message be sent?
+-    int  acksPending:4;          // how many messages are underway?
++    unsigned int acksPending:4;  // how many messages are underway?
+ 
+         nKnowsAboutInfo(){
+             memset(this, 0, sizeof(nKnowsAboutInfo) );
+Index: src/network/nSocket.cpp
+===================================================================
+--- src/network/nSocket.cpp	(revision 4613)
++++ src/network/nSocket.cpp	(revision 8573)
+@@ -38,6 +38,7 @@
+ 
+ #include <string>
+ #include <stdio.h>
++#include <string.h>
+ 
+ #include <sys/types.h>
+ 
+Index: src/network/nNetwork.cpp
+===================================================================
+--- src/network/nNetwork.cpp	(revision 4613)
++++ src/network/nNetwork.cpp	(revision 8573)
+@@ -20,7 +20,7 @@
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+-  
++
+ ***************************************************************************
+ 
+ */
+@@ -40,6 +40,7 @@
+ #include <stdlib.h>
+ #include <fstream>
+ #include "tMath.h"
++#include <string.h>
+ 
+ #ifndef WIN32
+ #include  <netinet/in.h>
+@@ -600,7 +601,8 @@
+     if (message->Descriptor()!=s_Acknowledge.ID())
+         sn_Connections[receiver].ackPending++;
+     else
+-        tASSERT(false);
++        tERR_ERROR("Should not wait for ack of an ack message itself.");
++
+     //    sn_ackAckPending[receiver]++;
+ #ifdef NET_DEBUG
+     acks++;
+@@ -646,7 +648,9 @@
+         sn_Connections[receiver].ReliableMessageSent();
+     }
+     else
+-        tASSERT(false);
++    {
++        tERR_ERROR( "No message." );
++    }
+     //    sn_ackAckPending[receiver]--;
+ 
+     sn_pendingAcks.Remove(this,id);
+@@ -1146,7 +1150,7 @@
+       Read((unsigned short &)vorkomma);
+       Read(nachkomma);
+       x=vorkomma+nachkomma/60000.0;
+-     
++
+       Read(((unsigned short *)&x)[0]);
+       Read(((unsigned short *)&x)[1]);
+      */
+@@ -1322,7 +1326,7 @@
+           lo->Send(0);
+ 
+           sn_Sync(10);
+-          
++
+           (new nMessage(login))->Send(0);
+         */
+     }
+@@ -1891,7 +1895,7 @@
+         return;
+     }
+ 
+-#ifdef DEBUG  
++#ifdef DEBUG
+     /*
+     if (descriptor>1)
+       con << "SMT " << descriptor << "\n";
+@@ -1930,23 +1934,23 @@
+         /*
+           if (sn_Connections[].rate_control[peer]>0)
+           send_collected(peer);
+-            
++
+           unsigned short *b=new (unsigned short)[data.Len()+3];
+-            
++
+           b[0]=htons(descriptor);
+           b[1]=htons(messageID);
+           b[2]=htons(data.Len());
+           int len=data.Len();
+           for(int i=0;i<len;i++)
+           b[3+i]=htons(data(i));
+-            
+-            
++
++
+           ANET_Write(sn_Connections[].socket[peer],(int8 *)b,
+           2*(data.Len()+3),&peers[peer]);
+-            
++
+           //std::cerr << "Sent " << 2*len+6 << " bytes.\n";
+           sn_Connections[].rate_control[peer]-=2*(len+3)+OVERHEAD;
+-            
++
+           delete b;
+         */
+ 
+@@ -2023,8 +2027,8 @@
+     // the growing buffer we read messages into
+     const int serverMaxAcceptedSize=2000;
+     static tArray< unsigned short > storage(2000);
+-    int maxrec = storage.Len();
+-    unsigned short * buff = &storage[0];
++    int maxrec = 0; maxrec = storage.Len();
++    unsigned short * buff = 0; buff = &storage[0];
+ 
+     // short buff[maxrec];
+     if (sn_Connections[peer].socket){
+@@ -2380,7 +2384,7 @@
+                 sn_Listen( net_hostport, tString( "ANY" ) ) ||         // second try: bind to generic IP
+                 sn_Listen( net_hostport, tString( "ALL" ) );           // last try: bind to all available IPs
+ 
+-#ifdef DEDICATED                
++#ifdef DEDICATED
+                 // save host port that worked, otherwise it may change from the port sent to the master server
+                 sn_serverPort = net_hostport;
+ #endif
+Index: src/network/nKrawall.cpp
+===================================================================
+--- src/network/nKrawall.cpp	(revision 4613)
++++ src/network/nKrawall.cpp	(revision 8573)
+@@ -44,6 +44,7 @@
+ 
+ #include <stdlib.h>
+ #include <string>
++#include <string.h>
+ 
+ bool nKrawall::MayRequirePassword(tString& adress, unsigned int port)
+ {
+Index: src/network/nNetwork.h
+===================================================================
+--- src/network/nNetwork.h	(revision 4613)
++++ src/network/nNetwork.h	(revision 8573)
+@@ -36,6 +36,7 @@
+ #include "nObserver.h"
+ //#include "tCrypt.h"
+ #include "tException.h"
++#include <memory>
+ 
+ class nSocket;
+ class nAddress;
+Index: src/network/nAuthentification.cpp
+===================================================================
+--- src/network/nAuthentification.cpp	(revision 4613)
++++ src/network/nAuthentification.cpp	(revision 8573)
+@@ -35,6 +35,7 @@
+ 
+ #include <memory>
+ #include <string>
++#include <string.h>
+ 
+ static nAuthentification::UserPasswordCallback* S_UserPasswordCallback = NULL;
+ static nAuthentification::LoginResultCallback*  S_LoginResultCallback  = NULL;
+Index: src/network/nConfig.cpp
+===================================================================
+--- src/network/nConfig.cpp	(revision 4613)
++++ src/network/nConfig.cpp	(revision 8573)
+@@ -30,6 +30,7 @@
+ #include "tConsole.h"
+ #include "tSysTime.h"
+ #include <set>
++#include <string.h>
+ 
+ nConfItemBase::nConfItemBase()
+         :tConfItemBase(""), lastChangeTime_(-10000), lastChangeMessage_(0), watcher_(0){}
+@@ -377,7 +378,7 @@
+         , reverted_( false )
+         , group_( c )
+         , overrideGroupBehavior_( Behavior_Default )
+-        , overrideGroupBehaviorConf_( item.GetTitle() + "_OVERRIDE", reinterpret_cast< int & >( overrideGroupBehavior_ ) )
++        , overrideGroupBehaviorConf_( item.GetTitle() + "_OVERRIDE", overrideGroupBehavior_ )
+ {
+     sn_StrongWatchersAddRef();
+     sn_GetStrongWatchers().insert(this);
+@@ -587,18 +588,18 @@
+ 
+ static nConfItemVersionWatcher::Behavior sn_GroupBehaviors[ nConfItemVersionWatcher::Group_Max ] =
+     {
+-        nConfItemVersionWatcher::Behavior_Block,
+-        nConfItemVersionWatcher::Behavior_Block,
+-        nConfItemVersionWatcher::Behavior_Nothing,
+-        nConfItemVersionWatcher::Behavior_Block,
+-        nConfItemVersionWatcher::Behavior_Nothing,
++        Behavior_Block,
++        Behavior_Block,
++        Behavior_Nothing,
++        Behavior_Block,
++        Behavior_Nothing,
+     };
+ 
+-static tSettingItem< int > sn_GroupBehaviorBreaks( "SETTING_LEGACY_BEHAVIOR_BREAKING", reinterpret_cast< int & >( sn_GroupBehaviors[ nConfItemVersionWatcher::Group_Breaking] ) );
+-static tSettingItem< int > sn_GroupBehaviorBumpy( "SETTING_LEGACY_BEHAVIOR_BUMPY", reinterpret_cast< int & >( sn_GroupBehaviors[ nConfItemVersionWatcher::Group_Bumpy] ) );
+-static tSettingItem< int > sn_GroupBehaviorAnnoyance( "SETTING_LEGACY_BEHAVIOR_ANNOYING", reinterpret_cast< int & >( sn_GroupBehaviors[ nConfItemVersionWatcher::Group_Annoying] ) );
+-static tSettingItem< int > sn_GroupBehaviorCheat( "SETTING_LEGACY_BEHAVIOR_CHEATING", reinterpret_cast< int & >( sn_GroupBehaviors[ nConfItemVersionWatcher::Group_Cheating] ) );
+-static tSettingItem< int > sn_GroupBehaviorDisplay( "SETTING_LEGACY_BEHAVIOR_VISUAL", reinterpret_cast< int & >( sn_GroupBehaviors[ nConfItemVersionWatcher::Group_Visual] ) );
++static tSettingItem< nConfItemVersionWatcher::Behavior > sn_GroupBehaviorBreaks( "SETTING_LEGACY_BEHAVIOR_BREAKING", sn_GroupBehaviors[ nConfItemVersionWatcher::Group_Breaking] );
++static tSettingItem< nConfItemVersionWatcher::Behavior > sn_GroupBehaviorBumpy( "SETTING_LEGACY_BEHAVIOR_BUMPY", sn_GroupBehaviors[ nConfItemVersionWatcher::Group_Bumpy] );
++static tSettingItem< nConfItemVersionWatcher::Behavior > sn_GroupBehaviorAnnoyance( "SETTING_LEGACY_BEHAVIOR_ANNOYING", sn_GroupBehaviors[ nConfItemVersionWatcher::Group_Annoying] );
++static tSettingItem< nConfItemVersionWatcher::Behavior > sn_GroupBehaviorCheat( "SETTING_LEGACY_BEHAVIOR_CHEATING", sn_GroupBehaviors[ nConfItemVersionWatcher::Group_Cheating] );
++static tSettingItem< nConfItemVersionWatcher::Behavior > sn_GroupBehaviorDisplay( "SETTING_LEGACY_BEHAVIOR_VISUAL", sn_GroupBehaviors[ nConfItemVersionWatcher::Group_Visual] );
+ 
+ // *******************************************************************************************
+ // *
+Index: src/network/md5.cpp
+===================================================================
+--- src/network/md5.cpp	(revision 4613)
++++ src/network/md5.cpp	(revision 8573)
+@@ -78,6 +78,7 @@
+ 
+ #include <string>
+ #include <memory>
++#include <string.h>
+ 
+ #ifdef TEST
+ /*
+Index: src/network/nConfig.h
+===================================================================
+--- src/network/nConfig.h	(revision 4613)
++++ src/network/nConfig.h	(revision 8573)
+@@ -210,6 +210,18 @@
+     virtual void ReadVal(std::istream &s);
+ };
+ 
++//! how we react on a client with a version incompatible with a setting
++enum nConfigItemBehavior
++{
++    Behavior_Nothing = 0, //!< do nothing, let client on
++    Behavior_Revert = 1,  //!< revert setting to default value
++    Behavior_Block = 2,   //!< don't let the client play at all
++    Behavior_Default = 3  //!< do whatever someone else says
++};
++
++class nConfItemVersionWatcher;
++tCONFIG_ENUM( nConfigItemBehavior );
++
+ //! configuration item watcher that shuts out clients that don't support a certain interface
+ class nConfItemVersionWatcher: public nIConfItemWatcher
+ {
+@@ -226,14 +238,7 @@
+         Group_Max
+     };
+ 
+-    //! how we react on a client with a version incompatible with a setting
+-    enum Behavior
+-    {
+-        Behavior_Nothing = 0, //!< do nothing, let client on
+-        Behavior_Revert = 1,  //!< revert setting to default value
+-        Behavior_Block = 2,   //!< don't let the client play at all
+-        Behavior_Default = 3  //!< do whatever someone else says
+-    };
++    typedef nConfigItemBehavior Behavior;
+ 
+     nConfItemVersionWatcher( nConfItemBase & item, Group group, int min, int max = -1 );          //!< constructor
+     virtual ~nConfItemVersionWatcher();                      //!< destructor
+@@ -255,7 +260,7 @@
+ 
+     Group group_;                                            //!< class of incompatibility
+     Behavior overrideGroupBehavior_;                         //!< if set, the global behavior for the class gets ignored
+-    tSettingItem< int > overrideGroupBehaviorConf_;          //!< setting item for override
++    tSettingItem< Behavior > overrideGroupBehaviorConf_;     //!< setting item for override
+ };
+ 
+ //! convenience helper class: setting item and version watcher combined
+Index: src/tools/tArray.cpp
+===================================================================
+--- src/tools/tArray.cpp	(revision 4613)
++++ src/tools/tArray.cpp	(revision 8573)
+@@ -33,6 +33,7 @@
+ #include <stdlib.h>
+ #include <string>
+ #include "tArray.h"
++#include <string.h>
+ 
+ void GrowingArrayBase::ComplainIfFull(){
+     if (Len()>0)
+Index: src/tools/tError.cpp
+===================================================================
+--- src/tools/tError.cpp	(revision 4613)
++++ src/tools/tError.cpp	(revision 8573)
+@@ -27,6 +27,8 @@
+ 
+ #include "config.h"
+ #include <iostream>
++#include <string.h>
++#include <cstdlib>
+ #if HAVE_UNISTD_H
+ #include <unistd.h>
+ #endif
+Index: src/tools/tCommandLine.h
+===================================================================
+--- src/tools/tCommandLine.h	(revision 4613)
++++ src/tools/tCommandLine.h	(revision 8573)
+@@ -62,8 +62,8 @@
+ struct tCommandLineParser
+ {
+ public:
+-    bool GetSwitch( char const * option, char * option_short=NULL );                      //! Tests whether the current argument is the given switch
+-    bool GetOption( tString & target, char const * option, char * option_short=NULL );    //! Tests whether the current argument is the given option and extracts the value
++    bool GetSwitch( char const * option, char const * option_short=NULL );                      //! Tests whether the current argument is the given switch
++    bool GetOption( tString & target, char const * option, char const * option_short=NULL );    //! Tests whether the current argument is the given option and extracts the value
+ 
+     bool End() const;                                                                     //! Tests whether the command line parsing is done
+ 
+Index: src/tools/tConfiguration.cpp
+===================================================================
+--- src/tools/tConfiguration.cpp	(revision 4613)
++++ src/tools/tConfiguration.cpp	(revision 8573)
+@@ -42,6 +42,7 @@
+ #include "tCommandLine.h"
+ 
+ #include <vector>
++#include <string.h>
+ 
+ /***********************************************************************
+  * The new Configuration interface, currently not completely implemented
+Index: src/tools/tMemManager.cpp
+===================================================================
+--- src/tools/tMemManager.cpp	(revision 4613)
++++ src/tools/tMemManager.cpp	(revision 8573)
+@@ -197,7 +197,7 @@
+ #endif
+ 
+ 
+-static char *leakname="leak.log";
++static char const *leakname="leak.log";
+ static bool checkleaks=true;
+ static const char *fileName="XXX";
+ static const char *classname="XXX";
+Index: src/tools/tRandom.cpp
+===================================================================
+--- src/tools/tRandom.cpp	(revision 4613)
++++ src/tools/tRandom.cpp	(revision 8573)
+@@ -36,6 +36,7 @@
+ 
+ #include    "tError.h"
+ #include    "tRecorder.h"
++#include    <cstdlib>
+ 
+ #undef 	INLINE_DEF
+ #define INLINE_DEF
+Index: src/tools/tCommandLine.cpp
+===================================================================
+--- src/tools/tCommandLine.cpp	(revision 4613)
++++ src/tools/tCommandLine.cpp	(revision 8573)
+@@ -219,7 +219,7 @@
+ //!
+ // *******************************************************************************************
+ 
+-bool tCommandLineParser::GetSwitch( char const * option, char * option_short )
++bool tCommandLineParser::GetSwitch( char const * option, char const * option_short )
+ {
+     if ( End() )
+         return false;
+@@ -248,7 +248,7 @@
+ //!
+ // *******************************************************************************************
+ 
+-bool tCommandLineParser::GetOption( tString & target, char const * option, char * option_short )
++bool tCommandLineParser::GetOption( tString & target, char const * option, char const * option_short )
+ {
+     if ( End() )
+         return false;
+Index: src/tools/tError.h
+===================================================================
+--- src/tools/tError.h	(revision 4613)
++++ src/tools/tError.h	(revision 8573)
+@@ -36,11 +36,12 @@
+ #include <sstream>
+ #include <iosfwd>
+ #include <string>
++#include <string.h>
+ #if HAVE_UNISTD_H
+ #include <unistd.h>
+ #endif
+ 
+-#define tVERIFY( x ) { if ( !( x ) ){ char* mess = "Assertion " #x " failed";  tERR_ERROR_INT( mess ); } }
++#define tVERIFY( x ) { if ( !( x ) ){ char const * mess = "Assertion " #x " failed";  tERR_ERROR_INT( mess ); } }
+ 
+ #ifdef DEBUG
+ 
+@@ -60,9 +61,9 @@
+ 
+ #define tERR_FLOW_LOW() if(st_debugValid(very_low,flow)) std::cout  <<  std::setw(30) << __PRETTY_FUNCTION__  << '\n'
+ 
+-#define tASSERT( x ) { if ( !( x ) ){ char* mess = "Assertion " #x " failed";  tERR_ERROR_INT( mess ); } }
++#define tASSERT( x ) { if ( !( x ) ){ char const * mess = "Assertion " #x " failed";  tERR_ERROR_INT( mess ); } }
+ 
+-#define tASSERT_EVAL( x ) { if ( !( x ) ){ char* mess = "Assertion " #x " failed";  tERR_ERROR_INT( mess ); } }
++#define tASSERT_EVAL( x ) { if ( !( x ) ){ char const * mess = "Assertion " #x " failed";  tERR_ERROR_INT( mess ); } }
+ 
+ #else  /* DEBUG */
+ #define tERR_DUMP(level,stream,stuff) 
+Index: src/tools/tCrypt.cpp
+===================================================================
+--- src/tools/tCrypt.cpp	(revision 4613)
++++ src/tools/tCrypt.cpp	(revision 8573)
+@@ -29,6 +29,7 @@
+ #include "tMemManager.h"
+ 
+ #include <string>
++#include <string.h>
+ 
+ class tCryptDummy: public tCrypt
+ {
+Index: src/engine/ePlayer.cpp
+===================================================================
+--- src/engine/ePlayer.cpp	(revision 4613)
++++ src/engine/ePlayer.cpp	(revision 8573)
+@@ -497,7 +497,7 @@
+ 
+ 
+ 
+-static char *default_instant_chat[]=
++static char const * default_instant_chat[]=
+     {"/team \\",
+      "/msg \\",
+      "/me \\",
+Index: src/engine/eTeam.cpp
+===================================================================
+--- src/engine/eTeam.cpp	(revision 4613)
++++ src/engine/eTeam.cpp	(revision 8573)
+@@ -45,7 +45,7 @@
+       {  7,  7,  7 }   // black
+     };
+ 
+-static char* se_team_name[TEAMCOLORS]=
++static char const * se_team_name[TEAMCOLORS]=
+     {
+         "$team_name_blue",
+         "$team_name_gold",
+Index: src/defs.h
+===================================================================
+--- src/defs.h	(revision 4613)
++++ src/defs.h	(revision 8573)
+@@ -39,6 +39,15 @@
+ #include <math.h>
+ #include <iosfwd>
+ 
++// Includes required for GCC 4.3 only. Remove them as soon as some of 
++// us developers have GCC 4.3, then it is of course better to only put them
++// where they are needed.
++#include <string.h>
++#include <memory>
++#include <typeinfo>
++#include <cstdlib>
++// end of GCC 4.3 includes
++
+ // maximum number of supported viewports
+ #ifndef MAX_VIEWERS
+ #define MAX_VIEWERS 4
+Index: src/ui/uInput.cpp
+===================================================================
+--- src/ui/uInput.cpp	(revision 4613)
++++ src/ui/uInput.cpp	(revision 8573)
+@@ -344,7 +344,7 @@
+ //  Menuitem for input selection
+ // *****************************************************
+ 
+-static char *keyname(int sym){
++static char const * keyname(int sym){
+ #ifndef DEDICATED
+     if (sym<=SDLK_LAST)
+         return SDL_GetKeyName(static_cast<SDLKey>(sym));
+@@ -716,7 +716,7 @@
+ // Player binds
+ // *****************
+ 
+-static char *Player_keyword="PLAYER_BIND";
++static char const * Player_keyword="PLAYER_BIND";
+ 
+ uBindPlayer::uBindPlayer(uAction *a,int p):uBind(a),ePlayer(p){}
+ 
+Index: accustomdir.m4
+===================================================================
+--- accustomdir.m4	(revision 4613)
++++ accustomdir.m4	(revision 8573)
+@@ -3,6 +3,11 @@
+ m4_define([_m4_divert(PARSE_ARGS_MOREOPTS)], 19)
+ #m4_define([_m4_divert(PARSE_ARGS)],      20)
+ 
++# old versions of autoconf define _AC_SRCPATHS, new (2.60 and later) use _AC_SRCDIRS.
++# map the old macro to the new one.
++m4_pattern_allow([_AC_SRCDIRS])
++m4_ifdef([_AC_SRCDIRS],,[m4_define([_AC_SRCDIRS],[_AC_SRCPATHS([$1])])])
++
+ # _AC_INIT_PARSE_ARGS
+ # -------------------
+ m4_define([_AC_INIT_PARSE_ARGS],
+@@ -549,7 +554,7 @@
+   ac_popdir=`pwd`
+   for ac_dir in : $ac_subdirs_all; do test "x$ac_dir" = x: && continue
+     test -d $ac_dir || continue
+-    _AC_SRCPATHS(["$ac_dir"])
++    _AC_SRCDIRS(["$ac_dir"])
+     cd $ac_dir
+     # Check for guested configure; otherwise get Cygnus style configure.
+     if test -f $ac_srcdir/configure.gnu; then

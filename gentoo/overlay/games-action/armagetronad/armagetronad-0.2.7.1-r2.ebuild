@@ -65,6 +65,7 @@ src_unpack() {
 	cd "${S}"
 	epatch "${FILESDIR}"/${P}-gcc4.patch
 	epatch "${FILESDIR}"/${P}-security-1.patch
+	epatch "${FILESDIR}"/${P}-gcc43.patch
 }
 
 aabuild() {

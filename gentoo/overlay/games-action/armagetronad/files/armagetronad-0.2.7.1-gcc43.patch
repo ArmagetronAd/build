@@ -1,0 +1,157 @@
+Index: src/tools/tDirectories.cpp
+===================================================================
+--- src/tools/tDirectories.cpp	(revision 8577)
++++ src/tools/tDirectories.cpp	(revision 8578)
+@@ -37,6 +37,7 @@
+ #endif
+ 
+ #include <dirent.h>
++#include <string.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #ifdef WIN32
+Index: src/tools/tArray.cpp
+===================================================================
+--- src/tools/tArray.cpp	(revision 8577)
++++ src/tools/tArray.cpp	(revision 8578)
+@@ -31,6 +31,7 @@
+ #include <iostream>
+ #include <stdlib.h>
+ #include <string>
++#include <string.h>
+ #include "tArray.h"
+ 
+ void GrowingArrayBase::ComplainIfFull(){
+Index: src/tools/tError.cpp
+===================================================================
+--- src/tools/tError.cpp	(revision 8577)
++++ src/tools/tError.cpp	(revision 8578)
+@@ -25,6 +25,7 @@
+ 
+ */
+ 
++#include <cstdlib>
+ #include <iostream>
+ #ifndef WIN32
+ #include <unistd.h>
+Index: src/tools/tLocale.cpp
+===================================================================
+--- src/tools/tLocale.cpp	(revision 8577)
++++ src/tools/tLocale.cpp	(revision 8578)
+@@ -32,6 +32,7 @@
+ 
+ #include <fstream>
+ #include <string>
++#include <string.h>
+ 
+ class tLocaleSubItem; // identifies a single string in a single language
+ 
+Index: src/tools/tConfiguration.cpp
+===================================================================
+--- src/tools/tConfiguration.cpp	(revision 8577)
++++ src/tools/tConfiguration.cpp	(revision 8578)
+@@ -32,6 +32,7 @@
+ #include <stdlib.h>
+ #include <ctype.h>
+ #include <string>
++#include <string.h>
+ #include "tString.h"
+ #include "tToDo.h"
+ #include "tConsole.h"
+Index: src/tools/tCrypt.cpp
+===================================================================
+--- src/tools/tCrypt.cpp	(revision 8577)
++++ src/tools/tCrypt.cpp	(revision 8578)
+@@ -29,6 +29,7 @@
+ #include "tMemManager.h"
+ 
+ #include <string>
++#include <string.h>
+ 
+ class tCryptDummy: public tCrypt
+ {
+Index: src/tools/tString.cpp
+===================================================================
+--- src/tools/tString.cpp	(revision 8577)
++++ src/tools/tString.cpp	(revision 8578)
+@@ -30,6 +30,7 @@
+ #include "tLocale.h"
+ #include <ctype.h>
+ #include <string>
++#include <string.h>
+ #include <iostream>
+ 
+ 
+Index: src/network/nServerInfo.cpp
+===================================================================
+--- src/network/nServerInfo.cpp	(revision 8577)
++++ src/network/nServerInfo.cpp	(revision 8578)
+@@ -42,6 +42,7 @@
+ #include "nNet.h"
+ 
+ #include <fstream>
++#include <string.h>
+ 
+ static nServerInfo*          sn_FirstServer = NULL;
+ static sn_ServerInfoCreator* sn_Creator     = NULL;
+Index: src/network/nKrawall.cpp
+===================================================================
+--- src/network/nKrawall.cpp	(revision 8577)
++++ src/network/nKrawall.cpp	(revision 8578)
+@@ -43,6 +43,7 @@
+ 
+ #include <stdlib.h>
+ #include <string>
++#include <string.h>
+ 
+ bool nKrawall::MayRequirePassword(tString& adress, unsigned int port)
+ {
+Index: src/network/net_udp.cpp
+===================================================================
+--- src/network/net_udp.cpp	(revision 8577)
++++ src/network/net_udp.cpp	(revision 8578)
+@@ -24,6 +24,7 @@
+ #include "nNet.h"
+ 
+ #include <string>
++#include <string.h>
+ #include <stdio.h>
+ 
+ #include <sys/types.h>
+Index: src/network/nAuthentification.cpp
+===================================================================
+--- src/network/nAuthentification.cpp	(revision 8577)
++++ src/network/nAuthentification.cpp	(revision 8578)
+@@ -35,6 +35,7 @@
+ 
+ #include <memory>
+ #include <string>
++#include <string.h>
+ 
+ static nAuthentification::UserPasswordCallback* S_UserPasswordCallback = NULL;
+ static nAuthentification::LoginResultCallback*  S_LoginResultCallback  = NULL;
+Index: src/network/nConfig.cpp
+===================================================================
+--- src/network/nConfig.cpp	(revision 8577)
++++ src/network/nConfig.cpp	(revision 8578)
+@@ -25,6 +25,8 @@
+ 
+ */
+ 
++#include <string.h>
++
+ #include "nConfig.h"
+ #include "tConsole.h"
+ 
+Index: src/network/md5.cpp
+===================================================================
+--- src/network/md5.cpp	(revision 8577)
++++ src/network/md5.cpp	(revision 8578)
+@@ -77,6 +77,7 @@
+ #include "md5.h"
+ 
+ #include <string>
++#include <string.h>
+ #include <memory>
+ 
+ #ifdef TEST

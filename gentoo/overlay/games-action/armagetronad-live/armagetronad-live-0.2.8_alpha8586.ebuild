@@ -118,7 +118,6 @@ aabuild() {
 		--enable-etc \
 		--disable-restoreold \
 		--disable-games \
-		$(use_enable auth armathentication) \
 		$(use_enable respawn) \
 		--enable-uninstall="emerge --clean =${CATEGORY}/${PF}" \
 		"${@:2}" || die "egamesconf($1) failed"
@@ -140,7 +139,11 @@ src_compile() {
 	fi
 	if ${build_server}; then
 		einfo "Building dedicated server"
-		aabuild server --disable-glout  --enable-initscripts --disable-desktop
+		aabuild server \
+			--disable-glout \
+			--enable-initscripts \
+			$(use_enable auth armathentication) \
+			--disable-desktop
 	fi
 }
 

@@ -1,7 +1,12 @@
 EXPORT_FUNCTIONS pkg_postinst pkg_preinst src_unpack
 
 live_svn_currentrev() {
+	local RHome="$(
+	  unset HOME
+	  echo -n ~
+	)"
 	# NOTE: we use $(which sed) to pass QA checks
+	HOME="$RHome" \
 	LC_ALL=C svn info "${1}" |
 	 "$(which sed)" '
 		s,^Last Changed Rev: \([0-9]\+\)$,\1,

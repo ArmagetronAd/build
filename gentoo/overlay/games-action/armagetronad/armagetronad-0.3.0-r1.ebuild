@@ -41,7 +41,7 @@ GLDEPS="
 	media-libs/sdl-mixer
 	media-libs/jpeg
 	media-libs/libpng
-	media-libs/ftgl
+	<=media-libs/ftgl-2.1.2.9999
 "
 RDEPEND="
 	>=dev-libs/libxml2-2.6.11

@@ -28,7 +28,7 @@ SRC_URI="
 LICENSE="GPL-2"
 SLOT="live"
 KEYWORDS="amd64 ppc sparc x86"
-IUSE="auth debug dedicated linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es moviepack moviesounds opengl respawn"
+IUSE="auth debug dedicated linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es linguas_pl moviepack moviesounds opengl respawn"
 
 ESVN_PROJECT="${P/_*}"
 
@@ -200,12 +200,14 @@ src_install() {
 			use linguas_de ||
 			use linguas_fr ||
 			use linguas_es ||
+			use linguas_pl ||
 			false;
 		};
 	}; } &&
 		en_GB='true' en_US='true'
 	$en_US || rm -v "${LangDir}american.txt"
 	use linguas_es || rm -v "${LangDir}spanish.txt"
+	use linguas_pl || rm -v "${LangDir}polish.txt"
 	
 	# Ok, so we screwed up on doc installation... so for now, the ebuild does this manually
 	dohtml -r "${D}${GAMES_PREFIX}/share/doc/${GameDir}/html/"*

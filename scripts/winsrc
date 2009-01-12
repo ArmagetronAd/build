@@ -50,5 +50,5 @@ find $WINDIR -name "*.in" -exec rm \{\} \;
 find $WINDIR -name "*.am" -exec rm \{\} \;
 find $WINDIR -name "Makefile*" -exec rm \{\} \;
 find $WINDIR -name "*.ghost" -exec rm \{\} \;
-find $WINDIR -name "CVS" -depth -exec rm -rf \{\} \;
-find $WINDIR -name "*~" -depth -exec rm -rf \{\} \;
+find $WINDIR -depth -name "CVS" -exec rm -rf \{\} \;
+find $WINDIR -depth -name "*~" -exec rm -rf \{\} \;

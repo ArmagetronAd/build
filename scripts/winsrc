@@ -31,13 +31,14 @@ for f in ${WINDIR}/win32/*.nsi; do
     rm $f.in
 done
 
-# generate version.h
+# copy version file
+cp ${WINDIR}/src/tFakeVersion.h ${WINDIR}/src/tTrueVersion.h
+
+# append windows specific stuff
 WINVERSION=`echo $VERSION | sed -e 's/\./,/g' -e 's/_alpha/,/' -e 's/_beta/,/' -e 's/_rc/,/'`
 MINVERSION=`echo $VERSION | sed -e 's/^.*_/_/'`
-echo "#define MINOR_VERSION ${MINVERSION}"      >  ${WINDIR}/src/version.h
-echo "#define MAJOR_VERSION ${WINVERSION}"      >> ${WINDIR}/src/version.h
-echo "#define VERSION \"${VERSION}\""           >> ${WINDIR}/src/version.h
-echo "#define BUILD_DATE \"`date +%Y%m%d`\""    >> ${WINDIR}/src/version.h
+echo "#define MINOR_VERSION ${MINVERSION}"      >> ${WINDIR}/src/tTrueVersion.h
+echo "#define MAJOR_VERSION ${WINVERSION}"      >> ${WINDIR}/src/tTrueVersion.h
 
 # transcode to windows CR/LF line mode
 for suffix in bat nsi nsi.m4 cfg txt dsp dsw h cpp dtd xml; do

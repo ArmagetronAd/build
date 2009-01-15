@@ -367,7 +367,7 @@ upload:
 	# *****************************************
 	#
 
-	cd ${UPLOAD}; echo -e "cd incoming\nmput armagetron*\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\ny\nexit" | ftp -p upload.sf.net $*
+	cd ${UPLOAD}; rsync -avP -e ssh * z-man@frs.sourceforge.net:uploads/
 
 TOEMPTYLINE=sed -e "s,^$$,," -e "t q" -e "p" -e "d" -e ": q" -e "q"
 

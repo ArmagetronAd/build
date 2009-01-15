@@ -141,6 +141,8 @@ if test -z "$PACKAGER"; then
     PACKAGER=$USERNAME_AABETA
     if test -z "$PACKAGER"; then
         PACKAGER="Anonymous"	
+	WARNING=yes
+	echo "Warning, packager set to anonymous. Change to your simple name (no @)."
     fi
 fi
 
@@ -332,11 +334,6 @@ echo "OSTAG_AABETA=${OSTAG_AABETA}" >> make.conf
 echo "" >> make.conf
 
 echo " -> ${OSTAG_AABETA}"
-
-if echo $PACKAGER | grep -v "@" > /dev/null; then
-    echo -e "\nThe packager name is not an email address.\nYou may want to correct that by editing make.conf."
-    WARNING=yes
-fi
 
 if test "$WARNING" = no; then
     echo "Everything seems OK."

@@ -1,6 +1,5 @@
 # Copyright 1999-2006 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /cvsroot/armagetronad/armagetronad_build/gentoo/client.ebuild,v 1.24 2006/05/05 13:55:13 luke-jr Exp $
 
 inherit autotools flag-o-matic eutils games
 

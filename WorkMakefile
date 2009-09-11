@@ -49,6 +49,7 @@ UPLOAD=$(RCDIR)/Upload
 $(UPLOAD)/.tag: $(RCDIR)/.tag
 	test -d $(UPLOAD) || mkdir $(UPLOAD)
 	echo "" > $@
+	ln doc/releasenotes.txt $(UPLOAD)/
 
 # bump rc number
 bump:
@@ -368,7 +369,7 @@ upload:
 	# *****************************************
 	#
 
-	cd ${UPLOAD}; rsync -avP -e ssh * z-man@frs.sourceforge.net:uploads/
+	cd ${UPLOAD}; mkdir -p new/$(VERSION); rsync -avP -e ssh new z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/; rmdir new/$(VERSION); rmdir new; rsync -avP -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/new/$(VERSION)/
 
 TOEMPTYLINE=sed -e "s,^$$,," -e "t q" -e "p" -e "d" -e ": q" -e "q"
 

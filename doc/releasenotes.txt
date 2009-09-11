@@ -1,0 +1,6 @@
+This is a release candidate for Armagetron Advanced 0.2.8.3, which
+is planned to be our final release in the 0.2.8 and 0.2 series, apart
+from bugfixes and security updates, of course. 0.2.8.3 rounds the
+features of the 0.2 development series off with additions like the
+new authentication system for players, rendering performance improvements
+and better team management in the game.

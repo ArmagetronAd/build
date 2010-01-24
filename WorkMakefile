@@ -3,7 +3,7 @@
 # Last change by $Author$ on $Date$
 
 all: tarsource
-full: all rpm debian
+full: all rpm deb
 pack: tarsource webdoc windoc zipsource
 rpm-mdk: mandriva
 rpm-mdkded: mandriva-dedicated
@@ -336,7 +336,7 @@ debianbuild: $(DEBSOURCEDIR)
 	#
 	cd $<; debian/rules binary
 
-debian: debianbuild
+deb: debianbuild $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  harvesting debian package            *

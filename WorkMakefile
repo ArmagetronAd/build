@@ -344,6 +344,30 @@ deb: debianbuild $(UPLOAD)/.tag
 	#
 	find $(RCDIR) -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
 
+UBUNTUSOURCEDIR=$(SOURCEDIR)-ubuntu
+ubuntuprepare: $(UBUNTUSOURCEDIR)
+$(UBUNTUSOURCEDIR): $(SOURCEDIR)/.tag $(UPLOAD)
+	#
+	# *****************************************
+	# *  prepare ubuntu build                 *
+	# *****************************************
+	#
+	cp -ax $(SOURCEDIR) $@
+#   adapt the following line as ubuntu releases get updated
+	bzr pull -d ../ubuntu || bzr branch lp:ubuntu/lucid/armagetronad ../ubuntu
+	cp -ax ../ubuntu/debian $@/debian
+	chmod 755 $@/debian/rules
+#   build changelog
+	sed -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/$(VERSION)~ppa${RC}/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $@/debian/changelog
+	cat < ../ubuntu/debian/changelog >> $@/debian/changelog
+#	build debian package
+	cd $@; fakeroot debian/rules binary
+#   harvesting debian package(s)
+	find $(UBUNTUSOURCEDIR)/../ -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
+	touch $@/.tag
+
+ubuntu: $(UBUNTUSOURCEDIR)
+
 APFILE=$(RCDIR)/.package
 autopackage-client: $(APFILE).client
 autopackage-server: $(APFILE).server

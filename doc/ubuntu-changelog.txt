@@ -1,0 +1,7 @@
+@package@ (@version@) unstable; urgency=low
+
+  * just slapping the new upstream code around the ubuntu distribution files.
+
+ -- Manuel Moos <z-man@users.sf.net>  @date@
+ 
+ 

@@ -2,7 +2,7 @@
 
 # copies sources from CVS folder into given target folder
 
-# set -x
+set -x
 
 # read configuration
 . ./make.conf
@@ -41,10 +41,13 @@ fi
 mkdir -p $TARGET/distmaker
 lwd=`pwd`
 cd $TARGET/distmaker
-test -r config.h || docstyle=web $CWD/$AA_SOURCE/configure --prefix=/usr/local --disable-glout --enable-automakedefaults --disable-useradd --disable-etc --disable-initscripts || exit -1
+test -r config.h || progname=${PACKAGE} progtitle=${PROGNAME} docstyle=web $CWD/$AA_SOURCE/configure --prefix=/usr/local --disable-glout --enable-automakedefaults --disable-useradd --disable-etc --disable-initscripts || exit -1
 ${MAKE} distprep || exit -1
 ${MAKE} dist || exit -1
-mv *.tar.* ../
+tar -xzf *.tar.*
+mv armagetronad-${VERSION} ${PACKAGE}-${VERSION}
+tar -cf ../${PACKAGE}-${VERSION}.src.tar ${PACKAGE}-${VERSION}
+#mv *.tar.* ../
 cd ${lwd}
 
 # copy raw sources for later tagging

@@ -72,7 +72,7 @@ include $(RELEASETAGFILE)
 
 # build tarball
 INPUTTARBALLBASE=tarballs/$(PACKAGE)-$(VERSION).src.tar
-INPUTTARBALLBASE2=tarballs/$(PACKAGE)-$(VERSION).tar.gz
+#INPUTTARBALLBASE2=tarballs/armagetronad-$(VERSION).tar.gz
 TARBALLBASE=$(UPLOAD)/$(RCNAME).src.tar
 TARBALLGZ=$(TARBALLBASE).gz
 TARBALLBZ=$(TARBALLBASE).bz2
@@ -86,7 +86,7 @@ $(INPUTTARBALLBASE): $(wildcard $(INPUTTARBALLBASE).*)
 	# *****************************************
 	#
 	${TESTVERSION}
-	mv $(INPUTTARBALLBASE2) $(INPUTTARBALLBASE).gz || true
+#	mv $(INPUTTARBALLBASE2) $(INPUTTARBALLBASE).gz || true
 	if test -r $(INPUTTARBALLBASE).gz  && gzip -f -d $(INPUTTARBALLBASE).gz; then echo done; else rm -f $(INPUTTARBALLBASE).gz; fi
 	if test -r $(INPUTTARBALLBASE).bz2  && bzip2 -f -d $(INPUTTARBALLBASE).bz2; then echo done; else rm -f $(INPUTTARBALLBASE).bz2; fi
 	test -r $@ || { echo "Source tarball not found. Please rerun make." ; rm -rf  ${SOURCETAG} ${VERSIONTAG}; false; }

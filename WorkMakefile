@@ -344,29 +344,54 @@ deb: debianbuild $(UPLOAD)/.tag
 	#
 	find $(RCDIR) -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
 
-UBUNTUSOURCEDIR=$(SOURCEDIR)-ubuntu
-ubuntuprepare: $(UBUNTUSOURCEDIR)
-$(UBUNTUSOURCEDIR): $(SOURCEDIR)/.tag $(UPLOAD)
+
+DEBVERSION=$(subst _,~,${VERSION})~ppa${RC}
+UBUNTUSOURCEDIR=$(RCDIR)/$(PACKAGE)-$(DEBVERSION)
+$(UBUNTUSOURCEDIR)/.tag: $(SOURCEDIR)/.tag $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  prepare ubuntu build                 *
 	# *****************************************
 	#
-	cp -ax $(SOURCEDIR) $@
+	echo $(DEBVERSION)
+	cp -ax $(SOURCEDIR) $(UBUNTUSOURCEDIR)
 #   adapt the following line as ubuntu releases get updated
-	bzr pull -d ../ubuntu || bzr branch lp:ubuntu/lucid/armagetronad ../ubuntu
-	cp -ax ../ubuntu/debian $@/debian
-	chmod 755 $@/debian/rules
+	bzr pull -d ../ubuntu || bzr branch lp:ubuntu/armagetronad ../ubuntu
+	cp -ax ../ubuntu/debian $(UBUNTUSOURCEDIR)/debian
+	chmod 755 $(UBUNTUSOURCEDIR)/debian/rules
 #   build changelog
-	sed -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/$(VERSION)~ppa${RC}/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $@/debian/changelog
-	cat < ../ubuntu/debian/changelog >> $@/debian/changelog
-#	build debian package
-	cd $@; fakeroot debian/rules binary
-#   harvesting debian package(s)
-	find $(UBUNTUSOURCEDIR)/../ -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
-	touch $@/.tag
+	sed -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/${DEBVERSION}/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $(UBUNTUSOURCEDIR)/debian/changelog
+	cat < ../ubuntu/debian/changelog >> $(UBUNTUSOURCEDIR)/debian/changelog
+	touch $@
 
-ubuntu: $(UBUNTUSOURCEDIR)
+$(RCDIR)/ubuntu.tag: $(UBUNTUSOURCEDIR)/.tag
+	#
+	# *****************************************
+	# *  ubuntu build                         *
+	# *****************************************
+	#
+	cd $(UBUNTUSOURCEDIR); fakeroot debian/rules binary
+#   harvesting debian package(s)
+	find $(RCDIR) -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
+	touch $@
+
+ubuntu: $(RCDIR)/ubuntu.tag
+
+$(RCDIR)/${PACKAGE}_${DEBVERSION}_source.changes: $(UBUNTUSOURCEDIR)
+	#
+	# *****************************************
+	# *  preparing ubuntu source for ppa      *
+	# *****************************************
+	#
+	cd $(UBUNTUSOURCEDIR) && debuild -S -sa
+
+upload-ubuntu: $(RCDIR)/${PACKAGE}_${DEBVERSION}_source.changes
+	#
+	# *****************************************
+	# *  uploading ubuntu source to ppa       *
+	# *****************************************
+	#
+	cd $(RCDIR) && dput ${PACKAGE}_${DEBVERSION}_source.changes
 
 APFILE=$(RCDIR)/.package
 autopackage-client: $(APFILE).client

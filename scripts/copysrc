@@ -41,7 +41,7 @@ fi
 mkdir -p $TARGET/distmaker
 lwd=`pwd`
 cd $TARGET/distmaker
-test -r config.h || progname=${PACKAGE} progtitle=${PROGNAME} docstyle=web $CWD/$AA_SOURCE/configure --prefix=/usr/local --disable-glout --enable-automakedefaults --disable-useradd --disable-etc --disable-initscripts || exit -1
+test -r config.h || progname="${PACKAGE}" progtitle="${PROGNAME}" docstyle=web $CWD/$AA_SOURCE/configure --prefix=/usr/local --disable-glout --enable-automakedefaults --disable-useradd --disable-etc --disable-initscripts || exit -1
 ${MAKE} distprep || exit -1
 ${MAKE} dist || exit -1
 tar -xzf *.tar.*

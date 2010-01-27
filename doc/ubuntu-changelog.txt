@@ -1,4 +1,4 @@
-@package@ (@version@) unstable; urgency=low
+@package@ (@version@) karmic; urgency=low
 
   * just slapping the new upstream code around the ubuntu distribution files.
 

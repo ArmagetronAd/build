@@ -324,7 +324,10 @@ $(DEBSOURCEDIR): $(SOURCEDIR)/.tag
 	# *  prepare debian build                 *
 	# *****************************************
 	#
-	cp -ax $(SOURCEDIR) $@
+	mkdir -p $(RCDIR)/tmp
+	cd $(RCDIR)/tmp; tar -xf ../../../../$(INPUTTARBALLBASE)
+	mv $(RCDIR)/tmp/$(PACKAGE)-$(VERSION) $@
+	rmdir $(RCDIR)/tmp
 	cp -ax debian $@
 	chmod 755 $@/debian/rules
 
@@ -347,14 +350,17 @@ deb: debianbuild $(UPLOAD)/.tag
 
 DEBVERSION=$(subst _,~,${VERSION})~ppa${RC}
 UBUNTUSOURCEDIR=$(RCDIR)/$(PACKAGE)-$(DEBVERSION)
-$(UBUNTUSOURCEDIR)/.tag: $(SOURCEDIR)/.tag $(UPLOAD)/.tag
+$(UBUNTUSOURCEDIR)/.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  prepare ubuntu build                 *
 	# *****************************************
 	#
 	echo $(DEBVERSION)
-	cp -ax $(SOURCEDIR) $(UBUNTUSOURCEDIR)
+	mkdir -p $(RCDIR)/tmp2
+	cd $(RCDIR)/tmp2; tar -xf ../../../../$(INPUTTARBALLBASE)
+	mv $(RCDIR)/tmp2/$(PACKAGE)-$(VERSION) $(UBUNTUSOURCEDIR)
+	rmdir $(RCDIR)/tmp2
 #   adapt the following line as ubuntu releases get updated
 	bzr pull -d ../ubuntu || bzr branch lp:ubuntu/armagetronad ../ubuntu
 	cp -ax ../ubuntu/debian $(UBUNTUSOURCEDIR)/debian
@@ -377,7 +383,7 @@ $(RCDIR)/ubuntu.tag: $(UBUNTUSOURCEDIR)/.tag
 
 ubuntu: $(RCDIR)/ubuntu.tag
 
-$(RCDIR)/${PACKAGE}_${DEBVERSION}_source.changes: $(UBUNTUSOURCEDIR)
+$(RCDIR)/${PACKAGE}_${DEBVERSION}_source.changes: $(UBUNTUSOURCEDIR)/.tag
 	#
 	# *****************************************
 	# *  preparing ubuntu source for ppa      *

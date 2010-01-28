@@ -9,7 +9,7 @@ rpm-mdk: mandriva
 rpm-mdkded: mandriva-dedicated
 
 # everything z-man can build at home and work
-z-man-home: tarsource zipsource webdoc windoc autopackage
+z-man-home: tarsource zipsource webdoc windoc autopackage ubuntu-hardy
 z-man-work: autopackage-legacyserver autopackage-client
 
 # other builders are invited to add their build sets.
@@ -348,59 +348,72 @@ deb: debianbuild $(UPLOAD)/.tag
 	find $(RCDIR) -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
 
 
-DEBVERSION=$(subst _,~,${VERSION})~ppa${RC}
+DEBVERSION=$(subst _,~,${VERSION})~ppa
 UBUNTUSOURCEDIR=$(RCDIR)/$(PACKAGE)-$(DEBVERSION)
-$(UBUNTUSOURCEDIR)/.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
+$(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  prepare ubuntu build                 *
 	# *****************************************
 	#
-	rm -rf $(UBUNTUSOURCEDIR)
+	rm -rf $(UBUNTUSOURCEDIR)$*
 	mkdir -p $(RCDIR)/tmp2
 	cd $(RCDIR)/tmp2; tar -xf ../../../../$(INPUTTARBALLBASE)
-	mv $(RCDIR)/tmp2/$(PACKAGE)-$(VERSION) $(UBUNTUSOURCEDIR)
+	mv $(RCDIR)/tmp2/$(PACKAGE)-$(VERSION) $(UBUNTUSOURCEDIR)$*
 	rmdir $(RCDIR)/tmp2
 #   adapt the following line as ubuntu releases get updated
 	bzr pull -d ../ubuntu || bzr branch lp:ubuntu/armagetronad ../ubuntu
-	cp -ax ../ubuntu/debian $(UBUNTUSOURCEDIR)/debian
+	cp -ax ../ubuntu/debian $(UBUNTUSOURCEDIR)$*/debian
 #   rebrand package
 #	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\./armagetronad./g" > $(UBUNTUSOURCEDIR)/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
-	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" > $(UBUNTUSOURCEDIR)/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
-	chmod 755 $(UBUNTUSOURCEDIR)/debian/rules
+	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" > $(UBUNTUSOURCEDIR)$*/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
+	chmod 755 $(UBUNTUSOURCEDIR)$*/debian/rules
 #   build changelog
-	sed -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/${DEBVERSION}/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $(UBUNTUSOURCEDIR)/debian/changelog
-	cat < ../ubuntu/debian/changelog >> $(UBUNTUSOURCEDIR)/debian/changelog
-	touch $@
+	DIST="`echo $* | sed -e s/.*~//`"; test -z $$DIST && DIST=hardy; sed -e "s/@distribution@/$$DIST/g" -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/${DEBVERSION}$*/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $(UBUNTUSOURCEDIR)$*/debian/changelog
+	cat < ../ubuntu/debian/changelog >> $(UBUNTUSOURCEDIR)$*/debian/changelog
+	echo "x" > $@
 
-$(RCDIR)/ubuntu.tag: $(UBUNTUSOURCEDIR)/.tag
+$(RCDIR)/ubuntu%.tag: $(UBUNTUSOURCEDIR)%.tag
 	#
 	# *****************************************
 	# *  ubuntu build                         *
 	# *****************************************
 	#
-	cd $(UBUNTUSOURCEDIR); fakeroot debian/rules binary
+	cd $(UBUNTUSOURCEDIR)$*; fakeroot debian/rules binary
 #   harvesting debian package(s)
 	find $(RCDIR) -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
-	touch $@
+	echo "x" > $@
 
-ubuntu: $(RCDIR)/ubuntu.tag
+xubuntu-build-%: $(RCDIR)/ubuntu%.tag
+	echo $@
 
-$(RCDIR)/${PACKAGE}_${DEBVERSION}_source.changes: $(UBUNTUSOURCEDIR)/.tag
-	#
-	# *****************************************
-	# *  preparing ubuntu source for ppa      *
-	# *****************************************
-	#
-	cd $(UBUNTUSOURCEDIR) && debuild -S -sa
+#real targets for the user
+ubuntu: xubuntu-build-$(RC)
+	echo $@
+ubuntu-%: xubuntu-build-$(RC)~%
+	echo $@
 
-upload-ubuntu: $(RCDIR)/${PACKAGE}_${DEBVERSION}_source.changes
+$(RCDIR)/${PACKAGE}_${DEBVERSION}%_source.changes: $(UBUNTUSOURCEDIR)%.tag
 	#
-	# *****************************************
-	# *  uploading ubuntu source to ppa       *
-	# *****************************************
+	# ************************************
+	# *  preparing ubuntu source for ppa *
+	# ************************************
 	#
-	cd $(RCDIR) && dput ${PACKAGE}_${DEBVERSION}_source.changes
+	cd $(UBUNTUSOURCEDIR)$* && debuild -S -sa
+
+xupload-ubuntu-%: $(RCDIR)/${PACKAGE}_${DEBVERSION}%_source.changes
+	#
+	# ***********************************
+	# *  uploading ubuntu source to ppa *
+	# ***********************************
+	#
+	cd $(RCDIR) && dput ${PACKAGE}_${DEBVERSION}$*_source.changes
+
+#real targets for the user
+upload-ubuntu: xupload-ubuntu-$(RC)
+	echo $@
+upload-ubuntu-%: xupload-ubuntu-$(RC)~%
+	echo $@
 
 APFILE=$(RCDIR)/.package
 autopackage-client: $(APFILE).client

@@ -356,7 +356,7 @@ $(UBUNTUSOURCEDIR)/.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	# *  prepare ubuntu build                 *
 	# *****************************************
 	#
-	echo $(DEBVERSION)
+	rm -rf $(UBUNTUSOURCEDIR)
 	mkdir -p $(RCDIR)/tmp2
 	cd $(RCDIR)/tmp2; tar -xf ../../../../$(INPUTTARBALLBASE)
 	mv $(RCDIR)/tmp2/$(PACKAGE)-$(VERSION) $(UBUNTUSOURCEDIR)
@@ -364,6 +364,9 @@ $(UBUNTUSOURCEDIR)/.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 #   adapt the following line as ubuntu releases get updated
 	bzr pull -d ../ubuntu || bzr branch lp:ubuntu/armagetronad ../ubuntu
 	cp -ax ../ubuntu/debian $(UBUNTUSOURCEDIR)/debian
+#   rebrand package
+#	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\./armagetronad./g" > $(UBUNTUSOURCEDIR)/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
+	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" > $(UBUNTUSOURCEDIR)/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
 	chmod 755 $(UBUNTUSOURCEDIR)/debian/rules
 #   build changelog
 	sed -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/${DEBVERSION}/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $(UBUNTUSOURCEDIR)/debian/changelog

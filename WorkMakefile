@@ -369,7 +369,7 @@ $(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" > $(UBUNTUSOURCEDIR)$*/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
 	chmod 755 $(UBUNTUSOURCEDIR)$*/debian/rules
 #   build changelog
-	DIST="`echo $* | sed -e s/.*~//`"; test -z $$DIST && DIST=hardy; sed -e "s/@distribution@/$$DIST/g" -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/${DEBVERSION}$*/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $(UBUNTUSOURCEDIR)$*/debian/changelog
+	DIST="`echo $* | sed -e s/^[0-9]*// -e s/.*~//`"; test -z $$DIST && DIST=hardy; sed -e "s/@distribution@/$$DIST/g" -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/${DEBVERSION}$*/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $(UBUNTUSOURCEDIR)$*/debian/changelog
 	cat < ../ubuntu/debian/changelog >> $(UBUNTUSOURCEDIR)$*/debian/changelog
 	echo "x" > $@
 

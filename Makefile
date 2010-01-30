@@ -43,6 +43,8 @@ distclean: wipe
 	#
 	rm -f make.conf
 
+sinclude make.conf
+
 sourcechange:
 	#
 	# *****************************************
@@ -50,4 +52,6 @@ sourcechange:
 	# *****************************************
 	#
 	rm -f tarballs/.sourcetag tarballs/*.tar*
+	cd $(AA_SOURCE) && rm -f src/doc/commands.txt && ./bootstrap.sh
+	cd tarballs/distmaker && rm armagetronad-* -rf && rm $(PACKAGE)-* -rf  && ./config.status --recheck
 

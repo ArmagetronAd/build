@@ -28,10 +28,6 @@ $(SOURCETAG):
 
 sinclude $(SOURCETAG)
 
-resource:
-	rm -f $(SOURCETAG)
-	make $(SOURCETAG)
-
 VERSIONTAG=builds/.versionfile
 
 # dummy values; should be overwritten later by include files

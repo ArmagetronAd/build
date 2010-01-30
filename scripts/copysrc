@@ -13,15 +13,11 @@ VERSION=$2
 # generate automatic files
 CWD=`pwd`
 if test -z "$VERSION"; then
-    if test -r $AA_SOURCE/version && test -r $AA_SOURCE/configure && test -r $AA_SOURCE/ChangeLog ; then
-        echo "No bootstrap required."
-    else
-        # bootstrap
-        lwd=`pwd`
-        cd $AA_SOURCE
-        sh ./bootstrap.sh || exit -1
-        cd ${lwd}
-    fi
+    # bootstrap
+    lwd=`pwd`
+    cd $AA_SOURCE
+    sh ./bootstrap.sh || exit -1
+    cd ${lwd}
         
     # adapt version to source
     VERSION=`sed -e 's,.*\[,,' -e 's,\].*,,'  < $AA_SOURCE/version`

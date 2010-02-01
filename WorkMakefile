@@ -3,7 +3,7 @@
 # Last change by $Author$ on $Date$
 
 all: tarsource
-full: all rpm debian
+full: all rpm deb
 pack: tarsource webdoc windoc zipsource
 rpm-mdk: mandriva
 rpm-mdkded: mandriva-dedicated
@@ -13,7 +13,7 @@ rpm-mdkded: mandriva-dedicated
 include IncludesMakefile3
 
 # everything z-man can build at home and work
-z-man-home: tarsource zipsource webdoc windoc autopackage
+z-man-home: tarsource zipsource webdoc windoc autopackage ubuntu-hardy
 z-man-work: autopackage-legacyserver autopackage-client
 
 # other builders are invited to add their build sets.
@@ -71,7 +71,7 @@ include $(RELEASETAGFILE)
 
 # build tarball
 INPUTTARBALLBASE=tarballs/$(PACKAGE)-$(VERSION).src.tar
-INPUTTARBALLBASE2=tarballs/$(PACKAGE)-$(VERSION).tar.gz
+#INPUTTARBALLBASE2=tarballs/armagetronad-$(VERSION).tar.gz
 TARBALLBASE=$(UPLOAD)/$(RCNAME).src.tar
 TARBALLGZ=$(TARBALLBASE).gz
 TARBALLBZ=$(TARBALLBASE).bz2
@@ -85,7 +85,7 @@ $(INPUTTARBALLBASE): $(wildcard $(INPUTTARBALLBASE).*)
 	# *****************************************
 	#
 	${TESTVERSION}
-	mv $(INPUTTARBALLBASE2) $(INPUTTARBALLBASE).gz || true
+#	mv $(INPUTTARBALLBASE2) $(INPUTTARBALLBASE).gz || true
 	if test -r $(INPUTTARBALLBASE).gz  && gzip -f -d $(INPUTTARBALLBASE).gz; then echo done; else rm -f $(INPUTTARBALLBASE).gz; fi
 	if test -r $(INPUTTARBALLBASE).bz2  && bzip2 -f -d $(INPUTTARBALLBASE).bz2; then echo done; else rm -f $(INPUTTARBALLBASE).bz2; fi
 	test -r $@ || { echo "Source tarball not found. Please rerun make." ; rm -rf  ${SOURCETAG} ${VERSIONTAG}; false; }
@@ -323,7 +323,10 @@ $(DEBSOURCEDIR): $(SOURCEDIR)/.tag
 	# *  prepare debian build                 *
 	# *****************************************
 	#
-	cp -ax $(SOURCEDIR) $@
+	mkdir -p $(RCDIR)/tmp
+	cd $(RCDIR)/tmp; tar -xf ../../../../$(INPUTTARBALLBASE)
+	mv $(RCDIR)/tmp/$(PACKAGE)-$(VERSION) $@
+	rmdir $(RCDIR)/tmp
 	cp -ax debian $@
 	chmod 755 $@/debian/rules
 
@@ -335,13 +338,81 @@ debianbuild: $(DEBSOURCEDIR)
 	#
 	cd $<; debian/rules binary
 
-debian: debianbuild
+deb: debianbuild $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  harvesting debian package            *
 	# *****************************************
 	#
 	find $(RCDIR) -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
+
+
+DEBVERSION=$(subst _,~,${VERSION})~ppa
+UBUNTUSOURCEDIR=$(RCDIR)/$(PACKAGE)-$(DEBVERSION)
+$(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
+	#
+	# *****************************************
+	# *  prepare ubuntu build                 *
+	# *****************************************
+	#
+	rm -rf $(UBUNTUSOURCEDIR)$*
+	mkdir -p $(RCDIR)/tmp2
+	cd $(RCDIR)/tmp2; tar -xf ../../../../$(INPUTTARBALLBASE)
+	mv $(RCDIR)/tmp2/$(PACKAGE)-$(VERSION) $(UBUNTUSOURCEDIR)$*
+	rmdir $(RCDIR)/tmp2
+#   adapt the following line as ubuntu releases get updated
+	bzr pull -d ../ubuntu || bzr branch lp:ubuntu/armagetronad ../ubuntu
+	cp -ax ../ubuntu/debian $(UBUNTUSOURCEDIR)$*/debian
+#   rebrand package
+#	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\./armagetronad./g" > $(UBUNTUSOURCEDIR)/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
+	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" > $(UBUNTUSOURCEDIR)$*/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
+	chmod 755 $(UBUNTUSOURCEDIR)$*/debian/rules
+#   build changelog
+	DIST="`echo $* | sed -e s/^[0-9]*// -e s/.*~//`"; test -z $$DIST && DIST=hardy; sed -e "s/@distribution@/$$DIST/g" -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/${DEBVERSION}$*/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $(UBUNTUSOURCEDIR)$*/debian/changelog
+	cat < ../ubuntu/debian/changelog >> $(UBUNTUSOURCEDIR)$*/debian/changelog
+	echo "x" > $@
+
+$(RCDIR)/ubuntu%.tag: $(UBUNTUSOURCEDIR)%.tag
+	#
+	# *****************************************
+	# *  ubuntu build                         *
+	# *****************************************
+	#
+	cd $(UBUNTUSOURCEDIR)$*; fakeroot debian/rules binary
+#   harvesting debian package(s)
+	find $(RCDIR) -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
+	echo "x" > $@
+
+xubuntu-build-%: $(RCDIR)/ubuntu%.tag
+	echo $@
+
+#real targets for the user
+ubuntu: xubuntu-build-$(RC)
+	echo $@
+ubuntu-%: xubuntu-build-$(RC)~%
+	echo $@
+
+$(RCDIR)/${PACKAGE}_${DEBVERSION}%_source.changes: $(UBUNTUSOURCEDIR)%.tag
+	#
+	# ************************************
+	# *  preparing ubuntu source for ppa *
+	# ************************************
+	#
+	cd $(UBUNTUSOURCEDIR)$* && debuild -S -sa
+
+xupload-ubuntu-%: $(RCDIR)/${PACKAGE}_${DEBVERSION}%_source.changes
+	#
+	# ***********************************
+	# *  uploading ubuntu source to ppa *
+	# ***********************************
+	#
+	cd $(RCDIR) && dput ${PACKAGE}_${DEBVERSION}$*_source.changes
+
+#real targets for the user
+upload-ubuntu: xupload-ubuntu-$(RC)
+	echo $@
+upload-ubuntu-%: xupload-ubuntu-$(RC)~%
+	echo $@
 
 APFILE=$(RCDIR)/.package
 autopackage-client: $(APFILE).client

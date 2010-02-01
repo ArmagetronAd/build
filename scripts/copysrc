@@ -2,7 +2,7 @@
 
 # copies sources from CVS folder into given target folder
 
-# set -x
+set -x
 
 # read configuration
 . ./make.conf
@@ -13,15 +13,11 @@ VERSION=$2
 # generate automatic files
 CWD=`pwd`
 if test -z "$VERSION"; then
-    if test -r $AA_SOURCE/version && test -r $AA_SOURCE/configure && test -r $AA_SOURCE/ChangeLog ; then
-        echo "No bootstrap required."
-    else
-        # bootstrap
-        lwd=`pwd`
-        cd $AA_SOURCE
-        sh ./bootstrap.sh || exit -1
-        cd ${lwd}
-    fi
+    # bootstrap
+    lwd=`pwd`
+    cd $AA_SOURCE
+    sh ./bootstrap.sh || exit -1
+    cd ${lwd}
         
     # adapt version to source
     VERSION=`sed -e 's,.*\[,,' -e 's,\].*,,'  < $AA_SOURCE/version`
@@ -41,7 +37,10 @@ fi
 mkdir -p $TARGET/distmaker
 lwd=`pwd`
 cd $TARGET/distmaker
-test -r config.h || docstyle=web $CWD/$AA_SOURCE/configure --prefix=/usr/local --disable-glout --enable-automakedefaults --disable-useradd --disable-etc --disable-initscripts || exit -1
+rm -rf armagetronad-*
+rm -rf ${PACKAGE}-*
+rm -f *.tar.*
+test -r config.h || progname="${PACKAGE}" progtitle="${PROGNAME}" docstyle=web $CWD/$AA_SOURCE/configure --prefix=/usr/local --disable-glout --enable-automakedefaults --disable-useradd --disable-etc --disable-initscripts || exit -1
 ${MAKE} distprep || exit -1
 
 # call some idle makes to update includes and do stuff
@@ -49,7 +48,10 @@ ${MAKE} nothing
 ${MAKE} nothingeither
 
 ${MAKE} dist || exit -1
-mv *.tar.* ../
+tar -xzf *.tar.*
+mv armagetronad-${VERSION} ${PACKAGE}-${VERSION}
+tar -cf ../${PACKAGE}-${VERSION}.src.tar ${PACKAGE}-${VERSION}
+#mv *.tar.* ../
 cd ${lwd}
 
 # copy raw sources for later tagging

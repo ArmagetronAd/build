@@ -33,6 +33,16 @@ rpm
 debian
  builds debian packages ( not yet complete )
 
+ubuntu
+ builds ubuntu archive with your current distribution, supposedly compatible with 
+ other versions.
+ubuntu-<release codename>
+ builds ubuntu package specialized for the given distribution.
+upload-ubuntu
+ uploads generic ubuntu source package to default PPA specified in ~/.dput.cf
+upload-ubuntu-<release codename>
+ uploads distribution-specific ubuntu source package to default PPA specified in ~/.dput.cf
+
 autopackage.client and autopackage.server
  builds autopackage client resp. server. Note: libxml2 is linked statically. You should
  therefore have a version of libxml2 compiled with apgcc. Use

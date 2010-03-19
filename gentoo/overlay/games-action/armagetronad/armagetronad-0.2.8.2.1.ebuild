@@ -176,7 +176,7 @@ src_install() {
 		einfo 'Adjusting dedicated server configuration'
 		dosed "s,^\(user=\).*$,\1${GAMES_USER_DED},; s,^#\(VARDIR=/.*\)$,\\1," "${GAMES_SYSCONFDIR}/${PN}-dedicated${GameSLOT}/rc.config" || ewarn 'adjustments for rc.config FAILED; the defaults may not be suited for your system!'
 	fi
-	
+
 	local LangDir="${D}${GAMES_DATADIR}/${GameDir}/language/"
 	use linguas_de || rm -v "${LangDir}deutsch.txt"
 	use linguas_fr || rm -v "${LangDir}french.txt"
@@ -198,7 +198,7 @@ src_install() {
 		en_GB='true' en_US='true'
 	$en_US || rm -v "${LangDir}american.txt"
 	use linguas_es || rm -v "${LangDir}spanish.txt"
-	
+
 	# Ok, so we screwed up on doc installation... so for now, the ebuild does this manually
 	dohtml -r "${D}${GAMES_PREFIX}/share/doc/${GameDir}/html/"*
 	dodoc "${D}${GAMES_PREFIX}/share/doc/${GameDir}/html/"*.txt

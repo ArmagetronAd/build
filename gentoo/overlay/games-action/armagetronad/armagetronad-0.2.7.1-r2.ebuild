@@ -132,7 +132,7 @@ src_install() {
 		doexe src/tron/${PN} || die "copying files"
 		make_desktop_entry armagetronad "Armagetron Advanced" ${PN}.ico
 		dogamesbin startscript/${PN} || die
-		
+
 		# copy moviepacks/sounds
 		cd "${WORKDIR}"
 		insinto "${GAMES_DATADIR}/${PN}${GameSLOT}"
@@ -156,10 +156,10 @@ src_install() {
 		doexe src/tron/${PN}-dedicated || die "copying files"
 		dogamesbin startscript/${PN}-dedicated || die
 	fi
-	
+
 	local LangDir="${D}${GAMES_DATADIR}/${GameDir}/language/"
 	use linguas_de || rm -v "${LangDir}deutsch.txt"
-	
+
 	dohtml doc/*.html
 	docinto html/net
 	dohtml doc/net/*.html
@@ -167,6 +167,6 @@ src_install() {
 	doins -r language || die "copying files"
 	insinto "${GAMES_SYSCONFDIR}/${PN}"
 	doins -r config/* || die "copying files"
-	
+
 	prepgamesdirs
 }

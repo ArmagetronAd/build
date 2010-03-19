@@ -118,7 +118,7 @@ aaconf() {
 		--disable-games \
 		$(use_enable auth armathentication) \
 		$(use_enable respawn) \
-		--enable-uninstall="emerge --clean =${CATEGORY}/${PF}" \
+		--disable-uninstall \
 		$(use_enable ruby) \
 		$(use_with   glew) \
 		"${@:2}" || die "egamesconf($1) failed"

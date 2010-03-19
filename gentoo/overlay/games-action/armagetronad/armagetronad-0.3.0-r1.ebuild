@@ -107,7 +107,7 @@ aaconf() {
 		--enable-etc \
 		--disable-restoreold \
 		--disable-games \
-		--enable-uninstall="emerge --clean =${CATEGORY}/${PF}" \
+		--disable-uninstall \
 		"${@:2}" || die "egamesconf($1) failed"
 }
 

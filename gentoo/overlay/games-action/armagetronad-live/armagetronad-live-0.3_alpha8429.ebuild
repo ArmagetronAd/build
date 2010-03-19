@@ -52,7 +52,6 @@ RDEPEND="
 	sys-libs/zlib
 	opengl? ( ${GLDEPS} )
 	!dedicated? ( ${GLDEPS} )
-	ruby? ( virtual/ruby >=dev-lang/swig-1.3.29[ruby] )
 	>=dev-libs/boost-1.33.1
 "
 OPT_CLIENTDEPS="
@@ -62,6 +61,7 @@ OPT_CLIENTDEPS="
 DEPEND="${RDEPEND}
 	opengl? ( ${OPT_CLIENTDEPS} )
 	!dedicated? ( ${OPT_CLIENTDEPS} )
+	ruby? ( virtual/ruby >=dev-lang/swig-1.3.29[ruby] )
 	sys-apps/util-linux
 "
 

@@ -4,7 +4,7 @@
 
 EAPI=2
 
-inherit autotools flag-o-matic eutils games
+inherit autotools flag-o-matic gnome2-utils eutils games
 
 DESCRIPTION="3D light cycles like in the movie TRON"
 HOMEPAGE="http://armagetronad.net/"
@@ -127,7 +127,7 @@ src_configure() {
 	filter-flags -fno-exceptions
 	if ${build_client}; then
 		einfo "Configuring game client"
-		aaconf client  --enable-glout --disable-initscripts  --enable-desktop
+		aaconf client  --enable-glout --disable-initscripts --disable-desktop
 	fi
 	if ${build_server}; then
 		einfo "Configuring dedicated server"
@@ -156,6 +156,18 @@ src_compile() {
 	fi
 }
 
+makenewicon() {
+	local hidir="/usr/share/icons/hicolor"
+	insinto ${hidir}/48x48/apps
+	doins desktop/icons/large/${MY_PN}.png || die
+	insinto ${hidir}/32x32/apps
+	doins desktop/icons/medium/${MY_PN}.png || die
+	insinto ${hidir}/16x16/apps
+	doins desktop/icons/small/${MY_PN}.png || die
+
+	make_desktop_entry armagetronad "Armagetron Advanced"
+}
+
 src_install() {
 	if ${build_client} && ${build_server}; then
 		# Setup symlink so both client and server share their common data
@@ -168,6 +180,7 @@ src_install() {
 		einfo "Installing game client"
 		cd "${WORKDIR}/build-client"
 		make DESTDIR="${D}" armabindir="${GAMES_BINDIR}" install || die "make(client) install failed"
+		makenewicon
 		# copy moviepacks/sounds
 		cd "${WORKDIR}"
 		insinto "${GAMES_DATADIR}/${MY_PN}${GameSLOT}"
@@ -224,4 +237,18 @@ src_install() {
 	rm -r "${D}${GAMES_PREFIX}/share/doc"
 	rmdir "${D}${GAMES_PREFIX}/share" || true	# Supress potential error
 	prepgamesdirs
+}
+
+pkg_preinst() {
+	games_pkg_preinst
+	gnome2_icon_savelist
+}
+
+pkg_postinst() {
+	games_pkg_postinst
+	gnome2_icon_cache_update
+}
+
+pkg_postrm() {
+	gnome2_icon_cache_update
 }

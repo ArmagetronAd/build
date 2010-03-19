@@ -1,6 +1,8 @@
 # Copyright 1999-2006 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=2
+
 inherit flag-o-matic eutils games subversion live
 
 DESCRIPTION="3D light cycles like in the movie TRON"
@@ -37,7 +39,7 @@ GLDEPS="
 	virtual/glu
 	virtual/opengl
 	media-libs/libsdl
-	media-libs/sdl-image
+	media-libs/sdl-image[png]
 	media-libs/sdl-mixer
 	media-libs/jpeg
 	media-libs/libpng
@@ -49,7 +51,7 @@ RDEPEND="
 	sys-libs/zlib
 	opengl? ( ${GLDEPS} )
 	!dedicated? ( ${GLDEPS} )
-	ruby? ( virtual/ruby >=dev-lang/swig-1.3.29 )
+	ruby? ( virtual/ruby >=dev-lang/swig-1.3.29[ruby] )
 	>=dev-libs/boost-1.33.1
 "
 OPT_CLIENTDEPS="
@@ -64,20 +66,6 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${MY_PN}"
 
 pkg_setup() {
-	if ! built_with_use media-libs/sdl-image png; then
-		local msg="You must install media-libs/sdl-image with USE=png"
-		eerror "$msg"
-		die "$msg"
-	fi
-	
-	if use ruby && ! built_with_use dev-lang/swig ruby ; then
-		eerror "You are trying to compile ${CATEGORY}/${PF} with the \"ruby\" USE flag enabled."
-		eerror "However, $(best_version dev-lang/swig) was compiled with the ruby flag disabled."
-		eerror
-		eerror "You must either disable this use flag, or recompile"
-		eerror "$(best_version dev-lang/swig) with this ruby use flag enabled."
-		die 'swig missing ruby'
-	fi
 	if use debug; then
 		ewarn
 		ewarn 'The "debug" USE flag will enable debugging code. This will cause AI'
@@ -141,7 +129,7 @@ aabuild() {
 
 src_compile() {
 	[ "${PN/-live/}" != "${PN}" ] && WANT_AUTOMAKE=1.9 ./bootstrap.sh
-	
+
 	# Assume client if they don't want a server
 	use opengl || ! use dedicated && build_client=true || build_client=false
 	use dedicated && build_server=true || build_server=false
@@ -195,7 +183,7 @@ src_install() {
 		einfo 'Adjusting dedicated server configuration'
 		dosed "s,^\(user=\).*$,\1${GAMES_USER_DED},; s,^#\(VARDIR=/.*\)$,\\1," "${GAMES_SYSCONFDIR}/${MY_PN}-dedicated${GameSLOT}/rc.config" || ewarn 'adjustments for rc.config FAILED; the defaults may not be suited for your system!'
 	fi
-	
+
 	local LangDir="${D}${GAMES_DATADIR}/${GameDir}/language/"
 	use linguas_de || rm -v "${LangDir}deutsch.txt"
 	use linguas_fr || rm -v "${LangDir}french.txt"
@@ -217,7 +205,7 @@ src_install() {
 		en_GB='true' en_US='true'
 	$en_US || rm -v "${LangDir}american.txt"
 	use linguas_es || rm -v "${LangDir}spanish.txt"
-	
+
 	# Ok, so we screwed up on doc installation... so for now, the ebuild does this manually
 	dohtml -r "${D}${GAMES_PREFIX}/share/doc/${GameDir}/html/"*
 	dodoc "${D}${GAMES_PREFIX}/share/doc/${GameDir}/html/"*.txt

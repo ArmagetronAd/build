@@ -30,7 +30,7 @@ SRC_URI="
 LICENSE="GPL-2"
 SLOT="live"
 KEYWORDS="amd64 ppc sparc x86"
-IUSE="auth debug dedicated linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es linguas_pl moviepack moviesounds opengl respawn"
+IUSE="auth debug dedicated linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es linguas_pl moviepack moviesounds opengl respawn threads"
 
 ESVN_PROJECT="${P/_*}"
 
@@ -52,6 +52,9 @@ RDEPEND="
 	sys-libs/zlib
 	opengl? ( ${GLDEPS} )
 	!dedicated? ( ${GLDEPS} )
+	dedicated? (
+		auth? ( threads? ( >=dev-libs/zthread-2.3.2 ) )
+	)
 "
 OPT_CLIENTDEPS="
 	moviepack? ( app-arch/unzip )
@@ -143,10 +146,16 @@ src_configure() {
 	fi
 	if ${build_server}; then
 		einfo "Configuring dedicated server"
+		local myconf=''
+		if use auth; then
+			use threads ||
+				myconf="$myconf --with-zthread-prefix=/.../nope";
+		fi
 		aaconf server \
 			--disable-glout \
 			--enable-initscripts \
 			$(use_enable auth armathentication) \
+			$myconf \
 			--disable-desktop
 	fi
 }

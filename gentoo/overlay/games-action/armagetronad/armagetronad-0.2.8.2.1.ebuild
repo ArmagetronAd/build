@@ -9,6 +9,7 @@ inherit flag-o-matic eutils games
 DESCRIPTION="3D light cycles like in the movie TRON"
 HOMEPAGE="http://armagetronad.net/"
 
+MY_PN="${PN/-live/}"
 OPT_CLIENTSRC="
 	moviesounds? (
 		http://beta.armagetronad.net/fetch.php/PreResource/moviesounds_fq.zip
@@ -58,6 +59,8 @@ DEPEND="${RDEPEND}
 	!dedicated? ( ${OPT_CLIENTDEPS} )
 "
 
+S="${WORKDIR}/${MY_PN}"
+
 pkg_setup() {
 	if use debug; then
 		ewarn
@@ -91,7 +94,7 @@ aaconf() {
 	export DEBUGLEVEL CODELEVEL=0
 	[ "$SLOT" == "0" ] && myconf="--disable-multiver" || myconf="--enable-multiver=${SLOT}"
 	[ "$1" == "server" ] && ded='-dedicated' || ded=''
-	GameDir="${PN}${ded}${GameSLOT}"
+	GameDir="${MY_PN}${ded}${GameSLOT}"
 	ECONF_SOURCE="${S}" \
 	egamesconf ${myconf} \
 		--disable-binreloc \
@@ -146,9 +149,9 @@ src_install() {
 	if ${build_client} && ${build_server}; then
 		# Setup symlink so both client and server share their common data
 		dodir "${GAMES_DATADIR}"
-		dosym "${PN}${GameSLOT}" "${GAMES_DATADIR}/${PN}-dedicated${GameSLOT}"
+		dosym "${MY_PN}${GameSLOT}" "${GAMES_DATADIR}/${MY_PN}-dedicated${GameSLOT}"
 		dodir "${GAMES_SYSCONFDIR}"
-		dosym "${PN}${GameSLOT}" "${GAMES_SYSCONFDIR}/${PN}-dedicated${GameSLOT}"
+		dosym "${MY_PN}${GameSLOT}" "${GAMES_SYSCONFDIR}/${MY_PN}-dedicated${GameSLOT}"
 	fi
 	if ${build_client}; then
 		einfo "Installing game client"
@@ -156,7 +159,7 @@ src_install() {
 		make DESTDIR="${D}" armabindir="${GAMES_BINDIR}" install || die "make(client) install failed"
 		# copy moviepacks/sounds
 		cd "${WORKDIR}"
-		insinto "${GAMES_DATADIR}/${PN}${GameSLOT}"
+		insinto "${GAMES_DATADIR}/${MY_PN}${GameSLOT}"
 		if use moviepack; then
 			einfo 'Installing moviepack'
 			doins -r moviepack || die "copying moviepack"
@@ -175,7 +178,7 @@ src_install() {
 		cd "${WORKDIR}/build-server"
 		make DESTDIR="${D}" armabindir="${GAMES_BINDIR}" install || die "make(server) install failed"
 		einfo 'Adjusting dedicated server configuration'
-		dosed "s,^\(user=\).*$,\1${GAMES_USER_DED},; s,^#\(VARDIR=/.*\)$,\\1," "${GAMES_SYSCONFDIR}/${PN}-dedicated${GameSLOT}/rc.config" || ewarn 'adjustments for rc.config FAILED; the defaults may not be suited for your system!'
+		dosed "s,^\(user=\).*$,\1${GAMES_USER_DED},; s,^#\(VARDIR=/.*\)$,\\1," "${GAMES_SYSCONFDIR}/${MY_PN}-dedicated${GameSLOT}/rc.config" || ewarn 'adjustments for rc.config FAILED; the defaults may not be suited for your system!'
 	fi
 
 	local LangDir="${D}${GAMES_DATADIR}/${GameDir}/language/"

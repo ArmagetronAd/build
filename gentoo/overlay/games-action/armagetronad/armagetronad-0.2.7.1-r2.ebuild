@@ -9,6 +9,7 @@ inherit eutils games
 DESCRIPTION="3d tron lightcycles, just like the movie"
 HOMEPAGE="http://armagetronad.net/"
 
+MY_PN="${PN/-live/}"
 OPT_CLIENTSRC="
 	moviesounds? (
 		http://beta.armagetronad.net/fetch.php/PreResource/moviesounds_fq.zip
@@ -52,6 +53,8 @@ DEPEND="${RDEPEND}
 	opengl? ( ${OPT_CLIENTDEPS} )
 	!dedicated? ( ${OPT_CLIENTDEPS} )
 "
+
+S="${WORKDIR}/${MY_PN}"
 
 src_prepare() {
 	epatch "${FILESDIR}"/${P}-gcc4.patch

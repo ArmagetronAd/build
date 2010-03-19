@@ -9,6 +9,7 @@ inherit autotools flag-o-matic eutils games
 DESCRIPTION="3D light cycles like in the movie TRON"
 HOMEPAGE="http://armagetronad.net/"
 
+MY_PN="${PN/-live/}"
 OPT_CLIENTSRC="
 	moviesounds? (
 		http://beta.armagetronad.net/fetch.php/PreResource/moviesounds_fq.zip
@@ -59,6 +60,8 @@ DEPEND="${RDEPEND}
 	opengl? ( ${OPT_CLIENTDEPS} )
 	!dedicated? ( ${OPT_CLIENTDEPS} )
 "
+
+S="${WORKDIR}/${MY_PN}"
 
 pkg_setup() {
 	if use debug; then
@@ -182,7 +185,7 @@ src_install() {
 		cd "${WORKDIR}/build-server"
 		make DESTDIR="${D}" armabindir="${GAMES_BINDIR}" install || die "make(server) install failed"
 		einfo 'Adjusting dedicated server configuration'
-		dosed "s,^\(user=\).*$,\1${GAMES_USER_DED},; s,^#\(VARDIR=/.*\)$,\\1," "${GAMES_SYSCONFDIR}/${PN}-dedicated${GameSLOT}/rc.config" || ewarn 'adjustments for rc.config FAILED; the defaults may not be suited for your system!'
+		dosed "s,^\(user=\).*$,\1${GAMES_USER_DED},; s,^#\(VARDIR=/.*\)$,\\1," "${GAMES_SYSCONFDIR}/${MY_PN}-dedicated${GameSLOT}/rc.config" || ewarn 'adjustments for rc.config FAILED; the defaults may not be suited for your system!'
 	fi
 
 	local LangDir="${D}${GAMES_DATADIR}/${GameDir}/language/"

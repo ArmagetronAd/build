@@ -9,7 +9,7 @@ inherit flag-o-matic eutils games subversion live
 DESCRIPTION="3D light cycles like in the movie TRON"
 HOMEPAGE="http://armagetronad.net/"
 
-MY_PN="armagetronad"
+MY_PN="${PN/-live/}"
 OPT_CLIENTSRC="
 	moviesounds? (
 		http://beta.armagetronad.net/fetch.php/PreResource/moviesounds_fq.zip
@@ -60,6 +60,7 @@ OPT_CLIENTDEPS="
 DEPEND="${RDEPEND}
 	opengl? ( ${OPT_CLIENTDEPS} )
 	!dedicated? ( ${OPT_CLIENTDEPS} )
+	sys-apps/util-linux
 "
 
 S="${WORKDIR}/${MY_PN}"
@@ -93,7 +94,7 @@ src_unpack() {
 	rsync -rlpgo "${ESVN_STORE_DIR}/${ESVN_PROJECT}/${ESVN_REPO_URI##*/}/.svn" "${S}" || ewarn ".svn directory couldn't be copied; your version number will use the current date instead of revision"
 }
 
-aabuild() {
+aaconf() {
 	MyBUILDDIR="${WORKDIR}/build-$1"
 	mkdir -p "${MyBUILDDIR}" || die "error creating build directory($1)"	# -p to allow EEXIST scenario
 	cd "${MyBUILDDIR}"
@@ -117,12 +118,19 @@ aabuild() {
 		$(use_enable respawn) \
 		--enable-uninstall="emerge --clean =${CATEGORY}/${PF}" \
 		"${@:2}" || die "egamesconf($1) failed"
+}
+
+aabuild() {
+	MyBUILDDIR="${WORKDIR}/build-$1"
+	cd "${MyBUILDDIR}"
 	emake armabindir="${GAMES_BINDIR}" || die "emake($1) failed"
 }
 
-src_compile() {
+src_prepare() {
 	[ "${PN/-live/}" != "${PN}" ] && WANT_AUTOMAKE=1.9 ./bootstrap.sh
+}
 
+src_configure() {
 	# Assume client if they don't want a server
 	use opengl || ! use dedicated && build_client=true || build_client=false
 	use dedicated && build_server=true || build_server=false
@@ -130,16 +138,27 @@ src_compile() {
 	[ "$SLOT" == "0" ] && GameSLOT="" || GameSLOT="-${SLOT}"
 	filter-flags -fno-exceptions
 	if ${build_client}; then
-		einfo "Building game client"
-		aabuild client  --enable-glout --disable-initscripts  --enable-desktop
+		einfo "Configuring game client"
+		aaconf client  --enable-glout --disable-initscripts  --enable-desktop
 	fi
 	if ${build_server}; then
-		einfo "Building dedicated server"
-		aabuild server \
+		einfo "Configuring dedicated server"
+		aaconf server \
 			--disable-glout \
 			--enable-initscripts \
 			$(use_enable auth armathentication) \
 			--disable-desktop
+	fi
+}
+
+src_compile() {
+	if ${build_client}; then
+		einfo "Building game client"
+		aabuild client
+	fi
+	if ${build_server}; then
+		einfo "Building dedicated server"
+		aabuild server
 	fi
 }
 

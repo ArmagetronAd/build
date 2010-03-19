@@ -9,7 +9,7 @@ inherit flag-o-matic eutils games subversion live
 DESCRIPTION="3D light cycles like in the movie TRON"
 HOMEPAGE="http://armagetronad.net/"
 
-MY_PN="armagetronad"
+MY_PN="${PN/-live/}"
 OPT_CLIENTSRC="
 	moviesounds? (
 		http://beta.armagetronad.net/fetch.php/PreResource/moviesounds_fq.zip
@@ -63,6 +63,7 @@ OPT_CLIENTDEPS="
 DEPEND="${RDEPEND}
 	opengl? ( ${OPT_CLIENTDEPS} )
 	!dedicated? ( ${OPT_CLIENTDEPS} )
+	sys-apps/util-linux
 "
 
 S="${WORKDIR}/${MY_PN}"

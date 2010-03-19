@@ -11,4 +11,8 @@
 		Armagetron Advanced is a Tron lightcycle clone in 3D.
 		In the game, you control a lightcycle in a digital grid, and you battle gladiatorial style against your opponents; one of you must die for the game to end.
 	</longdescription>
+	<use>
+		<flag name='moviesounds'>install sound effects extracted from the TRON movie</flag>
+		<flag name='moviepack'>install graphics based on the TRON movie</flag>
+	</use>
 </pkgmetadata>

@@ -4,7 +4,7 @@
 
 EAPI=2
 
-inherit flag-o-matic eutils games
+inherit autotools flag-o-matic eutils games
 
 DESCRIPTION="3D light cycles like in the movie TRON"
 HOMEPAGE="http://armagetronad.net/"
@@ -109,6 +109,13 @@ aabuild() {
 	MyBUILDDIR="${WORKDIR}/build-$1"
 	cd "${MyBUILDDIR}"
 	emake armabindir="${GAMES_BINDIR}" || die "emake($1) failed"
+}
+
+src_prepare() {
+	sed -i \
+		-e 's/png_check_sig/png_sig_cmp/' \
+		configure.ac || die
+	eautoreconf
 }
 
 src_configure() {

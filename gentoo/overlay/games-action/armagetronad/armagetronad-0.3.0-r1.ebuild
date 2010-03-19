@@ -61,8 +61,6 @@ DEPEND="${RDEPEND}
 	!dedicated? ( ${OPT_CLIENTDEPS} )
 "
 
-S="${WORKDIR}/${MY_PN}"
-
 pkg_setup() {
 	if use debug; then
 		ewarn

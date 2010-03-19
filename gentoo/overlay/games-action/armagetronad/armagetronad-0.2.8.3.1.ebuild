@@ -29,7 +29,7 @@ SRC_URI="mirror://sourceforge/armagetronad/${P}.src.tar.bz2
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 ppc sparc x86"
-IUSE="debug dedicated linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es moviepack moviesounds opengl"
+IUSE="auth debug dedicated linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es linguas_pl moviepack moviesounds opengl respawn threads"
 
 GLDEPS="
 	|| (
@@ -49,6 +49,9 @@ RDEPEND="
 	sys-libs/zlib
 	opengl? ( ${GLDEPS} )
 	!dedicated? ( ${GLDEPS} )
+	dedicated? (
+		auth? ( threads? ( >=dev-libs/zthread-2.3.2 ) )
+	)
 "
 OPT_CLIENTDEPS="
 	moviepack? ( app-arch/unzip )
@@ -57,9 +60,8 @@ OPT_CLIENTDEPS="
 DEPEND="${RDEPEND}
 	opengl? ( ${OPT_CLIENTDEPS} )
 	!dedicated? ( ${OPT_CLIENTDEPS} )
+	sys-apps/util-linux
 "
-
-S="${WORKDIR}/${MY_PN}"
 
 pkg_setup() {
 	if use debug; then
@@ -80,10 +82,6 @@ pkg_setup() {
 		ebeep 5
 	fi
 	games_pkg_setup
-}
-
-src_prepare() {
-	epatch "${FILESDIR}/${P}-build-fixups.patch"
 }
 
 aaconf() {
@@ -107,6 +105,7 @@ aaconf() {
 		--enable-etc \
 		--disable-restoreold \
 		--disable-games \
+		$(use_enable respawn) \
 		--enable-uninstall="emerge --clean =${CATEGORY}/${PF}" \
 		"${@:2}" || die "egamesconf($1) failed"
 }
@@ -130,7 +129,17 @@ src_configure() {
 	fi
 	if ${build_server}; then
 		einfo "Configuring dedicated server"
-		aaconf server --disable-glout  --enable-initscripts --disable-desktop
+		local myconf=''
+		if use auth; then
+			use threads ||
+				myconf="$myconf --with-zthread-prefix=/.../nope";
+		fi
+		aaconf server \
+			--disable-glout \
+			--enable-initscripts \
+			$(use_enable auth armathentication) \
+			$myconf \
+			--disable-desktop
 	fi
 }
 
@@ -172,6 +181,8 @@ src_install() {
 				doins -r ArmageTRON/moviesounds || die "copying spanish moviesounds"
 			fi
 		fi
+		rename armagetronad{,${GameSLOT}} "${D}"/usr/share/*/armagetronad.*
+		cd "${WORKDIR}/build-client"
 	fi
 	if ${build_server}; then
 		einfo "Installing dedicated server"
@@ -196,12 +207,14 @@ src_install() {
 			use linguas_de ||
 			use linguas_fr ||
 			use linguas_es ||
+			use linguas_pl ||
 			false;
 		};
 	}; } &&
 		en_GB='true' en_US='true'
 	$en_US || rm -v "${LangDir}american.txt"
 	use linguas_es || rm -v "${LangDir}spanish.txt"
+	use linguas_pl || rm -v "${LangDir}polish.txt"
 
 	# Ok, so we screwed up on doc installation... so for now, the ebuild does this manually
 	dohtml -r "${D}${GAMES_PREFIX}/share/doc/${GameDir}/html/"*

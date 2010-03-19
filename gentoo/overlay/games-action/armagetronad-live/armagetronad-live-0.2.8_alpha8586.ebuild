@@ -35,21 +35,16 @@ IUSE="auth debug dedicated linguas_de linguas_fr linguas_en linguas_en_GB lingua
 ESVN_PROJECT="${P/_*}"
 
 GLDEPS="
-	|| (
-		x11-libs/libX11
-		virtual/x11
-	)
 	virtual/glu
 	virtual/opengl
-	media-libs/libsdl
-	media-libs/sdl-image[png]
-	media-libs/sdl-mixer
+	media-libs/libsdl[X,audio,video]
+	media-libs/sdl-image[jpeg,png]
 	media-libs/jpeg
 	media-libs/libpng
+	sys-libs/zlib
 "
 RDEPEND="
 	>=dev-libs/libxml2-2.6.11
-	sys-libs/zlib
 	opengl? ( ${GLDEPS} )
 	!dedicated? ( ${GLDEPS} )
 	dedicated? (

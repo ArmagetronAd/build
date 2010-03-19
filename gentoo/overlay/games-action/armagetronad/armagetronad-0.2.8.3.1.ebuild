@@ -32,21 +32,16 @@ KEYWORDS="amd64 ppc sparc x86"
 IUSE="auth debug dedicated linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es linguas_pl moviepack moviesounds opengl respawn threads"
 
 GLDEPS="
-	|| (
-		x11-libs/libX11
-		virtual/x11
-	)
 	virtual/glu
 	virtual/opengl
-	media-libs/libsdl
-	media-libs/sdl-image[png]
-	media-libs/sdl-mixer
+	media-libs/libsdl[X,audio,video]
+	media-libs/sdl-image[jpeg,png]
 	media-libs/jpeg
 	media-libs/libpng
+	sys-libs/zlib
 "
 RDEPEND="
 	>=dev-libs/libxml2-2.6.11
-	sys-libs/zlib
 	opengl? ( ${GLDEPS} )
 	!dedicated? ( ${GLDEPS} )
 	dedicated? (

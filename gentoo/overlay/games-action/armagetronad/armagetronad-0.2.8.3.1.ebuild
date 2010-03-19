@@ -55,7 +55,6 @@ OPT_CLIENTDEPS="
 DEPEND="${RDEPEND}
 	opengl? ( ${OPT_CLIENTDEPS} )
 	!dedicated? ( ${OPT_CLIENTDEPS} )
-	sys-apps/util-linux
 "
 
 pkg_setup() {
@@ -196,7 +195,6 @@ src_install() {
 				doins -r ArmageTRON/moviesounds || die "copying spanish moviesounds"
 			fi
 		fi
-		rename armagetronad{,${GameSLOT}} "${D}"/usr/share/*/armagetronad.*
 		cd "${WORKDIR}/build-client"
 	fi
 	if ${build_server}; then

@@ -1,6 +1,8 @@
 # Copyright 1999-2006 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=2
+
 inherit eutils games
 
 DESCRIPTION="3d tron lightcycles, just like the movie"
@@ -33,7 +35,7 @@ GLDEPS="
 		virtual/opengl
 		virtual/glu
 		media-libs/libsdl
-		media-libs/sdl-image
+		media-libs/sdl-image[png]
 		media-libs/jpeg
 		media-libs/libpng
 "
@@ -50,24 +52,13 @@ DEPEND="${RDEPEND}
 	!dedicated? ( ${OPT_CLIENTDEPS} )
 "
 
-pkg_setup() {
-	if ! built_with_use media-libs/sdl-image png; then
-		local msg="You must install media-libs/sdl-image with USE=png"
-		eerror "$msg"
-		die "$msg"
-	fi
-	games_pkg_setup
-}
-
-src_unpack() {
-	unpack ${A}
-	cd "${S}"
+src_prepare() {
 	epatch "${FILESDIR}"/${P}-gcc4.patch
 	epatch "${FILESDIR}"/${P}-security-1.patch
 	epatch "${FILESDIR}"/${P}-gcc43.patch
 }
 
-aabuild() {
+aaconf() {
 	MyBUILDDIR="${WORKDIR}/build-$1"
 	mkdir -p "${MyBUILDDIR}" || die "error creating build directory($1)"	# -p to allow EEXIST scenario
 	cd "${MyBUILDDIR}"
@@ -79,6 +70,11 @@ aabuild() {
 		--disable-krawall \
 		--enable-etc \
 		"${@:2}" || die "egamesconf($1) failed"
+}
+
+aabuild() {
+	MyBUILDDIR="${WORKDIR}/build-$1"
+	cd "${MyBUILDDIR}"
 	emake || die "emake($1) failed"
 	make documentation || die "make documentation($1) failed"
 	mkdir startscript
@@ -90,19 +86,30 @@ aabuild() {
 		> "startscript/${PN}${ded}" || die 'sed failed'
 }
 
-src_compile() {
+src_configure() {
 	# Assume client if they don't want a server
 	use opengl || ! use dedicated && build_client=true || build_client=false
 	use dedicated && build_server=true || build_server=false
 
 	GameSLOT=""
 	if ${build_client}; then
+		einfo "Configuring game client"
+		aaconf client  --enable-glout
+	fi
+	if ${build_server}; then
+		einfo "Configuring dedicated server"
+		aaconf server --disable-glout
+	fi
+}
+
+src_compile() {
+	if ${build_client}; then
 		einfo "Building game client"
-		aabuild client  --enable-glout
+		aabuild client
 	fi
 	if ${build_server}; then
 		einfo "Building dedicated server"
-		aabuild server --disable-glout
+		aabuild server
 	fi
 }
 

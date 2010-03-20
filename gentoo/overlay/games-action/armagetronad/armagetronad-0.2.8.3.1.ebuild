@@ -156,6 +156,7 @@ src_compile() {
 }
 
 makenewicon() {
+	cd "${S}"
 	local hidir="/usr/share/icons/hicolor"
 	insinto ${hidir}/48x48/apps
 	doins desktop/icons/large/${MY_PN}.png || die

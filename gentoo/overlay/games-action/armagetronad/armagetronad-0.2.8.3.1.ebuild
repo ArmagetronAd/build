@@ -22,14 +22,13 @@ OPT_CLIENTSRC="
 	)
 "
 SRC_URI="mirror://sourceforge/armagetronad/${P}.src.tar.bz2
-	opengl? ( ${OPT_CLIENTSRC} )
 	!dedicated? ( ${OPT_CLIENTSRC} )
 "
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 ppc sparc x86"
-IUSE="auth debug dedicated linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es linguas_pl moviepack moviesounds opengl respawn threads"
+IUSE="auth debug dedicated linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es linguas_pl moviepack moviesounds respawn server threads"
 
 GLDEPS="
 	virtual/glu
@@ -40,20 +39,22 @@ GLDEPS="
 	media-libs/libpng
 	sys-libs/zlib
 "
+SRVDEPS="
+	auth? ( threads? ( >=dev-libs/zthread-2.3.2 ) )
+"
 RDEPEND="
 	>=dev-libs/libxml2-2.6.11
-	opengl? ( ${GLDEPS} )
 	!dedicated? ( ${GLDEPS} )
 	dedicated? (
-		auth? ( threads? ( >=dev-libs/zthread-2.3.2 ) )
+		${SRVDEPS}
 	)
+	server? ( ${SRVDEPS} )
 "
 OPT_CLIENTDEPS="
 	moviepack? ( app-arch/unzip )
 	moviesounds? ( app-arch/unzip )
 "
 DEPEND="${RDEPEND}
-	opengl? ( ${OPT_CLIENTDEPS} )
 	!dedicated? ( ${OPT_CLIENTDEPS} )
 "
 
@@ -118,9 +119,11 @@ src_prepare() {
 }
 
 src_configure() {
-	# Assume client if they don't want a server
-	use opengl || ! use dedicated && build_client=true || build_client=false
-	use dedicated && build_server=true || build_server=false
+	use dedicated &&
+		build_client=false build_server=true ||
+		build_client=true  build_server=false
+	use server &&
+		build_server=true
 
 	[ "$SLOT" == "0" ] && GameSLOT="" || GameSLOT="-${SLOT}"
 	filter-flags -fno-exceptions

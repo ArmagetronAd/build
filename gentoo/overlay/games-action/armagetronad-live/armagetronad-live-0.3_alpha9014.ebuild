@@ -23,14 +23,13 @@ OPT_CLIENTSRC="
 "
 ESVN_REPO_URI="https://${MY_PN}.svn.sourceforge.net/svnroot/${MY_PN}/${MY_PN}/trunk/${MY_PN}"
 SRC_URI="
-	opengl? ( ${OPT_CLIENTSRC} )
 	!dedicated? ( ${OPT_CLIENTSRC} )
 "
 
 LICENSE="GPL-2"
 SLOT="experimental-live"
 KEYWORDS="~amd64 ~ppc ~sparc ~x86"
-IUSE="auth debug dedicated glew linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es moviepack moviesounds opengl respawn ruby"
+IUSE="auth debug dedicated glew linguas_de linguas_fr linguas_en linguas_en_GB linguas_en_US linguas_es moviepack moviesounds respawn ruby server"
 
 GLDEPS="
 	virtual/glu
@@ -45,7 +44,6 @@ GLDEPS="
 "
 RDEPEND="
 	>=dev-libs/libxml2-2.6.11
-	opengl? ( ${GLDEPS} )
 	!dedicated? ( ${GLDEPS} )
 	>=dev-libs/boost-1.33.1
 	dev-libs/protobuf
@@ -55,7 +53,6 @@ OPT_CLIENTDEPS="
 	moviesounds? ( app-arch/unzip )
 "
 DEPEND="${RDEPEND}
-	opengl? ( ${OPT_CLIENTDEPS} )
 	!dedicated? ( ${OPT_CLIENTDEPS} )
 	ruby? ( virtual/ruby >=dev-lang/swig-1.3.29[ruby] )
 	sys-apps/util-linux
@@ -135,9 +132,11 @@ src_prepare() {
 }
 
 src_configure() {
-	# Assume client if they don't want a server
-	use opengl || ! use dedicated && build_client=true || build_client=false
-	use dedicated && build_server=true || build_server=false
+	use dedicated &&
+		build_client=false build_server=true ||
+		build_client=true  build_server=false
+	use server &&
+		build_server=true
 
 	[ "$SLOT" == "0" ] && GameSLOT="" || GameSLOT="-${SLOT}"
 	filter-flags -fno-exceptions

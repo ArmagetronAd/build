@@ -16,5 +16,6 @@
 		<flag name='moviesounds'>install sound effects extracted from the TRON movie</flag>
 		<flag name='moviepack'>install graphics based on the TRON movie</flag>
 		<flag name='respawn'>enable unsupported, hacky, impossible to deactivate at runtime, deathmatch mode. Use at your own risk.</flag>
+		<flag name='server'>Enable compilation of server</flag>
 	</use>
 </pkgmetadata>

@@ -228,11 +228,6 @@ src_install() {
 	use linguas_es || rm -v "${LangDir}spanish.txt"
 	use linguas_pl || rm -v "${LangDir}polish.txt"
 
-	# Ok, so we screwed up on doc installation... so for now, the ebuild does this manually
-	dohtml -r "${D}${GAMES_PREFIX}/share/doc/${GameDir}/html/"*
-	dodoc "${D}${GAMES_PREFIX}/share/doc/${GameDir}/html/"*.txt
-	rm -r "${D}${GAMES_PREFIX}/share/doc"
-	rmdir "${D}${GAMES_PREFIX}/share" || true	# Supress potential error
 	prepgamesdirs
 }
 

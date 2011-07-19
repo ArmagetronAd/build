@@ -15,8 +15,12 @@
 # Authors:
 #  Martin Pitt <martin.pitt@ubuntu.com>, based on
 #  http://blog.launchpad.net/api/recipe-for-uploading-files-via-the-api
+# 
+# actually ripped from lp-project-upload. Modified as lp-upload for
+# armagetronad by:
+#  Manuel Moos <z-man@users.sf.net>
 
-'''Upload a release tarball to a Launchpad project.'''
+'''Upload a release tarball and builds to a Launchpad project.'''
 
 import sys, datetime, os.path, subprocess, tempfile, os
 
@@ -57,13 +61,38 @@ def edit_file(prefix, description):
 # main
 #
 
-if len(sys.argv) != 4:
+if len(sys.argv) < 4:
     print >> sys.stderr, '''Upload a release tarball to a Launchpad project.
 
-Usage: %s <project name> <version> <tarball>''' % sys.argv[0]
+Usage: %s <project name> <version> <tarball> <optional builds>''' % sys.argv[0]
     sys.exit(1)
 
 (project, version, tarball) = sys.argv[1:]
+
+def prepare_file( filename ):
+    # Get the signature, if available.
+    signature = filename + '.asc'
+    if not os.path.exists(signature):
+        print 'Calling GPG to create ' + filename + ' signature...'
+        if subprocess.call(['gpg', '--armor', '--sign', '--detach-sig', filename]) != 0:
+            print >> sys.stderr, 'gpg failed, aborting'
+
+def upload_file( filename, description, mime_type, file_type ):
+    # Get the file contents.
+    file_content = open(filename, 'r').read()
+
+    signature = filename + '.asc'
+
+    if os.path.exists(signature):
+        signature_content = open(signature, 'r').read()
+    else:
+        signature_content = None
+
+    # Create a new product release file.
+    release.add_file(filename=filename, description='release tarball',
+            file_content=file_content, content_type='appplication/x-gzip',
+            file_type='Code Release Tarball', signature_filename=signature,
+            signature_content=signature_content)
 
 try:
     lp = get_launchpad('ubuntu-dev-tools')
@@ -83,25 +112,7 @@ try:
     if not release:
         release = create_release(proj, version)
 
-    # Get the file contents.
-    file_content = open(tarball, 'r').read()
-    # Get the signature, if available.
-    signature = tarball + '.asc'
-    if not os.path.exists(signature):
-        print 'Calling GPG to create tarball signature...'
-        if subprocess.call(['gpg', '--armor', '--sign', '--detach-sig', tarball]) != 0:
-            print >> sys.stderr, 'gpg failed, aborting'
-
-    if os.path.exists(signature):
-        signature_content = open(signature, 'r').read()
-    else:
-        signature_content = None
-
-    # Create a new product release file.
-    release.add_file(filename=tarball, description='release tarball',
-            file_content=file_content, content_type='appplication/x-gzip',
-            file_type='Code Release Tarball', signature_filename=signature,
-            signature_content=signature_content)
+    prepare_file(tarball)
 
     changelog = edit_file('changelog', 'changelog')
     if changelog:
@@ -109,6 +120,8 @@ try:
     release_notes = edit_file('releasenotes', 'release notes')
     if release_notes:
         release.release_notes = release_notes
+
+    upload_file(tarball, 'release tarball','appplication/x-gzip', 'Code Release Tarball')
 
     release.lp_save()
 

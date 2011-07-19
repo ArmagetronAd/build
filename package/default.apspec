@@ -10,7 +10,7 @@ Packager: REPLACETHIS
 Summary: Armagetron Advanced is a light cycle game.
 URL: http://www.armagetronad.net/
 License: GNU General Public License, Version 2
-SoftwareVersion: CVS
+SoftwareVersion: SVN_OR_BZR
 AutopackageTarget: 1.2
 
 # Only uncomment InterfaceVersion if your package exposes interfaces to other software,
@@ -38,7 +38,7 @@ challenging AI opponents for a quick training match.
 # should be removed before building.
 
 export CPPFLAGS="-DDEFAULT_SDL_AUDIODRIVER=alsa" 
-APBUILD_STATIC="xml2 ZThread GLEW ftgl" DEBUGLEVEL=0 prepareBuild --src ../../armagetronad --disable-sysinstall --disable-restoreold --disable-desktop --disable-glout --enable-uninstall="package remove armagetronad-dedicated" --localstatedir=/var --enable-etc --enable-initscripts --enable-automakedefaults --enable-useradd --enable-armathentication
+CPPFLAGS=-D_GNU_SOURCE=1 APBUILD_STATIC="xml2 ZThread GLEW ftgl" DEBUGLEVEL=0 prepareBuild --src ../../armagetronad --disable-sysinstall --disable-restoreold --disable-desktop --disable-glout --enable-uninstall="package remove armagetronad-dedicated" --localstatedir=/var --enable-etc --enable-initscripts --enable-automakedefaults --enable-useradd --enable-armathentication
 
 [BuildUnprepare]
 unprepareBuild

@@ -39,8 +39,10 @@ ${XMLSED_ALLOWOLD.${ALLOW_OLDLIBXML2}}
 
 COMMONSED=${STATICSED} ${XMLSED}
 
-CLIENTSED=-e "s,-dedicated,,g" -e "s,Advanced Server,Advanced,g" -e "s,--disable-glout,," -e "s,^\#client_,," -e "s,--enable-initscripts,--disable-initscripts," -e "s,--enable-armathentication,,"
-SERVERSED=
+CLIENTSED=-e "s,-dedicated,,g" -e "s,Advanced Server,Advanced,g" -e "s,--disable-glout,," -e "s,^\#client_,," -e "s,--enable-initscripts,--disable-initscripts," -e "s,--enable-armathentication,," \
+-e "s,ShortName:.*,ShortName: ${PACKAGE},"
+SERVERSED= -e "s,ShortName:.*,ShortName: ${PACKAGE}-dedicated,"
+
 
 # regular server and client builds, static/dynamic linking of libxml as is best
 SED.client=$(CLIENTSED) $(COMMONSED)

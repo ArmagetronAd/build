@@ -415,7 +415,6 @@ upload-ubuntu: xupload-ubuntu-$(RC)
 upload-ubuntu-%: xupload-ubuntu-$(RC)~%
 	echo $@
 upload-ubuntu-all: \
-upload-ubuntu-hardy \
 upload-ubuntu-lucid \
 upload-ubuntu-maverick \
 upload-ubuntu-natty \

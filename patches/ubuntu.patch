@@ -1,13 +1,13 @@
-=== modified file 'debian/control'
---- debian/control	2011-08-29 20:36:45 +0000
-+++ debian/control	2011-11-27 09:27:08 +0000
-@@ -6,7 +6,7 @@
- Standards-Version: 3.8.4
- Build-Depends: debhelper (>= 5), imagemagick, pkg-config, libgl1-mesa-dev,
-   libglu1-mesa-dev, libsdl-image1.2-dev (>= 1.2.2), libsdl1.2-dev (>= 1.2.2),
--  libsdl-mixer1.2-dev, autotools-dev, libpng12-dev, zlib1g-dev, libxml2-dev
-+  libsdl-mixer1.2-dev, autotools-dev, libpng12-dev, zlib1g-dev, libxml2-dev, libzthread-dev
- Homepage: http://armagetronad.sourceforge.net/
- Vcs-git: git://git.debian.org/git/collab-maint/armagetronad
- Vcs-Browser: http://git.debian.org/?p=collab-maint/armagetronad.git
+=== modified file 'debian/rules'
+--- debian/rules	2009-11-27 12:17:04 +0000
++++ debian/rules	2011-07-20 12:30:54 +0000
+@@ -33,7 +33,7 @@
+ endif
+ 
+ # Special options to ./configure for client and server builds.
+-SHARED_OPTS := --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --sysconfdir=/etc --disable-etc --datadir=/usr/share --disable-games --bindir=/usr/games --enable-binreloc CXXFLAGS="$(CFLAGS)" CFLAGS="$(CFLAGS)"
++SHARED_OPTS := --disable-uninstall --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --sysconfdir=/etc --disable-etc --datadir=/usr/share --disable-games --bindir=/usr/games --enable-binreloc CXXFLAGS="$(CFLAGS)" CFLAGS="$(CFLAGS)"
+ SERVER_OPTS := --disable-glout --disable-useradd --disable-init
+ CLIENT_OPTS := --enable-glout
+ 
 

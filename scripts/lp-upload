@@ -27,18 +27,20 @@ import sys, datetime, os.path, subprocess, tempfile, os
 from ubuntutools.lp.libsupport import get_launchpad
 from launchpadlib.errors import HTTPError
 
-def create_release(project, version):
+def create_release(project, series_name, version):
     '''Create new release and milestone for LP project.'''
 
-    print 'Release %s could not be found for project. Create it? (Y/n)' % version
-    answer = sys.stdin.readline().strip()
-    if answer.startswith('n'):
-        sys.exit(0)
-    if len(proj.series) != 1:
-        print >> sys.stderr, 'Does not support creating releases if more than one series exists.'
+    series = None
+    for ser in proj.series:
+        if ser.display_name == series_name:
+            series = ser
+            break
+    if not series:
+        print >> sys.stderr, 'Series %s not found, available:' % series_name
+        for s in proj.series.entries:
+            print '%s: %s' % (s['display_name'], s['summary'])
         sys.exit(3)
     release_date = datetime.date.today().strftime('%Y-%m-%d')
-    series = proj.series[0]
     milestone = series.newMilestone(name=version,
             date_targeted=release_date)
     return milestone.createProductRelease(date_released=release_date)
@@ -62,12 +64,15 @@ def edit_file(prefix, description):
 #
 
 if len(sys.argv) < 4:
-    print >> sys.stderr, '''Upload a release tarball to a Launchpad project.
+    print >> sys.stderr, '''Upload a release to a Launchpad project.
 
-Usage: %s <project name> <version> <tarball> <optional builds>''' % sys.argv[0]
+Usage: %s <project name> <series> <version> <builds>''' % sys.argv[0]
     sys.exit(1)
 
-(project, version, tarball) = sys.argv[1:]
+(project, series, version) = sys.argv[1:4]
+version=version.replace('_','-')
+builds = sys.argv[4:]
+#print builds
 
 def prepare_file( filename ):
     # Get the signature, if available.
@@ -80,19 +85,22 @@ def prepare_file( filename ):
 def upload_file( filename, description, mime_type, file_type ):
     # Get the file contents.
     file_content = open(filename, 'r').read()
-
+    print "adding %s: %s, %s, %s..." % (filename, file_type, description, mime_type)
+    
     signature = filename + '.asc'
-
+    
     if os.path.exists(signature):
         signature_content = open(signature, 'r').read()
     else:
         signature_content = None
-
+    
     # Create a new product release file.
-    release.add_file(filename=filename, description='release tarball',
-            file_content=file_content, content_type='appplication/x-gzip',
-            file_type='Code Release Tarball', signature_filename=signature,
+    release.add_file(filename=filename, description=description,
+            file_content=file_content, content_type=mime_type,
+            file_type=file_type, signature_filename=signature,
             signature_content=signature_content)
+    
+    print "done."
 
 try:
     lp = get_launchpad('ubuntu-dev-tools')
@@ -101,6 +109,50 @@ except Exception, e:
     sys.exit(2)
 
 try:
+    uploads=[]
+    for f in builds:
+        if os.path.exists(f):
+            prepare_file(f)
+            basename, extension = os.path.splitext(f)
+            basename, secondextension = os.path.splitext(basename)
+            basename, thirdextension = os.path.splitext(basename)
+            # print basename, thirdextension, secondextension, extension
+
+            # default types
+            mime_type="application/octet-stream"
+            file_type="Installer file"
+            description="Unknown"
+
+            if secondextension == ".src" or thirdextension == ".src":
+                file_type="Code Release Tarball"
+                description="Source Tarball"
+                if extension == '.bz2':
+                    mime_type="application/bzip2"
+                if extension == '.gz':
+                    mime_type="application/x-gzip"
+                if extension == '.zip':
+                    mime_type="application/zip"
+                    description="Source zip for Windows builds"
+            else:
+                if extension == ".package":
+                    description="Autopackage Installer for Linux"
+                if extension == ".deb":
+                    description="Debian Package"
+                if extension == ".dmg":
+                    description="OSX Disk Image"
+                    mime_type="application/x-apple-diskimage"
+                if extension == ".exe":
+                    description="Windows Installer"
+                    mime_type="application/exe"
+                if "dedicated" in f:
+                    description="Server " + description
+                else:
+                    description="Client " + description
+
+            #print f,description,mime_type,file_type
+            
+            uploads.append((f,description,mime_type,file_type))
+
     # Look up the project using the Launchpad instance.
     proj = lp.projects[project]
     # Find the release in the project's releases collection.
@@ -108,20 +160,34 @@ try:
     for rel in proj.releases:
         if rel.version == version:
             release = rel
+            print "Found release %s already existing." % version
             break
     if not release:
-        release = create_release(proj, version)
+        print "Creating release %s..." % version
+        release = create_release(proj, series, version)
+    
+    print "Setting changelog..."
+    changelog = "ChangeLog"
+    if os.path.exists(changelog):
+        release.changelog = open(changelog, 'r').read().strip()
+    else:
+        changelog = edit_file('changelog', 'changelog')
+        if changelog:
+            release.changelog = changelog
+    
+    print "Setting release notes..."
+    release_notes = "releasenotes.txt"
+    if os.path.exists(release_notes):
+        release.release_notes = open(release_notes, 'r').read().strip()
+    else:
+        release_notes = edit_file('releasenotes', 'release notes')
+        if release_notes:
+            release.release_notes = release_notes
 
-    prepare_file(tarball)
-
-    changelog = edit_file('changelog', 'changelog')
-    if changelog:
-        release.changelog = changelog
-    release_notes = edit_file('releasenotes', 'release notes')
-    if release_notes:
-        release.release_notes = release_notes
-
-    upload_file(tarball, 'release tarball','appplication/x-gzip', 'Code Release Tarball')
+    print "Uploading..."
+    for upload in uploads:
+        upload_file(upload[0], upload[1], upload[2], upload[3])
+    # upload_file(tarball, 'release tarball','appplication/x-gzip', 'Code Release Tarball')
 
     release.lp_save()
 

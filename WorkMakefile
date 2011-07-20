@@ -115,11 +115,11 @@ $(TARBALLGZ): $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	#
 	${TESTVERSION}
 	rm -f $@
-	mkdir -p tarballs/unpack
-	rm -rf tarballs/unpack/*
-	cd tarballs/unpack && tar -xf ../$(PACKAGE)-$(VERSION).src.tar
-	cd tarballs/unpack && tar -czf ../$(PACKAGE)-$(VERSION).src.tar.gz *
-	rm -rf tarballs/unpack
+	mkdir -p tarballs/unpack2
+	rm -rf tarballs/unpack2/*
+	cd tarballs/unpack2 && tar -xf ../$(PACKAGE)-$(VERSION).src.tar
+	cd tarballs/unpack2 && tar -czf ../$(PACKAGE)-$(VERSION).src.tar.gz *
+	rm -rf tarballs/unpack2
 	mv tarballs/$(PACKAGE)-$(VERSION).src.tar.gz $@
 	test -r $@
 	touch $@

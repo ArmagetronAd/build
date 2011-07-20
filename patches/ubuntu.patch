@@ -1,0 +1,13 @@
+=== modified file 'debian/rules'
+--- debian/rules	2009-11-27 12:17:04 +0000
++++ debian/rules	2011-07-20 12:30:54 +0000
+@@ -33,7 +33,7 @@
+ endif
+ 
+ # Special options to ./configure for client and server builds.
+-SHARED_OPTS := --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --sysconfdir=/etc --disable-etc --datadir=/usr/share --disable-games --bindir=/usr/games --enable-binreloc CXXFLAGS="$(CFLAGS)" CFLAGS="$(CFLAGS)"
++SHARED_OPTS := --disable-uninstall --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --mandir=\$${prefix}/share/man --sysconfdir=/etc --disable-etc --datadir=/usr/share --disable-games --bindir=/usr/games --enable-binreloc CXXFLAGS="$(CFLAGS)" CFLAGS="$(CFLAGS)"
+ SERVER_OPTS := --disable-glout --disable-useradd --disable-init
+ CLIENT_OPTS := --enable-glout
+ 
+

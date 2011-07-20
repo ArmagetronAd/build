@@ -111,6 +111,7 @@ try:
     lp = get_launchpad('ubuntu-dev-tools')
 except Exception, e:
     print >> sys.stderr, 'Could not connect to Launchpad:', str(e)
+    print >> sys.stderr, 'use "manage-credentials create -c ubuntu-dev-tools --level 2" to authorize this application, maybe clear out ~/.cache/lp_credentials.'
     sys.exit(2)
 
 try:
@@ -152,7 +153,10 @@ try:
                 if "dedicated" in f:
                     description="Server " + description
                 else:
-                    description="Client " + description
+                    if "-common" in f and extension == ".deb":
+                        description="Common " + description
+                    else:
+                        description="Client " + description
 
             #print f,description,mime_type,file_type
             

@@ -8,7 +8,7 @@ PACKAGE=armagetronad
 PREFIX=/usr/local
 
 # Launchpad series
-SERIES=0.2.8
+SERIES=trunk
 
 # RPM build root
 #RPMBUILDROOT="%{_tmppath}/%{name}-%{version}-root"

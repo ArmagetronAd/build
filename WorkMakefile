@@ -13,7 +13,7 @@ rpm-mdkded: mandriva-dedicated
 include IncludesMakefile3
 
 # everything z-man can build at home and work
-z-man-home: tarsource zipsource webdoc windoc autopackage ubuntu-hardy
+z-man-home: tarsource zipsource webdoc windoc autopackage ubuntu-lucid
 z-man-work: autopackage-legacyserver autopackage-client
 
 # other builders are invited to add their build sets.
@@ -336,7 +336,7 @@ debianbuild: $(DEBSOURCEDIR)
 	# *  build debian package                 *
 	# *****************************************
 	#
-	cd $<; debian/rules binary
+	cd $<; fakeroot debian/rules binary
 
 deb: debianbuild $(UPLOAD)/.tag
 	#
@@ -406,7 +406,7 @@ xupload-ubuntu-%: $(RCDIR)/${PACKAGE}_${DEBVERSION}%_source.changes
 	# *  uploading ubuntu source to ppa *
 	# ***********************************
 	#
-	cd $(RCDIR) && dput ${PACKAGE}_${DEBVERSION}$*_source.changes
+	cd $(RCDIR) && dput ppa:armagetronad-dev/ppa ${PACKAGE}_${DEBVERSION}$*_source.changes
 
 #real targets for the user
 upload-ubuntu: xupload-ubuntu-$(RC)
@@ -431,7 +431,17 @@ $(APFILE).%: $(SOURCEDIR)/.tag package/Makefile package/default.apspec $(UPLOAD)
 	rm -rf ap-$*
 	touch $@
 
-upload: $(UPLOAD)/.tag
+upload-lp: $(SOURCEDIR)/.tag $(UPLOAD)/.tag
+	#
+	# *****************************************
+	# *  uploading compiled files to lp       *
+	# *****************************************
+	#
+	cp doc/releasenotes.txt $(UPLOAD)/
+	cp $(SOURCEDIR)/ChangeLog $(UPLOAD)/
+	cd ${UPLOAD}; ../../../../scripts/lp-upload armagetronad "$(SERIES)" "$(VERSION)" *.gz *.bz2 *.zip *.deb *.package *.rpm
+
+upload-sf: $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  uploading compiled files to sf       *
@@ -439,7 +449,7 @@ upload: $(UPLOAD)/.tag
 	#
 
 	cp doc/releasenotes.txt $(UPLOAD)/
-	unix2dos $(UPLOAD)/releasenotes.txt
+	todos $(UPLOAD)/releasenotes.txt
 	cd ${UPLOAD}; mkdir -p new/$(VERSION); rsync -avP -e ssh new z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/; rmdir new/$(VERSION); rmdir new; rsync -avP -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/new/$(VERSION)/
 
 TOEMPTYLINE=sed -e "s,^$$,," -e "t q" -e "p" -e "d" -e ": q" -e "q"

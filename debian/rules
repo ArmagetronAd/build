@@ -51,14 +51,14 @@ autotools-update:
 configure-stamp.client:
 	dh_testdir
 	mkdir client
-	cd client && sh ../configure $(confflags) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info --enable-glout
+	cd client && sh ../configure $(confflags) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info --enable-glout --disable-uninstall
 	cd client && perl -pi -e 's/\s-lpng\b//; s/\s-lz\b//' `find -name Makefile`
 	touch $@
 
 configure-stamp.server:
 	dh_testdir
 	mkdir server
-	cd server && sh ../configure $(confflags) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info --disable-glout
+	cd server && sh ../configure $(confflags) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info --disable-glout --disable-uninstall
 	cd server && perl -pi -e 's/\s-lpng\b//; s/\s-lz\b//' `find -name Makefile`
 	touch $@
 

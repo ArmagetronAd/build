@@ -86,6 +86,11 @@ def upload_file( filename, description, mime_type, file_type ):
     # Get the file contents.
     file_content = open(filename, 'r').read()
     print "adding %s: %s, %s, %s..." % (filename, file_type, description, mime_type)
+
+    for f in release.files:
+        if filename == os.path.split(f.self_link)[-1]:
+            print "Already exists, delete it from %s first if you want to re-upload it." % release.self_link
+            return
     
     signature = filename + '.asc'
     

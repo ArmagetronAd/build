@@ -250,7 +250,7 @@ $(RCDIR)/doc.%.build: $(SOURCEDIR)/.tag
 	mkdir $@
 
 	# configure and make documentation
-	CXXFLAGS=$(CXXFLAGS) docstyle=$* bash scripts/configure $@ $(SOURCEDIR)	--prefix='/usr/local' --disable-glout
+	CXXFLAGS="$(CXXFLAGS) -O0" docstyle=$* bash scripts/configure $@ $(SOURCEDIR)	--prefix='/usr/local' --disable-glout
 
 $(RCDIR)/doc.%: $(RCDIR)/doc.%.build
 	#

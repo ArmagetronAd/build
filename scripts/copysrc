@@ -40,7 +40,7 @@ cd $TARGET/distmaker
 rm -rf armagetronad-*
 rm -rf ${PACKAGE}-*
 rm -f *.tar.*
-test -r config.h || progname="${PACKAGE}" progtitle="${PROGNAME}" docstyle=web $CWD/$AA_SOURCE/configure --prefix=/usr/local --disable-glout --enable-automakedefaults --disable-useradd --disable-etc --disable-initscripts || exit -1
+test -r config.h || progname="${PACKAGE}" progtitle="${PROGNAME}" CXXFLAGS="-O0" docstyle=web $CWD/$AA_SOURCE/configure --prefix=/usr/local --disable-glout --enable-automakedefaults --disable-useradd --disable-etc --disable-initscripts || exit -1
 ${MAKE} distprep || exit -1
 ${MAKE} dist || exit -1
 tar -xzf *.tar.*

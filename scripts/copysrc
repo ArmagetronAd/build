@@ -41,7 +41,7 @@ fi
 mkdir -p $TARGET/distmaker
 lwd=`pwd`
 cd $TARGET/distmaker
-test -r config.h || docstyle=web $CWD/$AA_SOURCE/configure --prefix=/usr/local --disable-glout --enable-automakedefaults --disable-useradd --disable-etc --disable-initscripts || exit -1
+test -r config.h || docstyle=web CXXFLAGS="-O0" $CWD/$AA_SOURCE/configure --prefix=/usr/local --disable-glout --enable-automakedefaults --disable-useradd --disable-etc --disable-initscripts || exit -1
 ${MAKE} distprep || exit -1
 ${MAKE} dist || exit -1
 mv *.tar.* ../

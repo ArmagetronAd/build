@@ -42,9 +42,14 @@ if test -d ${VISUALC}; then
     # transcribe nsi scripts
 	for f in `ls ${VISUALC} -1 | grep ".*.nsi$"`; do
 		#echo Adapting installer script $f...
-		sed < ${VISUALC}/$f > ${WINDIR}/$f -e "s,define PRODUCT_VERSION.*$,define PRODUCT_VERSION \"${VERSION}\","
+		sed < ${VISUALC}/$f > ${WINDIR}/$f \
+            -e "s,define PRODUCT_VERSION.*$,define PRODUCT_VERSION \"${VERSION}\"," \
+            -e "s,define PRODUCT_BASENAME.*$,define PRODUCT_BASENAME \"${PROGNAME}\"," \
+
         for suffix in gcc vc6 vc8; do
-            sed < ${VISUALC}/$f > ${WINDIR}/${suffix}.$f -e "s,define PRODUCT_VERSION.*$,define PRODUCT_VERSION \"${VERSION}.${suffix}\","
+            sed < ${VISUALC}/$f > ${WINDIR}/${suffix}.$f \
+            -e "s,define PRODUCT_VERSION.*$,define PRODUCT_VERSION \"${VERSION}.${suffix}\"," \
+            -e "s,define PRODUCT_BASENAME.*$,define PRODUCT_BASENAME \"${PROGNAME}\"," \
 
             # generate special makedist script that copies only the wanted installer generators
             MAKEDIST=${WINDIR}/makedist_${suffix}.bat

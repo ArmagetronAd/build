@@ -302,7 +302,7 @@ $(WINSOURCEDIR): $(SOURCEDIR)/.tag $(WINDOCDIR) $(WINBUILDDIR) Makefile scripts/
 	#
 	test "$(AA_VISUALC)" != "" || { echo -e "\nCVS module armagetronad_build_visualc needs to be checked out parallel to this directory for Windows source build.\n"; false; }
 	rm -rf $@ $@-proto $(RCDIR)/$(PACKAGE)
-	VERSION=$(VERSION) bash scripts/winsrc $@-proto $(SOURCEDIR) $(WINBUILDDIR) $(WINDOCDIR) $(AA_VISUALC) $(AA_CODEBLOCKS)
+	PROGNAME=$(PROGNAME) VERSION=$(VERSION) bash scripts/winsrc $@-proto $(SOURCEDIR) $(WINBUILDDIR) $(WINDOCDIR) $(AA_VISUALC) $(AA_CODEBLOCKS)
 	mv $@-proto $@
 	touch $@
 

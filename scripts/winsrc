@@ -27,7 +27,10 @@ done
 for f in ${WINDIR}/win32/*.nsi; do
 	#echo Adapting installer script $f...
     mv $f $f.in
-	sed < $f.in > $f -e "s,define PRODUCT_VERSION.*$,define PRODUCT_VERSION \"${VERSION}\","
+	sed < $f.in > $f \
+        -e "s,define PRODUCT_VERSION.*$,define PRODUCT_VERSION \"${VERSION}\","\
+        -e "s,define PRODUCT_BASENAME.*$,define PRODUCT_BASENAME \"${PROGNAME}\"," \
+
     rm $f.in
 done
 

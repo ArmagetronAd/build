@@ -25,7 +25,7 @@ for f in $WINDIR/INSTALL $WINDIR/COPYING $WINDIR/AUTHORS $WINDIR/NEWS $WINDIR/Ch
 done
 
 # copy Code::Blocks build files
-if test -d ${CODEBLOCKS}; then
+if test -n "${CODEBLOCKS}" && test -d ${CODEBLOCKS}; then
     cp -r ${CODEBLOCKS}/* ${WINDIR}/ || exit 1
     
     # adapt relative paths to source
@@ -36,7 +36,7 @@ if test -d ${CODEBLOCKS}; then
 fi
 
 # copy visualC build files
-if test -d ${VISUALC}; then
+if test -n "${VISUALC}" && test -d ${VISUALC}; then
     cp -r ${VISUALC}/* ${WINDIR}/ || exit 1
 
     # transcribe nsi scripts

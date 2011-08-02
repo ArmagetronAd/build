@@ -1,4 +1,3 @@
-This is a random build from the current development state of the 0.2.8
-branch that last produced release 0.2.8.3. Maybe it leads to a 0.2.9
-release, but probably the first stable version containing these
-minor new features here will be 0.4.
+This is a random build from the current development state of the trunk,
+probably highly unstable and unusable. The next stable release to come
+out of here should be 0.4.0.

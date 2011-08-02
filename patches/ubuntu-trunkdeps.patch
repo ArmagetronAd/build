@@ -1,0 +1,14 @@
+=== modified file 'debian/control'
+--- debian/control	2010-03-11 23:59:27 +0000
++++ debian/control	2011-08-02 08:25:26 +0000
+@@ -5,7 +5,8 @@
+ Standards-Version: 3.8.4
+ Build-Depends: debhelper (>= 5), imagemagick, pkg-config, libgl1-mesa-dev,
+   libglu1-mesa-dev, libsdl-image1.2-dev (>= 1.2.2), libsdl1.2-dev (>= 1.2.2),
+-  libsdl-mixer1.2-dev, autotools-dev, libpng12-dev, zlib1g-dev, libxml2-dev
++  libsdl-mixer1.2-dev, autotools-dev, libpng12-dev, zlib1g-dev, libxml2-dev,
++  libboost-dev, ftgl-dev, libglew-dev, bison, libprotobuf-dev, protobuf-compiler
+ Homepage: http://armagetronad.sourceforge.net/
+ Vcs-git: git://git.debian.org/git/collab-maint/armagetronad
+ Vcs-Browser: http://git.debian.org/?p=collab-maint/armagetronad.git
+

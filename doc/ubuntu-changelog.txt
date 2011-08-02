@@ -1,6 +1,9 @@
 @package@ (@version@) @distribution@; urgency=low
 
-  * just slapping the new upstream code around the ubuntu distribution files.
+  * slapping the new upstream code around the ubuntu distribution files.
+  * adding new compile time dependencies for trunk builds
+  * fixing server vardir
+  * disabling uninstall generation
 
  -- Manuel Moos <z-man@users.sf.net>  @date@
  

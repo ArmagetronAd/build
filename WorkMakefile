@@ -363,9 +363,14 @@ $(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 #   adapt the following line as ubuntu releases get updated
 	bzr pull -d ../ubuntu || bzr branch lp:ubuntu/armagetronad ../ubuntu
 	cp -ax ../ubuntu/debian $(UBUNTUSOURCEDIR)$*/debian
+#   don't even generate uninstall.
 	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu.patch
-#       for later. Fixes var dir location of dedicated server, now it would break stuff.
-#	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu-vardir.patch
+#   Fixes var dir location of dedicated server.
+	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu-vardir.patch
+#   Updates dependencies
+	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu-trunkdeps.patch
+#   version dependant patches
+	rel=$$(echo $* | sed -e "s,.*~,,"); echo patches/ubuntu~$$rel.patch; if test -r patches/ubuntu~$$rel.patch; then patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu~$$rel.patch; fi
 #   rebrand package
 #	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\./armagetronad./g" > $(UBUNTUSOURCEDIR)/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
 	cd $(UBUNTUSOURCEDIR)$*/debian/; for f in *; do dest=$$(echo $$f | sed -e "s,armagetronad,${PACKAGE},g"); test -d $$f || sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" --e "s/${PACKAGE}\.source/armagetronad.source/g" > $$dest.out; rm $$f; mv $$dest.out $$dest; done

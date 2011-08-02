@@ -1,0 +1,18 @@
+=== modified file 'debian/armagetronad-dedicated.wrapper'
+--- debian/armagetronad-dedicated.wrapper	2007-04-24 11:38:26 +0000
++++ debian/armagetronad-dedicated.wrapper	2011-07-28 17:13:30 +0000
+@@ -5,11 +5,11 @@
+ DATADIR=/usr/share/games/armagetronad
+ CONFDIR=/etc/armagetronad
+ 
+-CMDLINE="--datadir $DATADIR --configdir $CONFDIR -d"
+-
+ # Source configuration variables.
+ . /etc/default/armagetronad-dedicated
+ 
++CMDLINE="--datadir $DATADIR --configdir $CONFDIR --userdatadir $VARDIR -d"
++
+ # Array for keeping track of start times.
+ declare -a STARTDATE_LOG
+ 
+

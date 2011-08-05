@@ -386,7 +386,7 @@ $(RCDIR)/ubuntu%.tag: $(UBUNTUSOURCEDIR)%.tag
 	# *  ubuntu build                         *
 	# *****************************************
 	#
-	Cd $(UBUNTUSOURCEDIR)$*; fakeroot debian/rules binary
+	cd $(UBUNTUSOURCEDIR)$*; fakeroot debian/rules binary
 #   harvesting debian package(s)
 	find $(RCDIR) -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
 	echo "x" > $@

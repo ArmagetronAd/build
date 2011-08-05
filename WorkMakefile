@@ -361,7 +361,7 @@ $(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	mv $(RCDIR)/tmp2/$(PACKAGE)-$(VERSION) $(UBUNTUSOURCEDIR)$*
 	rmdir $(RCDIR)/tmp2
 #   adapt the following line as ubuntu releases get updated
-	bzr pull -d ../ubuntu || bzr branch lp:ubuntu/armagetronad ../ubuntu
+	bzr pull -d ../ubuntu || HOME=/noway bzr branch lp:ubuntu/armagetronad ../ubuntu
 	cp -ax ../ubuntu/debian $(UBUNTUSOURCEDIR)$*/debian
 #   don't even generate uninstall.
 	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu.patch
@@ -457,7 +457,7 @@ upload-lp: $(SOURCEDIR)/.tag $(UPLOAD)/.tag upload-rename
 	#
 	cp doc/releasenotes.txt $(UPLOAD)/
 	head -n 1000 $(SOURCEDIR)/ChangeLog > $(UPLOAD)/ChangeLog
-	cd ${UPLOAD}; ../../../../scripts/lp-upload armagetronad "$(SERIES)" "$(VERSION)" *.gz *.bz2 *.zip *.deb *.package *.rpm *.exe *.dmg
+	cd ${UPLOAD}; PROJ=armagetron-builds; test $(PACKAGE) = armagetronad && PROJ=armagetronad; ../../../../scripts/lp-upload "$$PROJ" "$(SERIES)" "$(VERSION)" *.gz *.bz2 *.zip *.deb *.package *.rpm *.exe *.dmg
 
 upload-sf: $(UPLOAD)/.tag upload-rename
 	#

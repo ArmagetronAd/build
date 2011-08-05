@@ -454,7 +454,7 @@ upload-lp: $(SOURCEDIR)/.tag $(UPLOAD)/.tag upload-rename
 	#
 	cp doc/releasenotes.txt $(UPLOAD)/
 	head -n 1000 $(SOURCEDIR)/ChangeLog > $(UPLOAD)/ChangeLog
-	cd ${UPLOAD}; ../../../../scripts/lp-upload armagetron-builds "$(SERIES)" "$(VERSION)" *.gz *.bz2 *.zip *.deb *.package *.rpm *.exe *.dmg
+	cd ${UPLOAD}; PROJ=armagetron-builds; test $(PACKAGE) = armagetronad && PROJ=armagetronad; ../../../../scripts/lp-upload "$$PROJ" "$(SERIES)" "$(VERSION)" *.gz *.bz2 *.zip *.deb *.package *.rpm *.exe *.dmg
 
 upload-sf: $(UPLOAD)/.tag upload-rename
 	#

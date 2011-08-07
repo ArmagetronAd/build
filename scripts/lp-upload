@@ -74,6 +74,10 @@ version=version.replace('_','-')
 builds = sys.argv[4:]
 #print builds
 
+Linux=False
+Windows=False
+Mac=False
+
 def prepare_file( filename ):
     # Get the signature, if available.
     signature = filename + '.asc'
@@ -142,14 +146,18 @@ try:
             else:
                 if extension == ".package":
                     description="Autopackage Installer for Linux"
+                    Linux=True
                 if extension == ".deb":
                     description="Debian Package"
+                    Linux=True
                 if extension == ".dmg":
                     description="OSX Disk Image"
                     mime_type="application/x-apple-diskimage"
+                    Mac=True
                 if extension == ".exe":
                     description="Windows Installer"
                     mime_type="application/exe"
+                    Windows=True
                 if "dedicated" in f:
                     description="Server " + description
                 else:
@@ -193,12 +201,33 @@ try:
         if release_notes:
             release.release_notes = release_notes
 
+    # create new summary
+    summary=""
+    if Linux:
+        summary = "Linux"
+    if Mac:
+        if "" != summary:
+            summary += "+"
+        summary += "Mac"
+    if Windows:
+        if "" != summary:
+            summary += "+"
+        summary += "Windows" 
+    milestone = release.milestone
+    #print dir(milestone)
+    #print milestone.web_link
+    #print milestone.lp_operations
+    #print milestone.lp_attributes
+    dummy = milestone.summary # dunno why that is needed, but it is
+    milestone.summary = summary
+
     print "Uploading..."
     for upload in uploads:
         upload_file(upload[0], upload[1], upload[2], upload[3])
     # upload_file(tarball, 'release tarball','appplication/x-gzip', 'Code Release Tarball')
 
     release.lp_save()
+    milestone.lp_save()
 
 except HTTPError, e:
     print 'An error happened in the upload:', e.content

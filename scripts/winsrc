@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # packs windows sources
 
 # set -x
@@ -38,8 +38,36 @@ done
 cp ${WINDIR}/src/tFakeVersion.h ${WINDIR}/src/tTrueVersion.h
 
 # append windows specific stuff
-WINVERSION=`echo $VERSION | sed -e 's/\./,/g' -e 's/_alpha/,/' -e 's/_beta/,/' -e 's/_rc/,/'`
+WINVERSION=`echo $VERSION | sed -e 's/\./,/g' -e 's/_alpha/,/' -e 's/_z//' -e 's/_beta/,/' -e 's/_rc/,/'`
 MINVERSION=`echo $VERSION | sed -e 's/^.*_/_/'`
+
+# normalize WINVERSION. It's supposed to be in the form a,b,c,d with a-d all 16 bit numbers
+
+# first, if it's only three digits, add a zero at the second to last place
+if( echo $WINVERSION | grep "[^,]*,[^,]*,[^,]*" > /dev/null ); then
+    LAST=`echo $WINVERSION | sed -e "s/.*,//"`
+    REST=`echo $WINVERSION | sed -e "s/,$LAST//"`
+    WINVERSION=$REST,0,$LAST
+fi
+
+REST=$WINVERSION
+WINVERSION=""
+LEFTOVER=0
+COUNT=4
+while test $COUNT -ge 1; do
+    COUNT=$(($COUNT-1))
+
+    LAST=`echo $REST | sed -e "s/.*,//"`
+    REST=`echo $REST | sed -e "s/,$LAST//"`
+
+    LAST=$(( $LAST+$LEFTOVER ))
+    LEFTOVER=$(( $LAST/0x10000 ))
+    LAST=$(( $LAST & 0xffff ))
+
+    WINVERSION=$LAST,$WINVERSION
+done
+WINVERSION=$(echo $WINVERSION | sed -e 's/,$//')
+
 echo "#define MINOR_VERSION ${MINVERSION}"      >> ${WINDIR}/src/tTrueVersion.h
 echo "#define MAJOR_VERSION ${WINVERSION}"      >> ${WINDIR}/src/tTrueVersion.h
 

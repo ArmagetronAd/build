@@ -49,6 +49,7 @@ libSDL_image libpng \
   fi
 done
 
+# libraries we know are dynamically loaded later, so they don't appear in ldd's output
 for library in \
 libjpeg.so.62 \
 ; do

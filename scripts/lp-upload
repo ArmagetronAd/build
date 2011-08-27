@@ -131,7 +131,7 @@ try:
             # default types
             mime_type="application/octet-stream"
             file_type="Installer file"
-            description="Unknown"
+            description="Portable App"
 
             if secondextension == ".src" or thirdextension == ".src":
                 file_type="Code Release Tarball"
@@ -166,7 +166,7 @@ try:
                     else:
                         description="Client " + description
 
-            #print f,description,mime_type,file_type
+            # print f,description,mime_type,file_type
             
             uploads.append((f,description,mime_type,file_type))
 

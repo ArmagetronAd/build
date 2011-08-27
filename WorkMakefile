@@ -441,7 +441,7 @@ $(GENERIC_CLIENT_DIR).tag: $(SOURCEDIR)/.tag
 	# configure and make
 	bash scripts/configure $(GENERIC_CLIENT_DIR) $(SOURCEDIR) --prefix='/usr/local' --disable-uninstall --disable-sysinstall --disable-restoreold --enable-etc --disable-initscripts --enable-automakedefaults --disable-useradd --enable-armathentication
 
-	make -C $(GENERIC_CLIENT_DIR)
+	${MAKE} -C $(GENERIC_CLIENT_DIR)
 	touch $@
 
 # portable client build
@@ -451,7 +451,7 @@ PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
 APPDIR=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
 PORTABLE_CLIENT=$(UPLOAD)/$(PORTABLE_CLIENT_NAME)_${VERSION}
 portable_client: $(PORTABLE_CLIENT)
-$(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun
+$(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build WorkMakefile
 	#
 	# *****************************************
 	# *  package portable client
@@ -459,19 +459,10 @@ $(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun
 	#
 #   install into appdir
 	rm -rf ${APPDIR}
-	make -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${APPDIR} install
+	${MAKE} -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${APPDIR} install
 
-#   add AppRun and desktop file
-	cp portable/AppRun $(APPDIR)/
-	find ${APPDIR} -name "*.desktop" -exec mv \{\} ${APPDIR}/ \;
-
-#   hack Icon
-	find ${APPDIR} -type d -name "desktop" -exec cp \{\}/icons/large/armagetronad.png ${APPDIR}/${PACKAGE}.png \;
-
-#   and pack it up. The script is stupidly only available inside a portable app
-#   called AppImageAssistant; fetch it and extract it with AppImageExtractor
-#   to /usr/local/bin/.
-	/usr/local/bin/AppImageAssistant.AppDir/package ${APPDIR} ${PORTABLE_CLIENT}
+#   delegate
+	APPDIR=${APPDIR} PORTABLE_CLIENT=${PORTABLE_CLIENT} PACKAGE=${PACKAGE} portable/build	
 
 $(RCDIR)/doc.%: $(RCDIR)/doc.%.build
 

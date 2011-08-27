@@ -1,0 +1,64 @@
+#!/bin/bash
+# builds portable client
+
+# set -x
+
+#   add AppRun and desktop file
+cp portable/AppRun ${APPDIR}/
+find ${APPDIR} -name "*.desktop" -exec mv \{\} ${APPDIR}/ \;
+
+#   hack Icon
+find ${APPDIR} -type d -name "desktop" -exec cp \{\}/icons/small/armagetronad.png ${APPDIR}/${PACKAGE}.png \;
+
+lastpath=
+
+function copylib()
+{
+    baselib=$1
+    path=$(dirname ${baselib})
+    baselib=$(basename ${baselib})
+    echo "Found in ${path}."
+    if test -n "$lastpath" && test "$lastpath" != "$path"; then
+        echo "error: different paths detected, frankenbuild!"
+        exit 1
+    fi
+    lastpath=$path
+    while test -n "${baselib}"; do
+      # copy libary
+      echo Copying ${baselib}...
+      cp -ax "${path}/${baselib}" ${APPDIR}/usr/local/lib/
+      # resolve links
+      baselib=$(ls -l ${path}/${baselib} | grep -- "->" | sed -e "s,.*-> ,,")
+    done
+}
+
+#   include libraries
+mkdir -p ${APPDIR}/usr/local/lib/
+for library in \
+libSDL-1 \
+libSDL_image libpng \
+; do
+  echo "Checking for library ${library}...."
+  baselib=$(ldd ${APPDIR}/usr/local/bin/${PACKAGE} | grep "${library}" | sed -e "s,.*=> ,," -e "s, (.*,,")
+  if test -z "${baselib}"; then
+    echo "Not linked."
+  else
+    copylib ${baselib}
+  fi
+done
+
+for library in \
+libjpeg.so \
+; do
+    echo "Installing library ${library} anyway, we know it's needed."
+    copylib ${lastpath}/${library}
+done
+
+
+echo $lastpath
+
+#   and pack it up. The script is stupidly only available inside a portable app
+#   called AppImageAssistant; fetch it and extract it with AppImageExtractor
+#   to /usr/local/bin/.
+rm -f ${PORTABLE_CLIENT}
+/usr/local/bin/AppImageAssistant.AppDir/package ${APPDIR} ${PORTABLE_CLIENT}

@@ -35,6 +35,8 @@ function copylib()
 #   include libraries
 mkdir -p ${APPDIR}/usr/local/lib/
 for library in \
+libxml2 \
+libZThread \
 libSDL-1 \
 libSDL_image libpng \
 ; do
@@ -48,6 +50,7 @@ libSDL_image libpng \
 done
 
 for library in \
+libjpeg.so.62 \
 libjpeg.so \
 ; do
     echo "Installing library ${library} anyway, we know it's needed."

@@ -39,6 +39,12 @@ libxml2 \
 libZThread \
 libSDL-1 \
 libSDL_image libpng \
+libSDL_mixer \
+libGLEW \
+libfreetype \
+libftgl \
+libprotobuf \
+libboost_thread \
 ; do
   echo "Checking for library ${library}...."
   baselib=$(ldd ${APPDIR}/usr/local/bin/${PACKAGE} | grep "${library}" | sed -e "s,.*=> ,," -e "s, (.*,,")

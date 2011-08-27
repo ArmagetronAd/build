@@ -26,13 +26,14 @@ function copylib()
     while test -n "${baselib}"; do
       # copy libary
       echo Copying ${baselib}...
-      cp -ax "${path}/${baselib}" ${APPDIR}/usr/local/lib/
+      cp -ax "${path}/${baselib}" ${APPDIR}/usr/lib/
       # resolve links
       baselib=$(ls -l ${path}/${baselib} | grep -- "->" | sed -e "s,.*-> ,,")
     done
 }
 
 #   include libraries
+mkdir -p ${APPDIR}/usr/lib/
 mkdir -p ${APPDIR}/usr/local/lib/
 for library in \
 libxml2 \
@@ -55,6 +56,7 @@ libboost_thread \
   fi
 done
 
+# libraries we know are dynamically loaded later, so they don't appear in ldd's output
 for library in \
 libjpeg.so.62 \
 ; do

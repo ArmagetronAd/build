@@ -121,7 +121,7 @@ except Exception, e:
 try:
     uploads=[]
     for f in builds:
-        if os.path.exists(f):
+        if os.path.exists(f) and os.path.splitext(f)[1] != ".asc":
             prepare_file(f)
             basename, extension = os.path.splitext(f)
             basename, secondextension = os.path.splitext(basename)
@@ -131,7 +131,7 @@ try:
             # default types
             mime_type="application/octet-stream"
             file_type="Installer file"
-            description="Portable App"
+            description="Portable App for Linux"
 
             if secondextension == ".src" or thirdextension == ".src":
                 file_type="Code Release Tarball"
@@ -158,7 +158,9 @@ try:
                     description="Windows Installer"
                     mime_type="application/exe"
                     Windows=True
-                if "dedicated" in f:
+                if "Portable App" in description:
+                    Linux=True
+                if "edicated" in f:
                     description="Server " + description
                 else:
                     if "-common" in f and extension == ".deb":

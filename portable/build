@@ -6,18 +6,11 @@
 #   add AppRun and desktop file
 cp portable/AppRun ${APPDIR}/
 find ${APPDIR} -name "*.desktop" -exec mv \{\} ${APPDIR}/ \;
-find ${APPDIR} -type l -name "*.desktop" -exec rm \{\} \;
 
 #   hack Icon
-for f in $(find ${APPDIR} -type d -name "desktop"); do
-  cp $f/icons/small/*.png ${APPDIR}/${PACKAGE}.png
-done
-
-# correct absolute symlinks
-APPDIR=${APPDIR} $(dirname $0)/fixlinks
+find ${APPDIR} -type d -name "desktop" -exec cp \{\}/icons/small/armagetronad.png ${APPDIR}/${PACKAGE}.png \;
 
 lastpath=
-otherpath=
 
 function copylib()
 {
@@ -25,21 +18,21 @@ function copylib()
     path=$(dirname ${baselib})
     baselib=$(basename ${baselib})
     echo "Found in ${path}."
-    if test "$lastpath" != "$path"; then
-        otherpath=$lastpath
+    if test -n "$lastpath" && test "$lastpath" != "$path"; then
+        echo "error: different paths detected, frankenbuild!"
+        exit 1
     fi
     lastpath=$path
     while test -n "${baselib}"; do
       # copy libary
       echo Copying ${baselib}...
-      cp -ax "${path}/${baselib}" ${APPDIR}/usr/lib/
+      cp -ax "${path}/${baselib}" ${APPDIR}/usr/local/lib/
       # resolve links
       baselib=$(ls -l ${path}/${baselib} | grep -- "->" | sed -e "s,.*-> ,,")
     done
 }
 
 #   include libraries
-mkdir -p ${APPDIR}/usr/lib/
 mkdir -p ${APPDIR}/usr/local/lib/
 for library in \
 libxml2 \
@@ -56,24 +49,18 @@ libSDL_image libpng \
   fi
 done
 
-if ! echo ${PACKAGE} | grep dedicated; then
-# libraries we know are dynamically loaded later, so they don't appear in ldd's output
 for library in \
 libjpeg.so.62 \
 ; do
     echo "Installing library ${library} anyway, we know it's needed."
-    if test -r ${lastpath}/${library}; then
-        copylib ${lastpath}/${library}
-    else
-        copylib ${otherpath}/${library}
-    fi
+    copylib ${lastpath}/${library}
 done
-fi
+
 
 echo $lastpath
 
 #   and pack it up. The script is stupidly only available inside a portable app
 #   called AppImageAssistant; fetch it and extract it with AppImageExtractor
 #   to /usr/local/bin/.
-rm -f ${PORTABLE}
-/usr/local/bin/AppImageAssistant.AppDir/package ${APPDIR} ${PORTABLE}
+rm -f ${PORTABLE_CLIENT}
+/usr/local/bin/AppImageAssistant.AppDir/package ${APPDIR} ${PORTABLE_CLIENT}

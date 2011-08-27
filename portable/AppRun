@@ -5,3 +5,4 @@ EXEC=$(grep -m 1 -r Exec= ./*.desktop | cut -d "=" -f 2 | cut -d % -f 1)
 EXECPATH=$(grep -m 1 -r Path= ./*.desktop | cut -d "=" -f 2 | cut -d % -f 1)
 #append library path so system libraries are found first
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:./usr/local/lib:./usr/lib" PATH=".${EXECPATH}:${PATH}" exec $EXEC $@
+#LD_LIBRARY_PATH="./usr/local/lib:./usr/lib:${LD_LIBRARY_PATH}" PATH=".${EXECPATH}:${PATH}" exec $EXEC $@

@@ -10,7 +10,8 @@ BUILDDIR=../ap
 include ../make.conf
 include ../builds/.versionfile
 
-PACKAGER_UNQUOTE=$(shell echo ${PACKAGER} | sed -e "s,\",,g")
+PACKAGER_UNQUOTE=$(subst ",,${PACKAGER})
+PROGNAME_STRIPPED=$(subst ",,${PROGNAME})
 
 # should we always statically link with libxml2?
 XMLSTATICDEFAULT = no
@@ -38,8 +39,6 @@ ${XMLSED_STATIC.${XMLSTATIC}} \
 ${XMLSED_ALLOWOLD.${ALLOW_OLDLIBXML2}}
 
 COMMONSED=${STATICSED} ${XMLSED}
-
-PROGNAME_STRIPPED=$(subst ",,${PROGNAME})
 
 CLIENTSED=-e "s,armagetronad-dedicated,${PACKAGE},g" -e "s,Armagetron Advanced Server,${PROGNAME_STRIPPED},g" -e "s,Armagetron Advanced,${PROGNAME_STRIPPED},g" -e "s,--disable-glout,," -e "s,^\#client_,," -e "s,--enable-initscripts,--disable-initscripts," -e "s,--enable-armathentication,,"
 SERVERSED= -e "s,armagetronad-dedicated,${PACKAGE}-dedicated," -e "s,Armagetron Advanced,${PROGNAME_STRIPPED},g"

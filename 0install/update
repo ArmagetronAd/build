@@ -1,0 +1,25 @@
+#!/bin/bash
+# updates 0install stream xml for new release 
+
+# expected variables:
+# SERIES
+# VERSION
+# FILE
+
+set -x
+
+# construct uri
+URI=http://launchpad.net/armagetronad/${SERIES}/${VERSION}/+download/$(basename ${FILE})
+
+# transform version for 0install
+ZEROVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" -e "s,-alpha,-pre0.," -e "s,-beta,-pre1.," )
+
+# determine xml to modify
+XML=0install/armagetronad-${SERIES}.xml
+
+# add the release
+0publish ${XML} \
+ --add-version ${ZEROVERSION} \
+ --archive-url=${URI} \
+ --archive-file=${FILE} \
+ --set-released=today

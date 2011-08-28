@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type='text/xsl' href='interface.xsl'?>
+<interface uri="http://armagetron.kicks-ass.net/~manuel/stuff/0install/armagetronad-0.2.8-snapshots.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
+  <name>armagetronad</name>
+  <summary>Tron clone in 3D</summary>
+  <description>
+Dumping cores since 2000.</description>
+  <homepage>http://armagetronad.net</homepage>
+  <category>Game</category>
+  <icon href="https://launchpadlibrarian.net/11798371/64x64.png" type="image/png"/>
+  <group arch="Linux-i686">
+    <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/SDL_image.xml">
+      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
+    </requires>
+    <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/libsdl1.2.xml">
+      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
+    </requires>
+    <implementation doc-dir="usr/local/share/doc/games/armagetronad-alpha/html" id="sha1new=cd1ec61f60d42fca93959b096724038135682fc0" license="OSI Approved :: GNU General Public License v2" main="usr/local/bin/armagetronad-alpha" released="2011-08-28" stability="developer" version="0.2.8-pre0.20110826">
+    <archive href="http://launchpad.net/armagetronad/0.2.8-snapshots/0.2.8-alpha20110826/+download/armagetronad-alpha-0.2.8_alpha20110826.bin.tar.bz2" size="2113594" type="application/x-bzip-compressed-tar"/>
+  </implementation>
+  </group>
+</interface>
+<!-- Base64 Signature
+iQEcBAABAgAGBQJOWs9sAAoJEJYsGiV3yxrNhyIH/A/TOFIdq1aVPOvXBAgbDqD3/Q9368gvvaUg
+u+Ezv5bwxOlio0sJj4StH0Tm6MajdNWQeLjZJb7Xz3htrl01DgoCEeKCaO6L4nAh1cTi51JVA92R
+XO9eAkQnZCq4Ufixy//0gjV3J3Ox1K1TpaWIPhncLmPTmGUjyFXVjEPVxu4yD6qRAiZzVL5F+geH
+FzWbNtWGMWs5eVeIGp3nBLswZh1LiAZSe0chdfGNcO+cKGeLRzXaAnWMuNDIwVIqB2ZMySCCDHaw
+kjLqNVItD52DXG4T4K7IGaM9xUVztRObGpRCXfJpvVPhvL3DMg+LogS3O1PEFScWcMyyRKI7xR1Y
+O9M=
+
+-->

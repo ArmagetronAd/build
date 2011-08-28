@@ -3,3 +3,4 @@
 ./builds
 ./ap-client
 ./make.conf.bak
+*.gpg

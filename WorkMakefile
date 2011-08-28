@@ -451,7 +451,7 @@ PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
 APPDIR=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
 PORTABLE_CLIENT=$(UPLOAD)/$(PORTABLE_CLIENT_NAME)_${VERSION}
 portable_client: $(PORTABLE_CLIENT)
-$(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build WorkMakefile
+$(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build WorkMakefile $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package portable client
@@ -466,11 +466,11 @@ $(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build Wor
 
 # plain binary tarball
 PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
-BINARY_TARBALL_NAME=${PACKAGE}-${VERSION}
+BINARY_TARBALL_NAME=${PACKAGE}-${VERSION}.${OSTAG_GENERIC}
 TARBALL_DIR=$(RCDIR)/$(BINARY_TARBALL_NAME).fortar
-BINARY_TARBALL=$(UPLOAD)/$(BINARY_TARBALL_NAME).${OSTAG_GENERIC}.bin.tar.bz2
+BINARY_TARBALL=$(UPLOAD)/$(BINARY_TARBALL_NAME).bin.tar.bz2
 binary_tarball: $(BINARY_TARBALL)
-$(BINARY_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile
+$(BINARY_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package client as tarball
@@ -482,6 +482,17 @@ $(BINARY_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile
 
 #   tar it up
 	wd=$$(pwd); cd ${TARBALL_DIR}; tar -cjf $${wd}/${BINARY_TARBALL} *
+
+ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
+zeroinstall: $(ZEROINSTTAG)
+$(ZEROINSTTAG): $(BINARY_TARBALL) 0install/update
+	#
+	# *****************************************
+	# *  update zeroinstall stream
+	# *****************************************
+	#
+	SERIES=${SERIES} FILE=${BINARY_TARBALL} VERSION=${VERSION} 0install/update
+	touch $@
 
 $(RCDIR)/doc.%: $(RCDIR)/doc.%.build
 

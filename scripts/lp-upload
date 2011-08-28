@@ -143,6 +143,12 @@ try:
                 if extension == '.zip':
                     mime_type="application/zip"
                     description="Source zip for Windows builds"
+            elif secondextension == ".bin" or thirdextension == ".bin":
+                description="Binary Tarball for Linux"
+                if extension == '.bz2':
+                    mime_type="application/bzip2"
+                if extension == '.gz':
+                    mime_type="application/x-gzip"
             else:
                 if extension == ".package":
                     description="Autopackage Installer for Linux"
@@ -171,6 +177,8 @@ try:
             # print f,description,mime_type,file_type
             
             uploads.append((f,description,mime_type,file_type))
+
+    # sys.exit(1)
 
     # Look up the project using the Launchpad instance.
     proj = lp.projects[project]

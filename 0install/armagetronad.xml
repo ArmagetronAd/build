@@ -15,6 +15,8 @@ Fortress modes.</description>
   <homepage>http://armagetronad.net</homepage>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
+  <feed src="http://simamo.de/0install/armagetronad-experimental.xml"/>
+  <feed src="http://simamo.de/0install/armagetronad-alpha.xml"/>
   <group arch="Linux-i686">
     <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/SDL_image.xml">
       <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>

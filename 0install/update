@@ -1,0 +1,43 @@
+#!/bin/bash
+# updates 0install stream xml for new release 
+
+# expected variables:
+# SERIES
+# VERSION
+# FILE
+# PACKAGE
+
+set -x
+
+# transform version for 0install
+ZEROVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" -e "s,-alpha,-pre0.," -e "s,-beta,-pre1.," )
+# and launchpad
+LPVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" )
+
+# construct uri
+URI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basename ${FILE})
+
+# determine xml to modify
+XML=
+test ${SERIES} == 0.2.8 && XML=0install/armagetronad.xml
+test ${SERIES} == 0.2.8-snapshots && XML=0install/armagetronad-alpha.xml
+test ${SERIES} == trunk-snapshots && XML=0install/armagetronad-experimental.xml
+test -z ${XML} && { echo "Unknown series: ${SERIES}"; exit 1; }
+
+EXTRAARG=
+# snapshots are always marked stable right away, the user opted in to get them already
+if echo ${SERIES} | grep snapshots; then
+  EXTRAARG=--set-stability=stable
+else
+  EXTRAARG=--set-stability=testing
+fi
+
+# add the release
+0launch -c 'http://0install.net/2006/interfaces/0publish' \
+  ${XML} \
+ --add-version ${ZEROVERSION} \
+ --archive-url=${URI} \
+ --archive-file=${FILE} \
+ --set-released=today \
+ --set-main=usr/local/bin/${PACKAGE} \
+ ${EXTRAARG}

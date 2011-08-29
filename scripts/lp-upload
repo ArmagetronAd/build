@@ -145,6 +145,10 @@ try:
                     description="Source zip for Windows builds"
             elif secondextension == ".bin" or thirdextension == ".bin":
                 description="Binary Tarball for Linux"
+                if "data" in basename:
+                    description="Data Tarball"
+                if "libs" in basename:
+                    description="Library Tarball for Linux"
                 if extension == '.bz2':
                     mime_type="application/bzip2"
                 if extension == '.gz':

@@ -501,10 +501,9 @@ $(BINARY_TARBALL): $(PORTABLE_CLIENT) WorkMakefile $(UPLOAD)/.tag
 #   get out data and program
 	mkdir ${TARBALL_DIR}/main/
 	mv ${TARBALL_DIR}/usr ${TARBALL_DIR}/main/
-	mkdir -p ${TARBALL_DIR}/data/usr/local/share/games/
-	mv ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE} ${TARBALL_DIR}/data/usr/local/share/games/
+	mv ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE} ${TARBALL_DIR}/data
 	mkdir -p ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}
-	for f in language resource scripts; do mv ${TARBALL_DIR}/data/usr/local/share/games/${PACKAGE}/$$f ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}/; done
+	for f in language resource scripts; do mv ${TARBALL_DIR}/data/$$f ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}/; done
 
 #   tar it up
 	wd=$$(pwd); cd ${TARBALL_DIR}/main; tar -cjf $${wd}/${BINARY_TARBALL} *

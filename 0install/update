@@ -5,6 +5,7 @@
 # SERIES
 # VERSION
 # FILE
+# PACKAGE
 
 set -x
 
@@ -34,4 +35,5 @@ echo ${SERIES} | grep snapshots && EXTRAARG=--set-stability=stable
  --archive-url=${URI} \
  --archive-file=${FILE} \
  --set-released=today \
+ --set-main=usr/local/bin/${PACKAGE} \
  ${EXTRAARG}

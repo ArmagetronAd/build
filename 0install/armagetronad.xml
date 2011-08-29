@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type='text/xsl' href='interface.xsl'?>
+<interface uri="http://simamo.de/0install/armagetronad.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
+  <name>Armagetron Advanced</name>
+  <summary>Tron clone in 3D</summary>
+  <description>
+Dumping cores since 2000.
+
+Armagetron Advanced is a lightcylce game with multiplayer focus.
+
+You ride a lightcycle, which leaves a trail of pure energy behind it. Crashing
+into your own trail or that of another player is quite fatal. Battle with others
+for simple kills, for survival, or for territorial dominance in the Sumo and
+Fortress modes.</description>
+  <homepage>http://armagetronad.net</homepage>
+  <category>Game</category>
+  <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
+  <group arch="Linux-i686">
+    <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/SDL_image.xml">
+      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
+    </requires>
+    <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/libsdl1.2.xml">
+      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
+    </requires>
+  </group>
+</interface>
+<!-- Base64 Signature
+iQEcBAABAgAGBQJOW4j/AAoJEJYsGiV3yxrNwIsH/RjH5Cj2Sseob2AYQsnUJzQ4jR3bby2WA+e4
+rWQMLlIgQTIVpONxiTwSNi1oLutbl/JGXSi9aj7YlDYfqzwFWumv1ir3BNGzPPUmNJ0oBPYa6oxN
+jumLsK6sNoDcC6Tsl4J50ZHWOEtwNyHw6o39+gidIBcG17zL1BxPFp9W3cHfZlpOwZkm4pw5mP7E
+6vSocMF6lE5oRCSSY1moEeqVbhutk9bQkO53k4xDD1DHk+mkC0iRCKYCnKFlUHvioDEukm6wJpAQ
+AaQHvDTqYsHu5be9ruA9F4Z6m8HNYGValJq8H0KjIKCaJ/Sy/W6k/AwLaXIw4uZQQ/Sp/ubBBB7d
+ahA=
+
+-->

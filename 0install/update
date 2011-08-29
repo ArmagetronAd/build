@@ -6,6 +6,7 @@
 # VERSION
 # FILE
 # PACKAGE
+# OSTAG_GENERIC
 
 set -x
 
@@ -32,6 +33,9 @@ else
   EXTRAARG=--set-stability=testing
 fi
 
+OS=Linux
+CPU=$(echo ${OSTAG_GENERIC} | sed -e "s,-.*,,")
+
 # add the release
 0launch -c 'http://0install.net/2006/interfaces/0publish' \
   ${XML} \
@@ -40,4 +44,5 @@ fi
  --archive-file=${FILE} \
  --set-released=today \
  --set-main=usr/local/bin/${PACKAGE} \
+ --set-arch=${OS}-${CPU} \
  ${EXTRAARG}

@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
-<?xml-stylesheet type='text/xsl' href='interface.xsl'?>
 <interface uri="http://simamo.de/0install/armagetronad-alpha.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
   <name>Armagetron Alpha</name>
   <summary>Tron clone in 3D Alpha builds</summary>
@@ -15,17 +14,17 @@ Fortress modes.</description>
   <homepage>http://armagetronad.net</homepage>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
-  <group arch="Linux-i686">
+  <group arch="*-*">
     <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/SDL_image.xml">
       <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
     </requires>
     <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/libsdl1.2.xml">
       <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
     </requires>
-    <implementation doc-dir="usr/local/share/doc/games/armagetronad-alpha/html" id="sha1new=cd1ec61f60d42fca93959b096724038135682fc0" license="OSI Approved :: GNU General Public License v2" main="usr/local/bin/armagetronad-alpha" released="2011-08-28" stability="developer" version="0.2.8" version-modifier="-pre0.20110826">
+    <implementation arch="Linux-i486" doc-dir="usr/local/share/doc/games/armagetronad-alpha/html" id="sha1new=cd1ec61f60d42fca93959b096724038135682fc0" license="OSI Approved :: GNU General Public License v2" main="usr/local/bin/armagetronad-alpha" released="2011-08-28" stability="developer" version="0.2.8" version-modifier="-pre0.20110826">
     <archive href="http://launchpad.net/armagetronad/0.2.8-snapshots/0.2.8-alpha20110826/+download/armagetronad-alpha-0.2.8_alpha20110826.bin.tar.bz2" size="2113594" type="application/x-bzip-compressed-tar"/>
   </implementation>
-    <implementation id="sha1new=ae76c42323a6d6a85ea9f3c1550f8c8be06d90ae" main="usr/local/bin/armagetronad-alpha" released="2011-08-29" stability="developer" version="0.2.8" version-modifier="-pre0.20110829">
+    <implementation arch="Linux-i486" id="sha1new=ae76c42323a6d6a85ea9f3c1550f8c8be06d90ae" main="usr/local/bin/armagetronad-alpha" released="2011-08-29" stability="developer" version="0.2.8" version-modifier="-pre0.20110829">
       <manifest-digest sha256="8724749ad55f630dd8e3e07a8b93b7e6ffbb083e9c0e8ed71ad56eff573f49d7"/>
       <archive href="http://launchpad.net/armagetronad/0.2.8-snapshots/0.2.8-alpha20110829/+download/armagetronad-alpha-0.2.8_alpha20110829.i486-generic-linux-gnu.bin.tar.bz2" size="2122026"/>
     </implementation>

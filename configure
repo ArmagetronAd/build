@@ -231,6 +231,12 @@ fi
 #OSTAG=i386-pc-solaris2.9
 #OSTAG=i586-mandrake-linux-gnu
 
+# ubuntu 10.4, gcc 4.1
+#OSTAG=i486-linux-gnu
+#OSTAG=i486-linux-gnu
+# gcc 4.6, self compiled
+#OSTAG=i686-pc-linux-gnu
+
 # OpenBSD: semi-well formed
 #OSTAG=i386-unknown-openbsd3.4
 

@@ -491,7 +491,7 @@ $(ZEROINSTTAG): $(BINARY_TARBALL) 0install/update
 	# *  update zeroinstall stream
 	# *****************************************
 	#
-	PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_TARBALL} VERSION=${VERSION} 0install/update
+	OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_TARBALL} VERSION=${VERSION} 0install/update
 	touch $@
 
 APFILE=$(RCDIR)/.package

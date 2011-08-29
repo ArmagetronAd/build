@@ -26,7 +26,11 @@ test -z ${XML} && { echo "Unknown series: ${SERIES}"; exit 1; }
 
 EXTRAARG=
 # snapshots are always marked stable right away, the user opted in to get them already
-echo ${SERIES} | grep snapshots && EXTRAARG=--set-stability=stable
+if echo ${SERIES} | grep snapshots; then
+  EXTRAARG=--set-stability=stable
+else
+  EXTRAARG=--set-stability=testing
+fi
 
 # add the release
 0launch -c 'http://0install.net/2006/interfaces/0publish' \

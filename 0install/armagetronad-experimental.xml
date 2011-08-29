@@ -1,4 +1,5 @@
 <?xml version="1.0" ?>
+<?xml-stylesheet type='text/xsl' href='interface.xsl'?>
 <interface uri="http://simamo.de/0install/armagetronad-experimental.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
   <name>Armagetron Experimental</name>
   <summary>Tron clone in 3D experimental builds</summary>
@@ -16,6 +17,9 @@ Fortress modes.</description>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
   <group arch="Linux-i686">
     <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/SDL_image.xml">
+      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
+    </requires>
+    <requires interface="http://repo.roscidus.com/lib_rsl/sdl-mixer1.2">
       <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
     </requires>
     <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/libsdl1.2.xml">

@@ -23,13 +23,16 @@ Fortress modes.</description>
       <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
     </requires>
   </group>
-</interface>
+<implementation id="sha1new=5415f5221f69fe67cc9dc6ca1e027c90b3043199" main="usr/local/bin/armagetronad" released="2011-08-29" version="0.2.8.3.2-rc1">
+  <manifest-digest sha256="5cf75112ac590676fec6e3b40a5e3fbbcf7030b924191238bcb485a2b98d0e9b"/>
+  <archive href="http://launchpad.net/armagetronad/0.2.8/0.2.8.3.2-rc1/+download/armagetronad-0.2.8.3.2_rc1.i486-generic-linux-gnu.bin.tar.bz2" size="2101995"/>
+</implementation></interface>
 <!-- Base64 Signature
-iQEcBAABAgAGBQJOW4j/AAoJEJYsGiV3yxrNwIsH/RjH5Cj2Sseob2AYQsnUJzQ4jR3bby2WA+e4
-rWQMLlIgQTIVpONxiTwSNi1oLutbl/JGXSi9aj7YlDYfqzwFWumv1ir3BNGzPPUmNJ0oBPYa6oxN
-jumLsK6sNoDcC6Tsl4J50ZHWOEtwNyHw6o39+gidIBcG17zL1BxPFp9W3cHfZlpOwZkm4pw5mP7E
-6vSocMF6lE5oRCSSY1moEeqVbhutk9bQkO53k4xDD1DHk+mkC0iRCKYCnKFlUHvioDEukm6wJpAQ
-AaQHvDTqYsHu5be9ruA9F4Z6m8HNYGValJq8H0KjIKCaJ/Sy/W6k/AwLaXIw4uZQQ/Sp/ubBBB7d
-ahA=
+iQEcBAABAgAGBQJOW5DVAAoJEJYsGiV3yxrN1QgH/R0IMnd6/RTODum754m1m/3D4WohD30rSXjz
+pmfB+zBofwb10fZW/8dfe0cyjnU4SvD7HCKr/FRLosMxgGymbiOjYZcLSgxcOiNKsVNFi5wp7DR7
++Svjz3sEi4hX4zljIbK5DXgQrq03Z1ohGVoMcomoN8IxR4PqA/rOaZYyLM2lquAvYu/ET41RQPWO
+8cbY13Ur3odNo5iCslQXl7zSrqrivsnFyCeDNCB24gmEHMaR5d9OqLREgNtqb0O5w0YbTafiWKwz
+4+w8fBOxE44TFsy1aV+BPG+O0w015Mxw07+iF8v5U3YP/mWSkIZCdwfdlF0726vKKO2dYokcG8dU
+97Y=
 
 -->

@@ -15,11 +15,20 @@ URI=http://launchpad.net/armagetronad/${SERIES}/${VERSION}/+download/$(basename 
 ZEROVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" -e "s,-alpha,-pre0.," -e "s,-beta,-pre1.," )
 
 # determine xml to modify
-XML=0install/armagetronad-${SERIES}.xml
+XML=
+test ${SERIES} == 0.2.8 && XML=0install/armagetronad.xml
+test ${SERIES} == 0.2.8-snapshots && XML=0install/armagetronad-alpha.xml
+test ${SERIES} == trunk-snapshots && XML=0install/armagetronad-experimental.xml
+test -z ${XML} && { echo "Unknown series: ${SERIES}"; exit 1; }
+
+EXTRAARG=
+# snapshots are always marked stable right away, the user opted in to get them already
+echo ${SERIES} | grep snapshots && EXTRAARG=--set-stability=stable
 
 # add the release
 0publish ${XML} \
  --add-version ${ZEROVERSION} \
  --archive-url=${URI} \
  --archive-file=${FILE} \
- --set-released=today
+ --set-released=today \
+ ${EXTRAARG}

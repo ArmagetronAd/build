@@ -4,3 +4,4 @@
 ./ap-client
 ./make.conf.bak
 *.gpg
+interface.xsl

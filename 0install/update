@@ -10,7 +10,7 @@
 set -x
 
 # transform version for 0install
-ZEROVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" -e "s,-alpha,-pre0.," -e "s,-beta,-pre1.," )
+ZEROVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" -e "s,-alpha,-pre0.," -e "s,-beta,-pre1.," -e "s,\.-z,.," )
 # and launchpad
 LPVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" )
 

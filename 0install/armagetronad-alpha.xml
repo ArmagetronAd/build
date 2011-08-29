@@ -25,14 +25,18 @@ Fortress modes.</description>
     <implementation doc-dir="usr/local/share/doc/games/armagetronad-alpha/html" id="sha1new=cd1ec61f60d42fca93959b096724038135682fc0" license="OSI Approved :: GNU General Public License v2" main="usr/local/bin/armagetronad-alpha" released="2011-08-28" stability="developer" version="0.2.8-pre0.20110826">
     <archive href="http://launchpad.net/armagetronad/0.2.8-snapshots/0.2.8-alpha20110826/+download/armagetronad-alpha-0.2.8_alpha20110826.bin.tar.bz2" size="2113594" type="application/x-bzip-compressed-tar"/>
   </implementation>
+    <implementation id="sha1new=ae76c42323a6d6a85ea9f3c1550f8c8be06d90ae" main="usr/local/bin/armagetronad-alpha" released="2011-08-29" stability="stable" version="0.2.8-pre0.20110829">
+      <manifest-digest sha256="8724749ad55f630dd8e3e07a8b93b7e6ffbb083e9c0e8ed71ad56eff573f49d7"/>
+      <archive href="http://launchpad.net/armagetronad/0.2.8-snapshots/0.2.8-alpha20110829/+download/armagetronad-alpha-0.2.8_alpha20110829.i486-generic-linux-gnu.bin.tar.bz2" size="2122026"/>
+    </implementation>
   </group>
 </interface>
 <!-- Base64 Signature
-iQEcBAABAgAGBQJOW123AAoJEJYsGiV3yxrNVUMIAIloCrwPHulZ1VO0lPPdNCTwfMwAxENPUgGe
-hRAL89AauXcvnRTYEIqJurwxfdJQsJSuzL4roAK9Ltm8SHviR7qMOqlRGtA5AKV/xpYuMFyog+C6
-glkX8Hdxc5X7miVVJKprgX7fQ7CVuS6MnaahbMy7htc2eUBvb+1TvX5dwdNCoYoKmVg5XFBseUKq
-OzHu8oMzVMfGwnTw8ufp5oJVQoxW+wCcQdw71yLJlAsbpRiPEpDnYek9bZrydmafoh7uyN8lbiBe
-9xCNz3q+hRp5G0nqcC2j2uiEGIV8dOdnJGbSuoF/k1B0394S7jVG87HVXCRS+C/VpSwENZilqtU0
-OS4=
+iQEcBAABAgAGBQJOW4e8AAoJEJYsGiV3yxrNqLMH/jBtVphXOQVTGEb25qz36zgumEMiqGNsd0Sf
+VgsdtAi1OquIGHQ6qEbbaWR1TivAD6m8cRG6I1puYzKYZYznz+4HKBWdlufNkFAi1YXQ36b8x1DD
+3Zt72lrgh3KX7ismKn/PySKxKqvegyRQrtI6fQnx1jjKazgocX+NQ5ssomERZbooXNjeFMtKBpNG
+CKJqlVsTgQdIjqpWbghO8y5WI7yjunH3uXiHa0pB1J0agzmD//PH4n0dhewIDdnASC1tO6SbqCzm
+rGroQO6rNDFS+RC1qzmbTONUgjDTgD9W+2+L8dA1crdeJCnw33ZKJPx3JkwYd5B9wHTfJBTryKwO
+5BY=
 
 -->

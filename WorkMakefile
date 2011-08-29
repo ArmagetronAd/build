@@ -445,6 +445,10 @@ $(GENERIC_CLIENT_DIR).tag: $(SOURCEDIR)/.tag
 	bash scripts/configure $(GENERIC_CLIENT_DIR) $(SOURCEDIR) --prefix='/usr/local' --disable-uninstall --disable-sysinstall --disable-restoreold --enable-etc --disable-initscripts --enable-automakedefaults --disable-useradd --enable-armathentication
 
 	${MAKE} -C $(GENERIC_CLIENT_DIR)
+
+#   remove this when breakpad gets through
+	strip $(GENERIC_CLIENT_DIR)/src/armagetronad_main
+
 	touch $@
 
 # portable client build
@@ -454,7 +458,7 @@ PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
 APPDIR=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
 PORTABLE_CLIENT=$(UPLOAD)/$(PORTABLE_CLIENT_NAME)_${VERSION}
 portable_client: $(PORTABLE_CLIENT)
-$(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build WorkMakefile $(UPLOAD)/.tag
+$(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package portable client
@@ -470,21 +474,42 @@ $(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build Wor
 # plain binary tarball
 PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
 BINARY_TARBALL_NAME=${PACKAGE}-${VERSION}.${OSTAG_GENERIC}
+BINARY_TARBALL_DATA_NAME=${PACKAGE}-data-${VERSION}
+BINARY_TARBALL_LIBS_NAME=${PACKAGE}-libs-${VERSION}.${OSTAG_GENERIC}
 TARBALL_DIR=$(RCDIR)/$(BINARY_TARBALL_NAME).fortar
 BINARY_TARBALL=$(UPLOAD)/$(BINARY_TARBALL_NAME).bin.tar.bz2
+BINARY_TARBALL_DATA=$(UPLOAD)/$(BINARY_TARBALL_DATA_NAME).bin.tar.bz2
+BINARY_TARBALL_LIBS=$(UPLOAD)/$(BINARY_TARBALL_LIBS_NAME).bin.tar.bz2
 binary_tarball: $(BINARY_TARBALL)
-$(BINARY_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile $(UPLOAD)/.tag
+$(BINARY_TARBALL): $(PORTABLE_CLIENT) WorkMakefile $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package client as tarball
 	# *****************************************
 	#
-#   install into appdir
+#   copy appdir into tarball directories
 	rm -rf ${TARBALL_DIR}
-	${MAKE} -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${TARBALL_DIR} install
+	mkdir -p ${TARBALL_DIR}
+	cp -ax ${APPDIR}/usr ${TARBALL_DIR}/
+
+#   get out libraries
+	mkdir -p ${TARBALL_DIR}/libs
+	mv ${TARBALL_DIR}/usr/local/lib ${TARBALL_DIR}/libs/lib
+	mv ${TARBALL_DIR}/usr/lib/* ${TARBALL_DIR}/libs/lib/
+	rm -rf ${TARBALL_DIR}/usr/lib ${TARBALL_DIR}/usr/local/lib
+
+#   get out data and program
+	mkdir ${TARBALL_DIR}/main/
+	mv ${TARBALL_DIR}/usr ${TARBALL_DIR}/main/
+	mkdir -p ${TARBALL_DIR}/data/usr/local/share/games/
+	mv ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE} ${TARBALL_DIR}/data/usr/local/share/games/
+	mkdir -p ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}
+	for f in language resource scripts; do mv ${TARBALL_DIR}/data/usr/local/share/games/${PACKAGE}/$$f ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}/; done
 
 #   tar it up
-	wd=$$(pwd); cd ${TARBALL_DIR}; tar -cjf $${wd}/${BINARY_TARBALL} *
+	wd=$$(pwd); cd ${TARBALL_DIR}/main; tar -cjf $${wd}/${BINARY_TARBALL} *
+	wd=$$(pwd); cd ${TARBALL_DIR}/data; tar -cjf $${wd}/${BINARY_TARBALL_DATA} *
+	wd=$$(pwd); cd ${TARBALL_DIR}/libs; tar -cjf $${wd}/${BINARY_TARBALL_LIBS} *
 
 ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
 zeroinstall: $(ZEROINSTTAG)

@@ -28,7 +28,8 @@ EXTRAARG=
 echo ${SERIES} | grep snapshots && EXTRAARG=--set-stability=stable
 
 # add the release
-0publish ${XML} \
+0launch -c -o 'http://0install.net/2006/interfaces/0publish' \
+  ${XML} \
  --add-version ${ZEROVERSION} \
  --archive-url=${URI} \
  --archive-file=${FILE} \

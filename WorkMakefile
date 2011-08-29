@@ -494,8 +494,6 @@ $(ZEROINSTTAG): $(BINARY_TARBALL) 0install/update
 	SERIES=${SERIES} FILE=${BINARY_TARBALL} VERSION=${VERSION} 0install/update
 	touch $@
 
-$(RCDIR)/doc.%: $(RCDIR)/doc.%.build
-
 APFILE=$(RCDIR)/.package
 autopackage-client: $(APFILE).client
 autopackage-server: $(APFILE).server

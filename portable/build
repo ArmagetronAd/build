@@ -18,7 +18,7 @@ function copylib()
     path=$(dirname ${baselib})
     baselib=$(basename ${baselib})
     echo "Found in ${path}."
-    if test -n "$lastpath" && test "$lastpath" != "$path"; then
+    if test -n "$lastpath" && test "$(dirname $lastpath)" != "$(dirname $path)"; then
         echo "error: different paths detected, frankenbuild!"
         exit 1
     fi

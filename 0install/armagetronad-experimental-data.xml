@@ -16,15 +16,6 @@ Fortress modes.</description>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
   <group arch="*-*" stability="developer">
-    <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/SDL_image.xml">
-      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
-    </requires>
-    <requires interface="http://repo.roscidus.com/lib_rsl/sdl-mixer1.2">
-      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
-    </requires>
-    <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/libsdl1.2.xml">
-      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
-    </requires>
     <implementation id="sha1new=cb0a45345abfed3cd657b9bc314cb891f9e6ce24" released="2011-08-30" version="0.3" version-modifier="-pre0.1570">
       <archive href="http://launchpad.net/armagetronad/trunk-snapshots/0.3-alpha-z1570/+download/armagetronad-experimental-data-0.3_alpha_z1570.bin.tar.bz2" size="2720826" type="application/x-bzip-compressed-tar"/>
     </implementation>

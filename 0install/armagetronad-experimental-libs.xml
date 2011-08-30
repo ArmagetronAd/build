@@ -15,17 +15,10 @@ Fortress modes.</description>
   <homepage>http://armagetronad.net</homepage>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
-  <group arch="*-*" stability="developer">
-    <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/SDL_image.xml">
-      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
-    </requires>
-    <requires interface="http://repo.roscidus.com/lib_rsl/sdl-mixer1.2">
-      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
-    </requires>
-    <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/libsdl1.2.xml">
-      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
-    </requires>
-  </group>
-  <implementation arch="Linux-i486" id="sha1new=369d3046e525c5580bb18580ab60bb29124e5522" released="2011-08-30" stability="developer" version="0.3" version-modifier="-pre0.1570">
+  <group arch="*-*" stability="developer"/>
+  <implementation arch="Linux-x86_64" id="sha1new=42444734fc22e44c3a1f1203747c7a58805efcb2" released="2011-08-30" version="0.3-pre0.1570">
+    <archive href="http://launchpad.net/armagetronad/trunk-snapshots/0.3-alpha-z1570/+download/armagetronad-experimental-libs-0.3_alpha_z1570.x86_64-generic-linux-gnu.bin.tar.bz2" size="2220095" type="application/x-bzip-compressed-tar"/>
+  </implementation>
+  <implementation arch="Linux-i486" id="sha1new=369d3046e525c5580bb18580ab60bb29124e5522" released="2011-08-30" version="0.3-pre0.1570">
     <archive href="http://launchpad.net/armagetronad/trunk-snapshots/0.3-alpha-z1570/+download/armagetronad-experimental-libs-0.3_alpha_z1570.i486-generic-linux-gnu.bin.tar.bz2" size="1550644" type="application/x-bzip-compressed-tar"/>
   </implementation></interface>

@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <?xml-stylesheet type='text/xsl' href='interface.xsl'?>
-<interface uri="http://simamo.de/0install/armagetronad-experimental.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
-  <name>Armagetron Experimental</name>
-  <summary>Tron clone in 3D experimental builds</summary>
+<interface uri="http://simamo.de/0install/armagetronad-libs.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
+  <name>Armagetron Libraries</name>
+  <summary>Tron clone in 3D experimental builds, libraries</summary>
   <description>
 Dumping cores since 2000.
 
@@ -15,6 +15,6 @@ Fortress modes.</description>
   <homepage>http://armagetronad.net</homepage>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
-  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-experimental-Linux-x86_64.xml"/>
-  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-experimental-Linux-i486.xml"/>
+  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-libs-Linux-x86_64.xml"/>
+  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-libs-Linux-i486.xml"/>
 </interface>

@@ -19,11 +19,9 @@ Fortress modes.</description>
   <feed src="http://simamo.de/0install/armagetronad-alpha.xml"/>
   <feed src="http://simamo.de/0install/armagetronad-beta.xml"/>
   <group arch="*-*" stability="stable">
-    <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/SDL_image.xml">
-      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
-    </requires>
-    <requires interface="http://www.nongnu.org/clanbomber/zeroinstall/libsdl1.2.xml">
-      <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
+    <requires interface="http://simamo.de/0install/armagetronad-experimental-libs.xml">
+      <version before="0.3-pre0.1571" not-before="0.3-pre0.1570"/>
+            <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
     </requires>
     <implementation arch="Linux-i686" id="sha1new=dc048fe3943a02054e119d94e4b03ee5c9413bd5" main="usr/local/bin/armagetronad" released="2011-08-29" version="0.2.8.3.1">
       <manifest-digest sha256="967443a495e4dd5814195368c653bd8c663732ebe0a3d24ae51eed816eb65ee7"/>

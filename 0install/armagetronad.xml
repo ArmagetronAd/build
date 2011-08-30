@@ -15,20 +15,12 @@ Fortress modes.</description>
   <homepage>http://armagetronad.net</homepage>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
-  <feed src="http://simamo.de/0install/armagetronad-experimental.xml"/>
-  <feed src="http://simamo.de/0install/armagetronad-alpha.xml"/>
-  <feed src="http://simamo.de/0install/armagetronad-beta.xml"/>
-  <group arch="*-*" stability="stable">
-    <requires interface="http://simamo.de/0install/armagetronad-experimental-libs.xml">
-      <version before="0.3-pre0.1571" not-before="0.3-pre0.1570"/>
-            <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
-    </requires>
-    <implementation arch="Linux-x86_64" id="sha1new=254146b51108ba0dc1b2fc2c03db1b6ac9567750" main="usr/local/bin/armagetronad" released="2011-08-30" version="0.2.8.3.1">
-      <manifest-digest sha256="8cd909f092ac4e8cea318c3c22873cda45f312b2c5798d5482da7b008b463bd8"/>
-      <archive href="http://launchpad.net/armagetronad/0.2.8/0.2.8.3.1/+download/armagetronad-0.2.8.3.1.x86_64-generic-linux-gnu.bin.tar.bz2" size="1721935"/>
-    </implementation>
-    <implementation arch="Linux-i486" id="sha1new=dc048fe3943a02054e119d94e4b03ee5c9413bd5" main="usr/local/bin/armagetronad" released="2011-08-29" version="0.2.8.3.1">
-      <manifest-digest sha256="967443a495e4dd5814195368c653bd8c663732ebe0a3d24ae51eed816eb65ee7"/>
-      <archive href="http://launchpad.net/armagetronad/0.2.8/0.2.8.3.1/+download/armagetronad-0.2.8.3.1.i486-generic-linux-gnu.bin.tar.bz2" size="2101110"/>
-    </implementation>
-  </group></interface>
+  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-experimental-Linux-x86_64.xml"/>
+  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-alpha-Linux-x86_64.xml"/>
+  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-beta-Linux-x86_64.xml"/>
+  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-stable-Linux-x86_64.xml"/>
+  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-experimental-Linux-i486.xml"/>
+  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-alpha-Linux-i486.xml"/>
+  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-beta-Linux-i486.xml"/>
+  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-stable-Linux-i486.xml"/>
+</interface>

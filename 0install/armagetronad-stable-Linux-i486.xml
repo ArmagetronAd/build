@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <?xml-stylesheet type='text/xsl' href='interface.xsl'?>
-<interface uri="http://simamo.de/0install/armagetronad-Linux-i486.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
+<interface uri="http://simamo.de/0install/armagetronad-stable-Linux-i486.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
   <name>Armagetron Advanced</name>
   <summary>Tron clone in 3D</summary>
   <description>

@@ -458,10 +458,10 @@ PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
 APPDIR=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
 PORTABLE_CLIENT=$(UPLOAD)/$(PORTABLE_CLIENT_NAME)_${VERSION}
 portable_client: $(PORTABLE_CLIENT)
-$(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build $(UPLOAD)/.tag
+$(APPDIR).tag: $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build $(UPLOAD)/.tag
 	#
 	# *****************************************
-	# *  package portable client
+	# *  package portable client, appdir
 	# *****************************************
 	#
 #   install into appdir
@@ -470,6 +470,22 @@ $(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build $(U
 
 #   delegate
 	APPDIR=${APPDIR} PORTABLE_CLIENT=${PORTABLE_CLIENT} PACKAGE=${PACKAGE} portable/build	
+
+#   mark
+	touch $@
+
+$(PORTABLE_CLIENT): $(APPDIR).tag
+	#
+	# *****************************************
+	# *  package portable client, appimage
+	# *****************************************
+	#
+
+#   and pack it up. The script is stupidly only available inside a portable app
+#   called AppImageAssistant; fetch it and extract it with AppImageExtractor
+#   to /usr/local/bin/.
+	rm -f $@
+	/usr/local/bin/AppImageAssistant.AppDir/package ${APPDIR} ${PORTABLE_CLIENT}
 
 # plain binary tarball
 PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
@@ -481,7 +497,7 @@ BINARY_TARBALL=$(UPLOAD)/$(BINARY_TARBALL_NAME).bin.tar.bz2
 BINARY_TARBALL_DATA=$(UPLOAD)/$(BINARY_TARBALL_DATA_NAME).bin.tar.bz2
 BINARY_TARBALL_LIBS=$(UPLOAD)/$(BINARY_TARBALL_LIBS_NAME).bin.tar.bz2
 binary_tarball: $(BINARY_TARBALL)
-$(BINARY_TARBALL): $(PORTABLE_CLIENT) WorkMakefile $(UPLOAD)/.tag
+$(BINARY_TARBALL): $(APPDIR).tag WorkMakefile $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package client as tarball

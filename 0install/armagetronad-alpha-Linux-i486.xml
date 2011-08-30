@@ -15,7 +15,7 @@ Fortress modes.</description>
   <homepage>http://armagetronad.net</homepage>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
-  <group arch="*-*" stability="developer"> 
+  <group arch="Linux-i486" stability="developer"> 
     <requires interface="http://simamo.de/0install/armagetronad-libs-Linux-i486.xml">
       <version before="0.3-pre0.1571" not-before="0.3-pre0.1570"/>
             <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>

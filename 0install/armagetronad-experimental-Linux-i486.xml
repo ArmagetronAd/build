@@ -20,7 +20,7 @@ Fortress modes.</description>
       <environment insert="" mode="prepend" name="ARMAGETRONAD_EXTRADATA"/>
       <version before="0.5-pre0.0.0.0" not-before="0.3-pre0.1570"/>
     </requires>
-    <requires interface="http://simamo.de/0install/armagetronad-libs-Linux-i468.xml">
+    <requires interface="http://simamo.de/0install/armagetronad-libs-Linux-i486.xml">
       <version before="0.5-pre0.0.0.0" not-before="0.3-pre0.1570"/>
       <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
     </requires>

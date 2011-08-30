@@ -15,6 +15,12 @@ Fortress modes.</description>
   <homepage>http://armagetronad.net</homepage>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
-  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-Linux-x86_64.xml"/>
-  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-Linux-i486.xml"/>
+  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-experimental-Linux-x86_64.xml"/>
+  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-alpha-Linux-x86_64.xml"/>
+  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-beta-Linux-x86_64.xml"/>
+  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-stable-Linux-x86_64.xml"/>
+  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-experimental-Linux-i486.xml"/>
+  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-alpha-Linux-i486.xml"/>
+  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-beta-Linux-i486.xml"/>
+  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-stable-Linux-i486.xml"/>
 </interface>

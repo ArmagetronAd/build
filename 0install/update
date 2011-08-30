@@ -15,14 +15,27 @@ ZEROVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" -e "s,-alpha,-pre0.," -e "s,-be
 # and launchpad
 LPVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" )
 
+# library and data files
+LIBFILE=$(echo ${FILE} | sed -e "s,${PACKAGE},${PACKAGE}-libs,")
+DATAFILE=$(echo ${FILE} | sed -e "s,${PACKAGE},${PACKAGE}-data," -e "s,${OSTAG_GENERIC}.,,")
+
+if test -r $FILE && test -r $DATAFILE && test -r $LIBFILE; then
+  echo All files there, good.
+else
+  echo Files not found. Boo!
+  exit 1
+fi
+
 # construct uri
 URI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basename ${FILE})
+LIBURI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basename ${LIBFILE})
+DATAURI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basename ${DATAFILE})
 
 # determine xml to modify
 XML=
-test ${SERIES} == 0.2.8 && XML=0install/armagetronad-beta.xml
-test ${SERIES} == 0.2.8-snapshots && XML=0install/armagetronad-alpha.xml
-test ${SERIES} == trunk-snapshots && XML=0install/armagetronad-experimental.xml
+test "${SERIES}" == "0.2.8" && XML=0install/armagetronad-beta
+test "${SERIES}" == "0.2.8-snapshots" && XML=0install/armagetronad-alpha
+test "${SERIES}" == "trunk-snapshots" && XML=0install/armagetronad-experimental
 test -z ${XML} && { echo "Unknown series: ${SERIES}"; exit 1; }
 
 OS=Linux
@@ -30,10 +43,24 @@ CPU=$(echo ${OSTAG_GENERIC} | sed -e "s,-.*,,")
 
 # add the release
 0launch -c 'http://0install.net/2006/interfaces/0publish' \
-  ${XML} \
+  ${XML}.xml \
  --add-version ${ZEROVERSION} \
  --archive-url=${URI} \
  --archive-file=${FILE} \
- --set-released=today \
- --set-main=usr/local/bin/${PACKAGE} \
  --set-arch=${OS}-${CPU} \
+ --set-released=today
+
+0launch -c 'http://0install.net/2006/interfaces/0publish' \
+  ${XML}-libs.xml \
+ --add-version ${ZEROVERSION} \
+ --archive-url=${LIBURI} \
+ --archive-file=${LIBFILE} \
+ --set-arch=${OS}-${CPU} \
+ --set-released=today
+
+0launch -c 'http://0install.net/2006/interfaces/0publish' \
+  ${XML}-data.xml \
+ --add-version ${ZEROVERSION} \
+ --archive-url=${DATAURI} \
+ --archive-file=${DATAFILE} \
+ --set-released=today

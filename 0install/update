@@ -6,6 +6,7 @@
 # VERSION
 # FILE
 # PACKAGE
+# OSTAG_GENERIC
 
 set -x
 
@@ -19,18 +20,13 @@ URI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basenam
 
 # determine xml to modify
 XML=
-test ${SERIES} == 0.2.8 && XML=0install/armagetronad.xml
+test ${SERIES} == 0.2.8 && XML=0install/armagetronad-beta.xml
 test ${SERIES} == 0.2.8-snapshots && XML=0install/armagetronad-alpha.xml
 test ${SERIES} == trunk-snapshots && XML=0install/armagetronad-experimental.xml
 test -z ${XML} && { echo "Unknown series: ${SERIES}"; exit 1; }
 
-EXTRAARG=
-# snapshots are always marked stable right away, the user opted in to get them already
-if echo ${SERIES} | grep snapshots; then
-  EXTRAARG=--set-stability=stable
-else
-  EXTRAARG=--set-stability=testing
-fi
+OS=Linux
+CPU=$(echo ${OSTAG_GENERIC} | sed -e "s,-.*,,")
 
 # add the release
 0launch -c 'http://0install.net/2006/interfaces/0publish' \
@@ -40,4 +36,4 @@ fi
  --archive-file=${FILE} \
  --set-released=today \
  --set-main=usr/local/bin/${PACKAGE} \
- ${EXTRAARG}
+ --set-arch=${OS}-${CPU} \

@@ -197,22 +197,22 @@ try:
         print "Creating release %s..." % version
         release = create_release(proj, series, version)
     
-    print "Setting changelog..."
     changelog = "ChangeLog"
     if os.path.exists(changelog):
         release.changelog = open(changelog, 'r').read().strip()
     else:
         changelog = edit_file('changelog', 'changelog')
-        if changelog:
+        if changelog and ( not release.changelog or len(release.changelog) == 0):
+            print "Setting changelog..."
             release.changelog = changelog
     
-    print "Setting release notes..."
     release_notes = "releasenotes.txt"
     if os.path.exists(release_notes):
         release.release_notes = open(release_notes, 'r').read().strip()
     else:
         release_notes = edit_file('releasenotes', 'release notes')
-        if release_notes:
+        if release_notes and ( not release.release_notes or len(release.release_notes) == 0):
+            print "Setting release notes..."
             release.release_notes = release_notes
 
     # create new summary

@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type='text/xsl' href='interface.xsl'?>
+<interface uri="http://simamo.de/0install/armagetronad-alpha-Linux-x86_64.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
+  <name>Armagetron Alpha</name>
+  <summary>Tron clone in 3D Alpha builds</summary>
+  <description>
+Dumping cores since 2000.
+
+Armagetron Advanced is a lightcylce game with multiplayer focus.
+
+You ride a lightcycle, which leaves a trail of pure energy behind it. Crashing
+into your own trail or that of another player is quite fatal. Battle with others
+for simple kills, for survival, or for territorial dominance in the Sumo and
+Fortress modes.</description>
+  <homepage>http://armagetronad.net</homepage>
+  <category>Game</category>
+  <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
+  <group arch="Linux-x86_64" stability="developer"> 
+    <requires interface="http://simamo.de/0install/armagetronad-libs-Linux-x86_64.xml">
+      <version before="0.3-pre0.1571" not-before="0.3-pre0.1570"/>
+            <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
+    </requires>
+    <implementation id="sha1new=50c2a5b0c193f0c7f688fe7414b270456273e804" main="usr/local/bin/armagetronad-alpha" released="2011-08-30" version="0.2.8-pre0.20110829">
+      <manifest-digest sha256="a899a8a51b3674dd624754d9cc6dd311e154ca54012c03b32aa32d2d611b6e58"/>
+      <archive href="http://launchpad.net/armagetronad/0.2.8-snapshots/0.2.8-alpha20110829/+download/armagetronad-alpha-0.2.8_alpha20110829.x86_64-generic-linux-gnu.bin.tar.bz2" size="1746404"/>
+    </implementation>
+  </group>
+</interface>

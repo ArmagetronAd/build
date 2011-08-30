@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type='text/xsl' href='interface.xsl'?>
+<interface uri="http://simamo.de/0install/armagetronad-Linux-i486.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
+  <name>Armagetron Advanced</name>
+  <summary>Tron clone in 3D</summary>
+  <description>
+Dumping cores since 2000.
+
+Armagetron Advanced is a lightcylce game with multiplayer focus.
+
+You ride a lightcycle, which leaves a trail of pure energy behind it. Crashing
+into your own trail or that of another player is quite fatal. Battle with others
+for simple kills, for survival, or for territorial dominance in the Sumo and
+Fortress modes.</description>
+  <homepage>http://armagetronad.net</homepage>
+  <category>Game</category>
+  <group arch="Linux-i486" stability="stable">
+    <requires interface="http://simamo.de/0install/armagetronad-libs-Linux-i486.xml">
+      <version before="0.3-pre0.1571" not-before="0.3-pre0.1570"/>
+            <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
+    </requires>
+    <implementation id="sha1new=dc048fe3943a02054e119d94e4b03ee5c9413bd5" main="usr/local/bin/armagetronad" released="2011-08-29" version="0.2.8.3.1">
+      <manifest-digest sha256="967443a495e4dd5814195368c653bd8c663732ebe0a3d24ae51eed816eb65ee7"/>
+      <archive href="http://launchpad.net/armagetronad/0.2.8/0.2.8.3.1/+download/armagetronad-0.2.8.3.1.i486-generic-linux-gnu.bin.tar.bz2" size="2101110"/>
+    </implementation>
+  </group>
+</interface>

@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <?xml-stylesheet type='text/xsl' href='interface.xsl'?>
-<interface uri="http://simamo.de/0install/armagetronad.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
+<interface uri="http://simamo.de/0install/armagetronad-Linux-x86_64.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
   <name>Armagetron Advanced</name>
   <summary>Tron clone in 3D</summary>
   <description>
@@ -15,6 +15,8 @@ Fortress modes.</description>
   <homepage>http://armagetronad.net</homepage>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
-  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-Linux-x86_64.xml"/>
-  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-Linux-i486.xml"/>
+  <feed src="http://simamo.de/0install/armagetronad-experimental-Linux-x86_64.xml"/>
+  <feed src="http://simamo.de/0install/armagetronad-alpha-Linux-x86_64.xml"/>
+  <feed src="http://simamo.de/0install/armagetronad-beta-Linux-x86_64.xml"/>
+  <feed src="http://simamo.de/0install/armagetronad-stable-Linux-x86_64.xml"/>
 </interface>

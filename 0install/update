@@ -19,13 +19,6 @@ LPVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" )
 LIBFILE=$(echo ${FILE} | sed -e "s,${PACKAGE},${PACKAGE}-libs,")
 DATAFILE=$(echo ${FILE} | sed -e "s,${PACKAGE},${PACKAGE}-data," -e "s,${OSTAG_GENERIC}.,,")
 
-if test -r $FILE && test -r $DATAFILE && test -r $LIBFILE; then
-  echo All files there, good.
-else
-  echo Files not found. Boo!
-  exit 1
-fi
-
 # construct uri
 URI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basename ${FILE})
 LIBURI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basename ${LIBFILE})
@@ -43,24 +36,30 @@ CPU=$(echo ${OSTAG_GENERIC} | sed -e "s,-.*,,")
 ARCH=${OS}-${CPU}
 
 # add the release
-0launch -c 'http://0install.net/2006/interfaces/0publish' \
+if test -r ${FILE} && ! grep -q version=\"${ZEROVERSION}\" ${XML}-${ARCH}.xml; then
+ 0launch -c 'http://0install.net/2006/interfaces/0publish' \
   ${XML}-${ARCH}.xml \
  --add-version ${ZEROVERSION} \
  --archive-url=${URI} \
  --archive-file=${FILE} \
  --set-main=usr/local/bin/${PACKAGE}\
  --set-released=today
+fi
 
-0launch -c 'http://0install.net/2006/interfaces/0publish' \
+if test -r ${LIBFILE} && ! grep -q version=\"${ZEROVERSION}\" 0install/armagetronad-libs-${ARCH}.xml; then
+  0launch -c 'http://0install.net/2006/interfaces/0publish' \
   0install/armagetronad-libs-${ARCH}.xml \
  --add-version ${ZEROVERSION} \
  --archive-url=${LIBURI} \
  --archive-file=${LIBFILE} \
  --set-released=today
+fi
 
-0launch -c 'http://0install.net/2006/interfaces/0publish' \
+if test -r ${DATAFILE} && ! grep -q version=\"${ZEROVERSION}\" 0install/armagetronad-data.xml; then
+  0launch -c 'http://0install.net/2006/interfaces/0publish' \
   0install/armagetronad-data.xml \
  --add-version ${ZEROVERSION} \
  --archive-url=${DATAURI} \
  --archive-file=${DATAFILE} \
  --set-released=today
+fi

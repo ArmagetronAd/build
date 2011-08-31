@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<?xml-stylesheet type='text/xsl' href='interface.xsl'?>
+<interface uri="http://simamo.de/0install/armagetronad-beta-Windows.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
+  <name>Armagetron Advanced</name>
+  <summary>Tron clone in 3D</summary>
+  <description>
+Dumping cores since 2000.
+
+Armagetron Advanced is a lightcylce game with multiplayer focus.
+
+You ride a lightcycle, which leaves a trail of pure energy behind it. Crashing
+into your own trail or that of another player is quite fatal. Battle with others
+for simple kills, for survival, or for territorial dominance in the Sumo and
+Fortress modes.</description>
+  <homepage>http://armagetronad.net</homepage>
+  <category>Game</category>
+  <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
+  <group arch="Windows-*" doc-dir="doc" license="GPL v2 (GNU General Public License)" main="armagetronad.exe" stability="testing">
+   <working-dir src="."/>
+  <implementation id="sha1new=1d813001052136e3aaa7092fd6b5fd6e57c3b26a" released="2011-08-31" version="0">
+  </implementation> 
+ </group>
+</interface>

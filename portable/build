@@ -60,6 +60,12 @@ libjpeg.so.62 \
 libZThread.so \
 libZThread-2.3.so.2 \
 libboost_thread.so \
+libogg.so \
+libogg.so.0 \
+libvorbisfile.so \
+libvorbisfile.so.3 \
+libmikmod.so \
+libmikmod.so.2 \
 ; do
     echo "Installing library ${library} anyway, we know it's needed."
     copylib ${lastpath}/${library}

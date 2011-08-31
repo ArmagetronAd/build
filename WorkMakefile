@@ -457,6 +457,7 @@ PORTABLE_CLIENT_BASENAME=$(subst ",,${PROGNAME})
 PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
 APPDIR=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
 PORTABLE_CLIENT=$(UPLOAD)/$(PORTABLE_CLIENT_NAME)_${VERSION}
+appdir: $(APPDIR).tag
 portable_client: $(PORTABLE_CLIENT)
 $(APPDIR).tag: $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build $(UPLOAD)/.tag
 	#

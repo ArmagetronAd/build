@@ -16,8 +16,9 @@ Fortress modes.</description>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
   <group arch="Windows-*" doc-dir="doc" license="GPL v2 (GNU General Public License)" main="armagetronad.exe" stability="testing">
-   <working-dir src="."/>
-  <implementation id="sha1new=1d813001052136e3aaa7092fd6b5fd6e57c3b26a" released="2011-08-31" version="0">
+  <implementation id="sha1new=6b8363c8f78c891e80c8007fa07f60d1879a68a4" released="2011-08-31" version="0.2.8.3.2-rc1">
+    <manifest-digest sha256="ec61c4fbb15c1a693ebeaad500fb4fc8eb49f0429b530bdd8d2f6878a4884aa0"/>
+    <archive href="http://launchpad.net/armagetronad/0.2.8/0.2.8.3.2-rc1/+download/armagetronad-0.2.8.3.2_rc1-Windows.zip" size="3574789"/>
   </implementation> 
  </group>
 </interface>

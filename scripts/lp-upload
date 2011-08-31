@@ -164,6 +164,10 @@ try:
                     description="Windows Installer"
                     mime_type="application/exe"
                     Windows=True
+                if extension == ".zip":
+                    description="Windows Binary Zip"
+                    mime_type="application/zip"
+                    Windows=True
                 if "Portable App" in description:
                     Linux=True
                 if "edicated" in f:

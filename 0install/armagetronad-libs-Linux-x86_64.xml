@@ -16,9 +16,9 @@ Fortress modes.</description>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
   <group arch="Linux-x86_64" stability="developer">
-  <implementation id="sha1new=c170f31b9f6160c8c5f5b72d65999cb47875065a" released="2011-08-30" version="0.3-pre0.1570">
-    <manifest-digest sha256="acf113c5140f0fd94ce817785a097d1b774426511e991ddfa1010197cfca1bc7"/>
-    <archive href="http://launchpad.net/armagetronad/trunk-snapshots/0.3-alpha-z1570/+download/armagetronad-experimental-libs-0.3_alpha_z1570.x86_64-generic-linux-gnu.bin.tar.bz2" size="2374764"/>
+  <implementation id="sha1new=0af44d24145319c96b693951b6ba032b8f589ef3" released="2011-08-31" version="0.3-pre0.1570">
+    <manifest-digest sha256="119caa6f60e4306f107232762b45db257de88b7fce9a712bb04dee8874314700"/>
+    <archive href="http://launchpad.net/armagetronad/trunk-snapshots/0.3-alpha-z1570/+download/armagetronad-experimental-libs-0.3_alpha_z1570.x86_64-generic-linux-gnu.bin.tar.bz2" size="2374712"/>
   </implementation>
  </group>
 </interface>

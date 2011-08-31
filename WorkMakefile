@@ -493,14 +493,17 @@ BINARY_TARBALL_NAME=${PACKAGE}-${VERSION}.${OSTAG_GENERIC}
 BINARY_TARBALL_DATA_NAME=${PACKAGE}-data-${VERSION}
 BINARY_TARBALL_LIBS_NAME=${PACKAGE}-libs-${VERSION}.${OSTAG_GENERIC}
 TARBALL_DIR=$(RCDIR)/$(BINARY_TARBALL_NAME).fortar
+binary_tarball_dir: $(TARBALL_DIR).tag
 BINARY_TARBALL=$(UPLOAD)/$(BINARY_TARBALL_NAME).bin.tar.bz2
 BINARY_TARBALL_DATA=$(UPLOAD)/$(BINARY_TARBALL_DATA_NAME).bin.tar.bz2
 BINARY_TARBALL_LIBS=$(UPLOAD)/$(BINARY_TARBALL_LIBS_NAME).bin.tar.bz2
 binary_tarball: $(BINARY_TARBALL)
-$(BINARY_TARBALL): $(APPDIR).tag WorkMakefile $(UPLOAD)/.tag
+binary_tarball_data: $(BINARY_TARBALL_DATA)
+binary_tarball_libs: $(BINARY_TARBALL_LIBS)
+$(TARBALL_DIR).tag: $(APPDIR).tag WorkMakefile
 	#
 	# *****************************************
-	# *  package client as tarball
+	# *  package client as tarball, preparation
 	# *****************************************
 	#
 #   copy appdir into tarball directories
@@ -521,14 +524,36 @@ $(BINARY_TARBALL): $(APPDIR).tag WorkMakefile $(UPLOAD)/.tag
 	mkdir -p ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}
 	for f in language resource scripts; do mv ${TARBALL_DIR}/data/$$f ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}/; done
 
-#   tar it up
+#   tag
+	touch $@
+
+$(BINARY_TARBALL): $(TARBALL_DIR).tag WorkMakefile $(UPLOAD)/.tag
+	#
+	# *****************************************
+	# *  package client as tarball
+	# *****************************************
+	#
 	wd=$$(pwd); cd ${TARBALL_DIR}/main; tar -cjf $${wd}/${BINARY_TARBALL} *
+
+$(BINARY_TARBALL_DATA): $(TARBALL_DIR).tag WorkMakefile $(UPLOAD)/.tag
+	#
+	# *****************************************
+	# *  package data as tarball
+	# *****************************************
+	#
 	wd=$$(pwd); cd ${TARBALL_DIR}/data; tar -cjf $${wd}/${BINARY_TARBALL_DATA} *
+
+$(BINARY_TARBALL_LIBS): $(TARBALL_DIR).tag WorkMakefile $(UPLOAD)/.tag
+	#
+	# *****************************************
+	# *  package libraries as tarball
+	# *****************************************
+	#
 	wd=$$(pwd); cd ${TARBALL_DIR}/libs; tar -cjf $${wd}/${BINARY_TARBALL_LIBS} *
 
 ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
 zeroinstall: $(ZEROINSTTAG)
-$(ZEROINSTTAG): $(BINARY_TARBALL) 0install/update
+$(ZEROINSTTAG): $(BINARY_TARBALL) 0install/update 0install/*.xml
 	#
 	# *****************************************
 	# *  update zeroinstall stream

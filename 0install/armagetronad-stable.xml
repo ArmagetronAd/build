@@ -17,4 +17,5 @@ Fortress modes.</description>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
   <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-stable-Linux-i486.xml"/>
   <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-stable-Linux-x86_64.xml"/>
+  <feed arch="Windows-*" src="http://simamo.de/0install/armagetronad-stable-Windows.xml"/>
 </interface>

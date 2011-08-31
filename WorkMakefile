@@ -480,6 +480,10 @@ $(BINARY_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile $(UPLOAD)/.tag
 	rm -rf ${TARBALL_DIR}
 	${MAKE} -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${TARBALL_DIR} install
 
+#   copy AppRun
+	cp portable/AppRun ${TARBALL_DIR}/
+	find ${TARBALL_DIR} -name "*.desktop" -exec mv \{\} ${TARBALL_DIR}/ \;
+
 #   tar it up
 	wd=$$(pwd); cd ${TARBALL_DIR}; tar -cjf $${wd}/${BINARY_TARBALL} *
 

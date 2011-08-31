@@ -36,6 +36,6 @@ ARCH=${OS}-${CPU}
  --archive-url=${URI} \
  --archive-file=${FILE} \
  --set-released=today \
- --set-main=usr/local/bin/${PACKAGE}
+ --set-main=AppRun
 
 

@@ -15,7 +15,7 @@ ZEROVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" -e "s,-alpha,-pre0.," -e "s,-be
 # and launchpad
 LPVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" )
 
-WINFILE=$(echo ${FILE} | sed -e "s,.${OSTAG_GENERIC},-Windows," -e "s,\.bin\.tar\.bz2,.zip,")
+WINFILE=$(echo ${FILE} | sed -e "s,\.${OSTAG_GENERIC},.win32," -e "s,\.bin\.tar\.bz2,.zip,")
 
 # construct uri
 URI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basename ${FILE})

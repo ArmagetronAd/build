@@ -1,0 +1,27 @@
+#!/bin/bash
+# handles dumped windows dist file
+
+set -x
+
+cd ${RCDIR}
+cp -ax Upload/dist windist
+
+pushd Upload/dist
+# build nsis installers
+for f in arma*.nsi; do 
+  if test -r $f; then
+    wine C:/Program\ Files/NSIS/makensis.exe $f || exit 1
+  fi
+done
+mv *.win32.exe ../
+rm -f *.nsi
+
+# zip up 
+rm -f *_dedicated.exe
+rm -f *_master.exe
+zip -r ../${PACKAGE}-${VERSION}.win32.zip * || exit 1
+popd
+
+# discard garbage
+rm -rf Upload/dist
+

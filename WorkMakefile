@@ -545,7 +545,7 @@ $(TARBALL_DIR).tag: $(APPDIR).tag WorkMakefile uploadcheck
 
 #   copy AppRun
 	cp portable/AppRun ${TARBALL_DIR}/main/
-	find ${TARBALL_DIR}/main -name "*.desktop" -exec mv \{\} ${TARBALL_DIR}/main/ \;
+	cp ${APPDIR}/*.desktop ${TARBALL_DIR}/main/
 
 #   tag
 	touch $@

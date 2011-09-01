@@ -18,11 +18,13 @@ LPVERSION=$(echo ${VERSION} | sed -e "s,_,-,g" )
 # library and data files
 LIBFILE=$(echo ${FILE} | sed -e "s,${PACKAGE},${PACKAGE}-libs,")
 DATAFILE=$(echo ${FILE} | sed -e "s,${PACKAGE},${PACKAGE}-data," -e "s,${OSTAG_GENERIC}.,,")
+WINFILE=$(echo ${FILE} | sed -e "s,\.${OSTAG_GENERIC},.win32," -e "s,\.bin\.tar\.bz2,.zip,")
 
 # construct uri
 URI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basename ${FILE})
 LIBURI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basename ${LIBFILE})
 DATAURI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basename ${DATAFILE})
+WINURI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basename ${WINFILE})
 
 # determine xml to modify
 XML=
@@ -43,7 +45,8 @@ if test -r ${FILE} && ! grep -q version=\"${ZEROVERSION}\" ${XML}-${ARCH}.xml; t
  --archive-url=${URI} \
  --archive-file=${FILE} \
  --set-main=usr/local/bin/${PACKAGE}\
- --set-released=today
+ --set-released=today \
+ --set-main=AppRun
 fi
 
 if test -r ${LIBFILE} && ! grep -q version=\"${ZEROVERSION}\" 0install/armagetronad-libs-${ARCH}.xml; then
@@ -63,3 +66,14 @@ if test -r ${DATAFILE} && ! grep -q version=\"${ZEROVERSION}\" 0install/armagetr
  --archive-file=${DATAFILE} \
  --set-released=today
 fi
+
+if test -r ${WINFILE} && ! grep -q version=\"${ZEROVERSION}\" ${XML}-Windows.xml; then
+  0launch -c 'http://0install.net/2006/interfaces/0publish' \
+  ${XML}-Windows.xml \
+ --add-version ${ZEROVERSION} \
+ --archive-url=${WINURI} \
+ --archive-file=${WINFILE} \
+ --archive-extract="" \
+ --set-released=today
+fi
+

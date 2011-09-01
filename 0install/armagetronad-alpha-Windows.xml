@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <?xml-stylesheet type='text/xsl' href='interface.xsl'?>
-<interface uri="http://simamo.de/0install/armagetronad-stable.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
+<interface uri="http://simamo.de/0install/armagetronad-alpha-Windows.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
   <name>Armagetron Advanced</name>
   <summary>Tron clone in 3D</summary>
   <description>
@@ -15,7 +15,10 @@ Fortress modes.</description>
   <homepage>http://armagetronad.net</homepage>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
-  <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-stable-Linux-i486.xml"/>
-  <feed arch="Linux-x86_64" src="http://simamo.de/0install/armagetronad-stable-Linux-x86_64.xml"/>
-  <feed arch="Windows-*" src="http://simamo.de/0install/armagetronad-stable-Windows.xml"/>
+  <group arch="Windows-*" doc-dir="doc" license="GPL v2 (GNU General Public License)" main="armagetronad.exe" stability="developer">
+  <implementation id="sha1new=04141e3613cd1e889dd78260325cd71c88a33ee0" released="2011-08-31" version="0.2.8-pre0.20110829">
+    <manifest-digest sha256="3b76f23c8bf5adc741db59210d2e92800ce200687d24b7baa3cc4ee6e0891872"/>
+    <archive href="http://launchpad.net/armagetronad/0.2.8-snapshots/0.2.8-alpha20110829/+download/armagetronad-0.2.8_alpha20110829-Windows.zip" size="3480154"/>
+  </implementation> 
+ </group>
 </interface>

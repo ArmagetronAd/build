@@ -49,6 +49,10 @@ $(UPLOAD)/.tag: $(RCDIR)/.tag
 	test -d $(UPLOAD) || mkdir $(UPLOAD)
 	echo "" > $@
 
+uploadcheck: $(UPLOAD)/.tag
+#   check for windows build directory dumped into Upload
+	if test -d $(UPLOAD)/dist; then RCDIR=$(RCDIR) VERSION=$(VERSION) PACKAGE=${PACKAGE} scripts/handledist; fi
+
 # bump rc number
 bump:
 	# update release candidate number
@@ -90,7 +94,7 @@ $(INPUTTARBALLBASE): $(wildcard $(INPUTTARBALLBASE).*)
 	if test -r $(INPUTTARBALLBASE).bz2  && bzip2 -f -d $(INPUTTARBALLBASE).bz2; then echo done; else rm -f $(INPUTTARBALLBASE).bz2; fi
 	test -r $@ || { echo "Source tarball not found. Please rerun make." ; rm -rf  ${SOURCETAG} ${VERSIONTAG}; false; }
 
-$(TARBALLBZ): $(INPUTTARBALLBASE) $(UPLOAD)/.tag
+$(TARBALLBZ): $(INPUTTARBALLBASE) uploadcheck
 	#
 	# *****************************************
 	# *  repack sources as bz2                *
@@ -106,7 +110,7 @@ $(TARBALLBZ): $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	test -r $@
 	touch $@
 
-$(TARBALLGZ): $(INPUTTARBALLBASE) $(UPLOAD)/.tag
+$(TARBALLGZ): $(INPUTTARBALLBASE) uploadcheck
 	#
 	# *****************************************
 	# *  repack sources as gz                 *
@@ -305,7 +309,7 @@ $(WINSOURCEDIR): $(SOURCEDIR)/.tag $(WINDOCDIR) $(WINBUILDDIR) Makefile scripts/
 	mv $@-proto $@
 	touch $@
 
-$(WINSOURCE): $(WINSOURCEDIR) $(UPLOAD)/.tag
+$(WINSOURCE): $(WINSOURCEDIR) uploadcheck
 	#
 	# *****************************************
 	# *  pack windows source                  *
@@ -338,7 +342,7 @@ debianbuild: $(DEBSOURCEDIR)
 	#
 	cd $<; fakeroot debian/rules binary
 
-deb: debianbuild $(UPLOAD)/.tag
+deb: debianbuild uploadcheck
 	#
 	# *****************************************
 	# *  harvesting debian package            *
@@ -349,7 +353,7 @@ deb: debianbuild $(UPLOAD)/.tag
 
 DEBVERSION=$(subst _,~,${VERSION})~ppa
 UBUNTUSOURCEDIR=$(RCDIR)/$(PACKAGE)-$(DEBVERSION)
-$(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
+$(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) uploadcheck
 	#
 	# *****************************************
 	# *  prepare ubuntu build                 *
@@ -459,7 +463,7 @@ APPDIR=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
 PORTABLE_CLIENT=$(UPLOAD)/$(PORTABLE_CLIENT_NAME)_${VERSION}
 appdir: $(APPDIR).tag
 portable_client: $(PORTABLE_CLIENT)
-$(APPDIR).tag: $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build $(UPLOAD)/.tag
+$(APPDIR).tag: $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build uploadcheck
 	#
 	# *****************************************
 	# *  package portable client, appdir
@@ -501,7 +505,7 @@ BINARY_TARBALL_LIBS=$(UPLOAD)/$(BINARY_TARBALL_LIBS_NAME).bin.tar.bz2
 binary_tarball: $(BINARY_TARBALL)
 binary_tarball_data: $(BINARY_TARBALL_DATA)
 binary_tarball_libs: $(BINARY_TARBALL_LIBS)
-$(TARBALL_DIR).tag: $(APPDIR).tag WorkMakefile
+$(TARBALL_DIR).tag: $(APPDIR).tag WorkMakefile uploadcheck
 	#
 	# *****************************************
 	# *  package client as tarball, preparation
@@ -524,6 +528,10 @@ $(TARBALL_DIR).tag: $(APPDIR).tag WorkMakefile
 	mv ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE} ${TARBALL_DIR}/data
 	mkdir -p ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}
 	for f in language resource scripts; do mv ${TARBALL_DIR}/data/$$f ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}/; done
+
+#   copy AppRun
+	cp portable/AppRun ${TARBALL_DIR}/main/
+	find ${TARBALL_DIR}/main -name "*.desktop" -exec mv \{\} ${TARBALL_DIR}/main/ \;
 
 #   tag
 	touch $@
@@ -568,7 +576,7 @@ autopackage-client: $(APFILE).client
 autopackage-server: $(APFILE).server
 autopackage-legacyserver: $(APFILE).legacyserver
 autopackage: autopackage-client autopackage-server
-$(APFILE).%: $(SOURCEDIR)/.tag package/Makefile package/default.apspec $(UPLOAD)/.tag
+$(APFILE).%: $(SOURCEDIR)/.tag package/Makefile package/default.apspec uploadcheck
 	#
 	# *****************************************
 	# *  build autopackage $*
@@ -581,10 +589,10 @@ $(APFILE).%: $(SOURCEDIR)/.tag package/Makefile package/default.apspec $(UPLOAD)
 	touch $@
 
 # rename renegade uploads
-upload-rename: $(UPLOAD)/.tag
+upload-rename: uploadcheck
 	if test $(PACKAGE) != armagetronad; then cd $(UPLOAD); for f in armagetronad*; do if echo $$f | egrep "armagetronad-0|armagetronad-dedicated-0" > /dev/null; then mv $$f $$(echo $$f | sed -e "s,armagetronad,$(PACKAGE),"); fi; done; fi
 
-upload-lp: $(SOURCEDIR)/.tag $(UPLOAD)/.tag upload-rename
+upload-lp: $(SOURCEDIR)/.tag uploadcheck upload-rename
 	#
 	# *****************************************
 	# *  uploading compiled files to lp       *
@@ -595,7 +603,7 @@ upload-lp: $(SOURCEDIR)/.tag $(UPLOAD)/.tag upload-rename
 	cd ${UPLOAD};  ../../../../scripts/lp-upload armagetronad "$(SERIES)" "$(VERSION)" *.gz *.bz2 *.zip *.deb *.package *.rpm *.exe *.dmg $(PORTABLE_CLIENT_NAME)_*
 #	cd ${UPLOAD}; PROJ=armagetron-builds; test $(PACKAGE) = armagetronad && PROJ=armagetronad; ../../../../scripts/lp-upload "$$PROJ" "$(SERIES)" "$(VERSION)" *.gz *.bz2 *.zip *.deb *.package *.rpm *.exe *.dmg
 
-upload-sf: $(UPLOAD)/.tag upload-rename
+upload-sf: uploadcheck upload-rename
 	#
 	# *****************************************
 	# *  uploading compiled files to sf       *

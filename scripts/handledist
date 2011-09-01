@@ -4,7 +4,6 @@
 set -x
 
 cd ${RCDIR}
-test -d windist && mv windist windist.back
 cp -ax Upload/dist windist
 
 pushd Upload/dist
@@ -14,19 +13,13 @@ for f in arma*.nsi; do
     wine C:/Program\ Files/NSIS/makensis.exe $f || exit 1
   fi
 done
-mv *.win32.exe ../ || exit 1
+mv *.win32.exe ../
 rm -f *.nsi
 
 # zip up 
-#rm -f *_dedicated.exe
+rm -f *_dedicated.exe
 rm -f *_master.exe
-rm -f *.a *.def banner.bmp var
-mkdir -p ../ZeroInstall
-zip -r ../../${PACKAGE}-libs-${VERSION}.win32.zip *.dll || exit 1
-rm -f *.dll
-zip -r ../ZeroInstall/${PACKAGE}-${VERSION}.win32.zip * -x *_dedicated.exe || exit 1
-rm -rf textures models sound music
-zip -r ../ZeroInstall/${PACKAGE}-dedicated-${VERSION}.win32.zip * -x armagetronad.exe ArmagetronAd.exe || exit 1
+zip -r ../${PACKAGE}-${VERSION}.win32.zip * || exit 1
 popd
 
 # discard garbage

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#set -x
+set -x
 
 root=$(dirname "${0}")
 EXEC=$(grep -m 1 -r Exec= ${root}/*.desktop | cut -d "=" -f 2 | cut -d % -f 1)
@@ -14,7 +14,15 @@ test -d .${EXEC} && extraarg="--userdatadir .${EXEC}"
 
 # for debugging: if LD_DEBUG_APP=true, use the included libraries first.
 # you can then use strace to check no non-standard external libraries are needed. 
-extralibs=
-test "x${LD_DEBUG_APP}" = xtrue || extralib=:/usr/local/lib32:/usr/local/lib:/usr/lib32:/usr/lib
 
-LD_LIBRARY_PATH="${root}/usr/local/lib:${LD_LIBRARY_PATH}:${root}/usr/lib" PATH="${root}/usr/local/bin:${PATH}:${extralib}${root}/usr/bin" exec $EXEC ${extraarg} $@
+extralibs=
+if test "x${LD_DEBUG_APP}" = xtrue; then
+  echo "Library debug mode: ignore system libraries."
+else
+  # find all directories in ld's cache
+  for lib in $(ldconfig -p | tail -n +2 | sed -e "s,.* =>,," -e "s,/[^/]*$,," | sort -u); do
+      extralib=${extralib}:${lib}
+  done
+fi
+
+LD_LIBRARY_PATH="${root}/usr/local/lib:${LD_LIBRARY_PATH}${extralib}:${root}/usr/lib" PATH="${root}/usr/local/bin:${PATH}${root}/usr/bin" exec $EXEC ${extraarg} $@

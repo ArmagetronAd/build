@@ -23,4 +23,8 @@ Fortress modes.</description>
   <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-alpha-Linux-i486.xml"/>
   <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-beta-Linux-i486.xml"/>
   <feed arch="Linux-i486" src="http://simamo.de/0install/armagetronad-stable-Linux-i486.xml"/>
+  <feed arch="Windows-*" src="http://simamo.de/0install/armagetronad-experimental-Windows.xml"/>
+  <feed arch="Windows-*" src="http://simamo.de/0install/armagetronad-alpha-Windows.xml"/>
+  <feed arch="Windows-*" src="http://simamo.de/0install/armagetronad-beta-Windows.xml"/>
+  <feed arch="Windows-*" src="http://simamo.de/0install/armagetronad-stable-Windows.xml"/>
 </interface>

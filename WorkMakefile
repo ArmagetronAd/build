@@ -319,6 +319,20 @@ $(WINSOURCE): $(WINSOURCEDIR) uploadcheck
 	bash scripts/chdirexec $(RCDIR) zip -q -r $@ $(WINSOURCEDIR)
 	touch $@
 
+winbin: $(WINSOURCEDIR).hasbeenbuilt
+$(WINSOURCEDIR).hasbeenbuilt: $(WINSOURCEDIR) $(UPLOAD)/.tag ${AA_WINLIBS}/win32
+	#
+	# *****************************************
+	# *  build windows
+	# *****************************************
+	#
+	cp -ax $(WINSOURCEDIR) $(WINSOURCEDIR).build
+	rm ${RCDIR}/winlibs; ln -s $$(pwd)/${AA_WINLIBS} ${RCDIR}/winlibs
+	cd $(WINSOURCEDIR).build/win32; if test -z "$$DISPLAY"; then DISPLAY=:0.0 xterm -e "bash ./fromunix.sh"; else bash ./fromunix.sh; fi
+	mv $(WINSOURCEDIR).build/build/dist $(UPLOAD)/
+	$(MAKE) uploadcheck
+	touch $@
+
 DEBSOURCEDIR=$(SOURCEDIR)-debian
 debianprepare: $(DEBSOURCEDIR)
 $(DEBSOURCEDIR): $(SOURCEDIR)/.tag

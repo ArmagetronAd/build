@@ -1,7 +1,7 @@
 #!/bin/bash
 # packs windows sources
 
-# set -x
+#set -x
 
 WINDIR=$1
 SRCDIR=$2
@@ -38,8 +38,8 @@ done
 cp ${WINDIR}/src/tFakeVersion.h ${WINDIR}/src/tTrueVersion.h
 
 # append windows specific stuff
-WINVERSION=`echo $VERSION | sed -e 's/\./,/g' -e 's/_alpha/,/' -e 's/_z//' -e 's/_beta/,/' -e 's/_rc/,/'`
-MINVERSION=`echo $VERSION | sed -e 's/^.*_/_/'`
+WINVERSION=`echo $VERSION | sed -e 's/\./,/g' -e 's/_alpha/,/' -e 's/_z//' -e 's/_beta/,/' -e 's/_rc/,/' -e 's/_/,/g'`
+MINVERSION=`echo $VERSION | sed -e 's/^.*_z/_z/'`
 
 # normalize WINVERSION. It's supposed to be in the form a,b,c,d with a-d all 16 bit numbers
 

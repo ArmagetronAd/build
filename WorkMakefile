@@ -330,7 +330,7 @@ $(WINSOURCEDIR).hasbeenbuilt: $(WINSOURCEDIR) $(UPLOAD)/.tag ${AA_WINLIBS}/win32
 	rm -f ${RCDIR}/winlibs; ln -s $$(pwd)/${AA_WINLIBS} ${RCDIR}/winlibs
 	cd $(WINSOURCEDIR).build/win32; if test -z "$$DISPLAY"; then DISPLAY=:0.0 xterm -e "bash ./fromunix.sh"; else bash ./fromunix.sh; fi
 	mv $(WINSOURCEDIR).build/build/dist $(UPLOAD)/
-	$(MAKE) uploadcheck
+#	$(MAKE) uploadcheck
 	touch $@
 
 DEBSOURCEDIR=$(SOURCEDIR)-debian

@@ -146,8 +146,10 @@ try:
             elif secondextension == ".bin" or thirdextension == ".bin":
                 description="Binary Tarball for Linux"
                 if extension == '.bz2':
+                    Linux=True
                     mime_type="application/bzip2"
                 if extension == '.gz':
+                    Linux=True
                     mime_type="application/x-gzip"
             else:
                 if extension == ".package":

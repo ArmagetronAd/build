@@ -474,7 +474,7 @@ BINARY_TARBALL_NAME=${PACKAGE}-${VERSION}.${OSTAG_GENERIC}
 TARBALL_DIR=$(RCDIR)/$(BINARY_TARBALL_NAME).fortar
 BINARY_TARBALL=$(UPLOAD)/$(BINARY_TARBALL_NAME).bin.tar.bz2
 binary_tarball: $(BINARY_TARBALL)
-$(BINARY_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile $(UPLOAD)/.tag
+$(BINARY_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile portable/AppRun $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package client as tarball

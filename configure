@@ -77,9 +77,10 @@ echo -n Determining winlibs directory...
 
 AA_WINLIBS_SOURCE=""
 for CANDIDATE in ../armagetronad_winlibs ../winlibs; do
-	WARNING=yes
 	test -d $CANDIDATE && test -z "$AA_WINLIBS_SOURCE" && AA_WINLIBS_SOURCE=$CANDIDATE
 done
+
+test -z "$AA_WINLIBS_SOURCE" && WARNING=yes
 
 echo "# winlibs directory" >> make.conf
 echo "AA_WINLIBS=$AA_WINLIBS_SOURCE" >> make.conf

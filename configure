@@ -73,39 +73,11 @@ for CANDIDATE in ../armagetronad_build_visualc ../visualc_build ../build_visualc
 	test -d $CANDIDATE && test -z "$AA_VC_SOURCE" && AA_VC_SOURCE=$CANDIDATE
 done
 
-echo "# VisualC directory" >> make.conf
-echo "AA_VISUALC=$AA_VC_SOURCE" >> make.conf
-echo "" >> make.conf
-
-echo " $AA_VC_SOURCE"
-
-if test -z "$AA_VC_SOURCE"; then
-    WARNING=yes
-    echo "VisualC build files not found. You'll need them to prepare sources for the Windows build."
-fi
-
-echo -n Determining Code::Blocks directory...  
-
-AA_CODEBLOCKS_SOURCE=""
-for CANDIDATE in ../armagetronad_build_codeblocks ../build_codeblocks ../codeblocks_build; do
-	test -d $CANDIDATE && test -z "$AA_CODEBLOCKS_SOURCE" && AA_CODEBLOCKS_SOURCE=$CANDIDATE
-done
-
-echo "# Code::Blocks directory" >> make.conf
-echo "AA_CODEBLOCKS=$AA_CODEBLOCKS_SOURCE" >> make.conf
-echo "" >> make.conf
-
-echo " $AA_CODEBLOCKS_SOURCE"
-
-if test -z "$AA_CODEBLOCKS_SOURCE"; then
-    WARNING=yes
-    echo "Code::Blocks build files not found. You'll need them to prepare sources for the Windows build."
-fi
-
 echo -n Determining winlibs directory...  
 
 AA_WINLIBS_SOURCE=""
 for CANDIDATE in ../armagetronad_winlibs ../winlibs; do
+	WARNING=yes
 	test -d $CANDIDATE && test -z "$AA_WINLIBS_SOURCE" && AA_WINLIBS_SOURCE=$CANDIDATE
 done
 

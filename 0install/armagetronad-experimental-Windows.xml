@@ -20,5 +20,9 @@ Fortress modes.</description>
   <manifest-digest sha256="ae3b7399c93f1d18242b6eb5c65c2a82cc958e7ac3d43eef1daba89a7047b5f8"/>
   <archive extract="" href="http://launchpad.net/armagetronad/trunk-snapshots/0.3-alpha-z1570/+download/armagetronad-experimental-0.3_alpha_z1570-Windows.zip" size="7479506"/>
 </implementation>
+<implementation id="sha1new=28c20a339f688ecd88f90abc3500103b6d97e502" released="2011-09-02" version="0.3-pre0.1576">
+  <manifest-digest sha256="02acd04bb47f630ce383f4896499905513044dcdbf766d81187d137b3bcab834"/>
+  <archive extract="" href="http://launchpad.net/armagetronad/trunk-snapshots/0.3-alpha-z1576/+download/armagetronad-experimental-0.3_alpha_z1576.win32.zip" size="7482273"/>
+</implementation>
   </group>
 </interface>

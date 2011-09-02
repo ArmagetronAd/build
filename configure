@@ -11,13 +11,19 @@
 WARNING=no
 
 # rescue packager from previous run
+# and copy base information
 PACKAGER=""
-if test -r make.conf; then
-    PACKAGER=`cat make.conf | grep ^PACKAGER | sed -e 's,^PACKAGER=",,' -e's,"$,,'`
+if test -r make.conf.bak; then
+    PACKAGER=`cat make.conf.bak | grep ^PACKAGER | sed -e 's,^PACKAGER=",,' -e's,"$,,'`
+    if grep "AUTOMATICALLY DETERMINED VALUES FOLLOW" make.conf.bak; then
+        grep -B 10000 -A 2 "AUTOMATICALLY DETERMINED VALUES FOLLOW" make.conf.bak > make.conf
+    else
+        cp make.conf.template make.conf
+    fi
+else
+    cp make.conf.template make.conf
 fi
 
-# copy base information
-cp make.conf.template make.conf
 
 # process commandline arguments
 RPMTOPDIR=""
@@ -110,7 +116,6 @@ echo "" >> make.conf
 echo " $AA_WINLIBS_SOURCE"
 
 if test -z "$AA_WINLIBS_SOURCE"; then
-    WARNING=yes
     echo "Windows library sources not found. You'll need them to prepare sources for the Windows build. (well, not yet, but in future revisions, you will)."
 fi
 

@@ -94,7 +94,7 @@ $(INPUTTARBALLBASE): $(wildcard $(INPUTTARBALLBASE).*)
 	if test -r $(INPUTTARBALLBASE).bz2  && bzip2 -f -d $(INPUTTARBALLBASE).bz2; then echo done; else rm -f $(INPUTTARBALLBASE).bz2; fi
 	test -r $@ || { echo "Source tarball not found. Please rerun make." ; rm -rf  ${SOURCETAG} ${VERSIONTAG}; false; }
 
-$(TARBALLBZ): $(INPUTTARBALLBASE) uploadcheck
+$(TARBALLBZ): $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  repack sources as bz2                *
@@ -110,7 +110,7 @@ $(TARBALLBZ): $(INPUTTARBALLBASE) uploadcheck
 	test -r $@
 	touch $@
 
-$(TARBALLGZ): $(INPUTTARBALLBASE) uploadcheck
+$(TARBALLGZ): $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  repack sources as gz                 *
@@ -309,7 +309,7 @@ $(WINSOURCEDIR): $(SOURCEDIR)/.tag $(WINDOCDIR) $(WINBUILDDIR) Makefile scripts/
 	mv $@-proto $@
 	touch $@
 
-$(WINSOURCE): $(WINSOURCEDIR) uploadcheck
+$(WINSOURCE): $(WINSOURCEDIR) $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  pack windows source                  *
@@ -356,7 +356,7 @@ debianbuild: $(DEBSOURCEDIR)
 	#
 	cd $<; fakeroot debian/rules binary
 
-deb: debianbuild uploadcheck
+deb: debianbuild $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  harvesting debian package            *
@@ -367,7 +367,7 @@ deb: debianbuild uploadcheck
 
 DEBVERSION=$(subst _,~,${VERSION})~ppa
 UBUNTUSOURCEDIR=$(RCDIR)/$(PACKAGE)-$(DEBVERSION)
-$(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) uploadcheck
+$(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  prepare ubuntu build                 *
@@ -477,7 +477,7 @@ APPDIR=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
 PORTABLE_CLIENT=$(UPLOAD)/$(PORTABLE_CLIENT_NAME)_${VERSION}
 appdir: $(APPDIR).tag
 portable_client: $(PORTABLE_CLIENT)
-$(APPDIR).tag: $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build uploadcheck
+$(APPDIR).tag: $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package portable client, appdir
@@ -519,7 +519,7 @@ BINARY_TARBALL_LIBS=$(UPLOAD)/$(BINARY_TARBALL_LIBS_NAME).bin.tar.bz2
 binary_tarball: $(BINARY_TARBALL)
 binary_tarball_data: $(BINARY_TARBALL_DATA)
 binary_tarball_libs: $(BINARY_TARBALL_LIBS)
-$(TARBALL_DIR).tag: $(APPDIR).tag WorkMakefile uploadcheck
+$(TARBALL_DIR).tag: $(APPDIR).tag WorkMakefile $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package client as tarball, preparation
@@ -575,7 +575,7 @@ $(BINARY_TARBALL_LIBS): $(TARBALL_DIR).tag WorkMakefile $(UPLOAD)/.tag
 	wd=$$(pwd); cd ${TARBALL_DIR}/libs; tar -cjf $${wd}/${BINARY_TARBALL_LIBS} *
 
 ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
-zeroinstall: $(ZEROINSTTAG)
+zeroinstall:  uploadcheck $(ZEROINSTTAG)
 $(ZEROINSTTAG): $(BINARY_TARBALL) 0install/update 0install/*.xml
 	#
 	# *****************************************
@@ -590,7 +590,7 @@ autopackage-client: $(APFILE).client
 autopackage-server: $(APFILE).server
 autopackage-legacyserver: $(APFILE).legacyserver
 autopackage: autopackage-client autopackage-server
-$(APFILE).%: $(SOURCEDIR)/.tag package/Makefile package/default.apspec uploadcheck
+$(APFILE).%: $(SOURCEDIR)/.tag package/Makefile package/default.apspec $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  build autopackage $*

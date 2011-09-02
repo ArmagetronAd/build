@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+#set -x
 
 root=$(dirname "${0}")
 EXEC=$(grep -m 1 -r Exec= ${root}/*.desktop | cut -d "=" -f 2 | cut -d % -f 1)

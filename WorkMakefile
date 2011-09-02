@@ -493,7 +493,7 @@ $(BINARY_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile $(UPLOAD)/.tag
 
 ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
 zeroinstall:  uploadcheck $(ZEROINSTTAG)
-$(ZEROINSTTAG): $(BINARY_TARBALL) 0install/update
+$(ZEROINSTTAG): $(BINARY_TARBALL) 0install/update $(UPLOAD)/*
 	#
 	# *****************************************
 	# *  update zeroinstall stream

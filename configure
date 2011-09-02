@@ -15,7 +15,7 @@ WARNING=no
 PACKAGER=""
 if test -r make.conf.bak; then
     PACKAGER=`cat make.conf.bak | grep ^PACKAGER | sed -e 's,^PACKAGER=",,' -e's,"$,,'`
-    if grep "AUTOMATICALLY DETERMINED VALUES FOLLOW" make.conf.bak; then
+    if grep "AUTOMATICALLY DETERMINED VALUES FOLLOW" make.conf.bak > /dev/null 2>&1; then
         grep -B 10000 -A 2 "AUTOMATICALLY DETERMINED VALUES FOLLOW" make.conf.bak > make.conf
     else
         cp make.conf.template make.conf

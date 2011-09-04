@@ -519,7 +519,7 @@ BINARY_TARBALL_LIBS=$(UPLOAD)/$(BINARY_TARBALL_LIBS_NAME).bin.tar.bz2
 binary_tarball: $(BINARY_TARBALL)
 binary_tarball_data: $(BINARY_TARBALL_DATA)
 binary_tarball_libs: $(BINARY_TARBALL_LIBS)
-$(TARBALL_DIR).tag: $(APPDIR).tag WorkMakefile $(UPLOAD)/.tag
+$(TARBALL_DIR).tag: $(APPDIR).tag WorkMakefile portable/AppRun $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package client as tarball, preparation

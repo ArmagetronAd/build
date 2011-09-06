@@ -433,6 +433,7 @@ upload-ubuntu-oneiric
 
 # generic client build
 GENERIC_CLIENT_DIR=$(RCDIR)/client.build
+CLIENT_CONFIGURE_ARGUMENTS=--prefix='/usr/local' --disable-uninstall --disable-sysinstall --disable-restoreold --enable-etc --disable-initscripts --enable-automakedefaults --disable-useradd --enable-armathentication
 generic_client: $(GENERIC_CLIENT_DIR).tag
 $(GENERIC_CLIENT_DIR).tag: $(SOURCEDIR)/.tag
 	#
@@ -445,16 +446,35 @@ $(GENERIC_CLIENT_DIR).tag: $(SOURCEDIR)/.tag
 	mkdir -p $(GENERIC_CLIENT_DIR)
 
 	# configure and make
-	bash scripts/configure $(GENERIC_CLIENT_DIR) $(SOURCEDIR) --prefix='/usr/local' --disable-uninstall --disable-sysinstall --disable-restoreold --enable-etc --disable-initscripts --enable-automakedefaults --disable-useradd --enable-armathentication
+	bash scripts/configure $(GENERIC_CLIENT_DIR) $(SOURCEDIR) $(CLIENT_CONFIGURE_ARGUMENTS)
 
 	${MAKE} -C $(GENERIC_CLIENT_DIR)
+	touch $@
+
+GENERIC_SERVER_DIR=$(RCDIR)/server.build
+SERVER_CONFIGURE_ARGUMENTS=$(CLIENT_CONFIGURE_ARGUMENTS) --disable-glout
+generic_server: $(GENERIC_SERVER_DIR).tag
+$(GENERIC_SERVER_DIR).tag: $(SOURCEDIR)/.tag
+	#
+	# *****************************************
+	# *  generic server build          
+	# *****************************************
+	#
+	# create build directory
+	rm -rf $(GENERIC_SERVER_DIR)/config.cache $(GENERIC_SERVER_DIR)/Makefile
+	mkdir -p $(GENERIC_SERVER_DIR)
+
+	# configure and make
+	bash scripts/configure $(GENERIC_SERVER_DIR) $(SOURCEDIR) $(SERVER_CONFIGURE_ARGUMENTS)
+
+	${MAKE} -C $(GENERIC_SERVER_DIR)
 	touch $@
 
 # portable client build
 PORTABLE_CLIENT_BASENAME=$(subst ",,${PROGNAME})
 #"
 PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
-APPDIR=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
+APPDIR_CLIENT=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
 PORTABLE_CLIENT=$(UPLOAD)/$(PORTABLE_CLIENT_NAME)_${VERSION}
 portable_client: $(PORTABLE_CLIENT)
 $(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build WorkMakefile $(UPLOAD)/.tag
@@ -464,14 +484,33 @@ $(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build Wor
 	# *****************************************
 	#
 #   install into appdir
-	rm -rf ${APPDIR}
-	${MAKE} -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${APPDIR} install
+	rm -rf ${APPDIR_CLIENT}
+	${MAKE} -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${APPDIR_CLIENT} install
 
 #   delegate
-	APPDIR=${APPDIR} PORTABLE_CLIENT=${PORTABLE_CLIENT} PACKAGE=${PACKAGE} portable/build	
+	APPDIR=${APPDIR_CLIENT} PORTABLE=${PORTABLE_CLIENT} PACKAGE=${PACKAGE} portable/build	
+
+# portable server build
+PORTABLE_SERVER_BASENAME=$(subst ",,${PROGNAME})Dedicated
+#"
+PORTABLE_SERVER_NAME=$(shell echo ${PORTABLE_SERVER_BASENAME} | sed -e "s, ,,g")
+APPDIR_SERVER=$(RCDIR)/$(PORTABLE_SERVER_NAME).AppDir
+PORTABLE_SERVER=$(UPLOAD)/$(PORTABLE_SERVER_NAME)_${VERSION}
+portable_server: $(PORTABLE_SERVER)
+$(PORTABLE_SERVER): $(GENERIC_SERVER_DIR).tag portable/AppRun portable/build WorkMakefile $(UPLOAD)/.tag
+	#
+	# *****************************************
+	# *  package portable server
+	# *****************************************
+	#
+#   install into appdir
+	rm -rf ${APPDIR_SERVER}
+	${MAKE} -C ${GENERIC_SERVER_DIR} DESTDIR=$$(pwd)/${APPDIR_SERVER} install
+
+#   delegate
+	APPDIR=${APPDIR_SERVER} PORTABLE=${PORTABLE_SERVER} PACKAGE=${PACKAGE}-dedicated portable/build	
 
 # plain binary tarball
-PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
 BINARY_TARBALL_NAME=${PACKAGE}-${VERSION}.${OSTAG_GENERIC}
 TARBALL_DIR=$(RCDIR)/$(BINARY_TARBALL_NAME).fortar
 BINARY_TARBALL=$(UPLOAD)/$(BINARY_TARBALL_NAME).bin.tar.bz2

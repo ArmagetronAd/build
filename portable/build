@@ -64,5 +64,5 @@ echo $lastpath
 #   and pack it up. The script is stupidly only available inside a portable app
 #   called AppImageAssistant; fetch it and extract it with AppImageExtractor
 #   to /usr/local/bin/.
-rm -f ${PORTABLE_CLIENT}
-/usr/local/bin/AppImageAssistant.AppDir/package ${APPDIR} ${PORTABLE_CLIENT}
+rm -f ${PORTABLE}
+/usr/local/bin/AppImageAssistant.AppDir/package ${APPDIR} ${PORTABLE}

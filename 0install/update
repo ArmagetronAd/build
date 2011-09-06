@@ -22,13 +22,12 @@ URI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basenam
 WINURI=http://launchpad.net/armagetronad/${SERIES}/${LPVERSION}/+download/$(basename ${WINFILE})
 
 # determine xml to modify
-XML=
-test ${SERIES} == 0.2.8 && XML=0install/armagetronad-beta
-test ${SERIES} == 0.2.8-snapshots && XML=0install/armagetronad-alpha
-test ${SERIES} == trunk-snapshots && XML=0install/armagetronad-experimental
-test ${SERIES} == hacks && XML=0install/armagetronad-ctsty
-test -z ${XML} && { echo "Unknown series: ${SERIES}"; exit 1; }
-echo ${FILE} | grep -- -dedicated > /dev/null && XML=${XML}-dedicated
+XML=0install/${PACKAGE}
+
+# exception: plain 0.2.8 builds always go to the beta feed first
+if test ${SERIES} == 0.2.8; then
+    echo ${PACKAGE} | grep beta || XML=${XML-beta}
+fi
 
 OS=Linux
 CPU=$(echo ${OSTAG_GENERIC} | sed -e "s,-.*,,")

@@ -511,36 +511,62 @@ $(PORTABLE_SERVER): $(GENERIC_SERVER_DIR).tag portable/AppRun portable/build Wor
 	APPDIR=${APPDIR_SERVER} PORTABLE=${PORTABLE_SERVER} PACKAGE=${PACKAGE}-dedicated portable/build	
 
 # plain binary tarball
-BINARY_TARBALL_NAME=${PACKAGE}-${VERSION}.${OSTAG_GENERIC}
-TARBALL_DIR=$(RCDIR)/$(BINARY_TARBALL_NAME).fortar
-BINARY_TARBALL=$(UPLOAD)/$(BINARY_TARBALL_NAME).bin.tar.bz2
-binary_tarball: $(BINARY_TARBALL)
-$(BINARY_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile portable/AppRun $(UPLOAD)/.tag
+BINARY_CLIENT_TARBALL_NAME=${PACKAGE}-${VERSION}.${OSTAG_GENERIC}
+CLIENT_TARBALL_DIR=$(RCDIR)/$(BINARY_CLIENT_TARBALL_NAME).fortar
+BINARY_CLIENT_TARBALL=$(UPLOAD)/$(BINARY_CLIENT_TARBALL_NAME).bin.tar.bz2
+binary_client_tarball: $(BINARY_CLIENT_TARBALL)
+$(BINARY_CLIENT_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile portable/AppRun $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package client as tarball
 	# *****************************************
 	#
 #   install into appdir
-	rm -rf ${TARBALL_DIR}
-	${MAKE} -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${TARBALL_DIR} install
+	rm -rf ${CLIENT_TARBALL_DIR}
+	${MAKE} -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${CLIENT_TARBALL_DIR} install
 
 #   copy AppRun
-	cp portable/AppRun ${TARBALL_DIR}/
-	find ${TARBALL_DIR} -name "*.desktop" -exec mv \{\} ${TARBALL_DIR}/ \;
+	cp portable/AppRun ${CLIENT_TARBALL_DIR}/
+	find ${CLIENT_TARBALL_DIR} -name "*.desktop" -exec mv \{\} ${CLIENT_TARBALL_DIR}/ \;
 
 #   tar it up
-	wd=$$(pwd); cd ${TARBALL_DIR}; tar -cjf $${wd}/${BINARY_TARBALL} *
+	wd=$$(pwd); cd ${CLIENT_TARBALL_DIR}; tar -cjf $${wd}/${BINARY_CLIENT_TARBALL} *
 	rm -f $(ZEROINSTTAG)
 
+# plain binary tarball
+BINARY_SERVER_TARBALL_NAME=${PACKAGE}-dedicated-${VERSION}.${OSTAG_GENERIC}
+SERVER_TARBALL_DIR=$(RCDIR)/$(BINARY_SERVER_TARBALL_NAME).fortar
+BINARY_SERVER_TARBALL=$(UPLOAD)/$(BINARY_SERVER_TARBALL_NAME).bin.tar.bz2
+binary_server_tarball: $(BINARY_SERVER_TARBALL)
+$(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/AppRun $(UPLOAD)/.tag
+	#
+	# *****************************************
+	# *  package client as tarball
+	# *****************************************
+	#
+#   install into appdir
+	rm -rf ${SERVER_TARBALL_DIR}
+	${MAKE} -C ${GENERIC_SERVER_DIR} DESTDIR=$$(pwd)/${SERVER_TARBALL_DIR} install
+
+#   copy AppRun
+	cp portable/AppRun ${SERVER_TARBALL_DIR}/
+	find ${SERVER_TARBALL_DIR} -name "*.desktop" -exec mv \{\} ${SERVER_TARBALL_DIR}/ \;
+
+#   tar it up
+	wd=$$(pwd); cd ${SERVER_TARBALL_DIR}; tar -cjf $${wd}/${BINARY_SERVER_TARBALL} *
+	rm -f $(ZEROINSTTAG)
+
+binary_tarball: binary_client_tarball binary_server_tarball
+
 zeroinstall:  uploadcheck $(ZEROINSTTAG)
-$(ZEROINSTTAG): $(BINARY_TARBALL) 0install/update
+$(ZEROINSTTAG): $(BINARY_CLIENT_TARBALL) $(BINARY_SERVER_TARBALL) 0install/update
 	#
 	# *****************************************
 	# *  update zeroinstall stream
 	# *****************************************
 	#
-	OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_TARBALL} VERSION=${VERSION} 0install/update
+	OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_CLIENT_TARBALL} VERSION=${VERSION} 0install/update
+	OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE}-dedicated SERIES=${SERIES} FILE=${BINARY_SERVER_TARBALL} VERSION=${VERSION} 0install/update
 	touch $@
 
 APFILE=$(RCDIR)/.package

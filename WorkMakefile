@@ -50,9 +50,11 @@ $(UPLOAD)/.tag: $(RCDIR)/.tag
 	test -d $(UPLOAD) || mkdir $(UPLOAD)
 	echo "" > $@
 
+ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
+
 uploadcheck: $(UPLOAD)/.tag
 #   check for windows build directory dumped into Upload
-	if test -d $(UPLOAD)/dist; then RCDIR=$(RCDIR) VERSION=$(VERSION) PACKAGE=${PACKAGE} scripts/handledist; fi
+	if test -d $(UPLOAD)/dist; then RCDIR=$(RCDIR) VERSION=$(VERSION) PACKAGE=${PACKAGE} scripts/handledist; rm -f $(ZEROINSTTAG); fi
 
 # bump rc number
 bump:
@@ -490,10 +492,10 @@ $(BINARY_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile portable/AppRun $(UPLO
 
 #   tar it up
 	wd=$$(pwd); cd ${TARBALL_DIR}; tar -cjf $${wd}/${BINARY_TARBALL} *
+	rm -f $(ZEROINSTTAG)
 
-ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
 zeroinstall:  uploadcheck $(ZEROINSTTAG)
-$(ZEROINSTTAG): $(BINARY_TARBALL) 0install/update $(UPLOAD)/*
+$(ZEROINSTTAG): $(BINARY_TARBALL) 0install/update
 	#
 	# *****************************************
 	# *  update zeroinstall stream

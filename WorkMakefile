@@ -433,7 +433,8 @@ upload-ubuntu-oneiric
 
 # generic client build
 GENERIC_CLIENT_DIR=$(RCDIR)/client.build
-CLIENT_CONFIGURE_ARGUMENTS=--prefix='/usr/local' --disable-uninstall --disable-sysinstall --disable-restoreold --enable-etc --disable-initscripts --enable-automakedefaults --disable-useradd --enable-armathentication
+GENERIC_CONFIGURE_ARGUMENTS=--prefix='/usr/local' --disable-uninstall --disable-restoreold --enable-etc --enable-automakedefaults --disable-useradd
+CLIENT_CONFIGURE_ARGUMENTS=${GENERIC_CONFIGURE_ARGUMENTS} --disable-sysinstall --disable-initscripts
 generic_client: $(GENERIC_CLIENT_DIR).tag
 $(GENERIC_CLIENT_DIR).tag: $(SOURCEDIR)/.tag
 	#
@@ -452,7 +453,7 @@ $(GENERIC_CLIENT_DIR).tag: $(SOURCEDIR)/.tag
 	touch $@
 
 GENERIC_SERVER_DIR=$(RCDIR)/server.build
-SERVER_CONFIGURE_ARGUMENTS=$(CLIENT_CONFIGURE_ARGUMENTS) --disable-glout
+SERVER_CONFIGURE_ARGUMENTS=$(GENERIC_CONFIGURE_ARGUMENTS) --disable-glout --enable-armathentication
 generic_server: $(GENERIC_SERVER_DIR).tag
 $(GENERIC_SERVER_DIR).tag: $(SOURCEDIR)/.tag
 	#
@@ -469,6 +470,8 @@ $(GENERIC_SERVER_DIR).tag: $(SOURCEDIR)/.tag
 
 	${MAKE} -C $(GENERIC_SERVER_DIR)
 	touch $@
+
+generic_build: generic_client generic_server
 
 # portable client build
 PORTABLE_CLIENT_BASENAME=$(subst ",,${PROGNAME})
@@ -527,7 +530,7 @@ $(BINARY_CLIENT_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile portable/AppRun
 
 #   copy AppRun
 	cp portable/AppRun ${CLIENT_TARBALL_DIR}/
-	find ${CLIENT_TARBALL_DIR} -name "*.desktop" -exec mv \{\} ${CLIENT_TARBALL_DIR}/ \;
+	find ${CLIENT_TARBALL_DIR} -type f  -name "*.desktop" -exec mv \{\} ${CLIENT_TARBALL_DIR}/ \;
 
 #   tar it up
 	wd=$$(pwd); cd ${CLIENT_TARBALL_DIR}; tar -cjf $${wd}/${BINARY_CLIENT_TARBALL} *
@@ -541,7 +544,7 @@ binary_server_tarball: $(BINARY_SERVER_TARBALL)
 $(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/AppRun $(UPLOAD)/.tag
 	#
 	# *****************************************
-	# *  package client as tarball
+	# *  package server as tarball
 	# *****************************************
 	#
 #   install into appdir
@@ -550,7 +553,7 @@ $(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/AppRun
 
 #   copy AppRun
 	cp portable/AppRun ${SERVER_TARBALL_DIR}/
-	find ${SERVER_TARBALL_DIR} -name "*.desktop" -exec mv \{\} ${SERVER_TARBALL_DIR}/ \;
+	find ${SERVER_TARBALL_DIR} -type f -name "*.desktop" -exec mv \{\} ${SERVER_TARBALL_DIR}/ \;
 
 #   tar it up
 	wd=$$(pwd); cd ${SERVER_TARBALL_DIR}; tar -cjf $${wd}/${BINARY_SERVER_TARBALL} *

@@ -26,7 +26,7 @@ XML=0install/${PACKAGE}
 
 # exception: plain 0.2.8 builds always go to the beta feed first
 if test ${SERIES} == 0.2.8; then
-    echo ${PACKAGE} | grep beta || XML=${XML-beta}
+    echo ${PACKAGE} | grep beta || XML=$(echo ${XML} | sed -e 's,armagetronad,armagetronad-beta,')
 fi
 
 OS=Linux

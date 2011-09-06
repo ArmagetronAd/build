@@ -480,7 +480,7 @@ PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
 APPDIR_CLIENT=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
 PORTABLE_CLIENT=$(UPLOAD)/$(PORTABLE_CLIENT_NAME)_${VERSION}
 portable_client: $(PORTABLE_CLIENT)
-$(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build WorkMakefile $(UPLOAD)/.tag
+$(PORTABLE_CLIENT): $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build portable/fixlinks WorkMakefile $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package portable client
@@ -500,7 +500,7 @@ PORTABLE_SERVER_NAME=$(shell echo ${PORTABLE_SERVER_BASENAME} | sed -e "s, ,,g")
 APPDIR_SERVER=$(RCDIR)/$(PORTABLE_SERVER_NAME).AppDir
 PORTABLE_SERVER=$(UPLOAD)/$(PORTABLE_SERVER_NAME)_${VERSION}
 portable_server: $(PORTABLE_SERVER)
-$(PORTABLE_SERVER): $(GENERIC_SERVER_DIR).tag portable/AppRun portable/build WorkMakefile $(UPLOAD)/.tag
+$(PORTABLE_SERVER): $(GENERIC_SERVER_DIR).tag portable/AppRun portable/build portable/fixlinks WorkMakefile $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package portable server
@@ -541,7 +541,7 @@ BINARY_SERVER_TARBALL_NAME=${PACKAGE}-dedicated-${VERSION}.${OSTAG_GENERIC}
 SERVER_TARBALL_DIR=$(RCDIR)/$(BINARY_SERVER_TARBALL_NAME).fortar
 BINARY_SERVER_TARBALL=$(UPLOAD)/$(BINARY_SERVER_TARBALL_NAME).bin.tar.bz2
 binary_server_tarball: $(BINARY_SERVER_TARBALL)
-$(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/AppRun $(UPLOAD)/.tag
+$(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/fixlinks portable/AppRun $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package server as tarball
@@ -554,6 +554,8 @@ $(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/AppRun
 #   copy AppRun
 	cp portable/AppRun ${SERVER_TARBALL_DIR}/
 	find ${SERVER_TARBALL_DIR} -type f -name "*.desktop" -exec mv \{\} ${SERVER_TARBALL_DIR}/ \;
+
+	APPDIR=${SERVER_TARBALL_DIR} portable/fixlinks 
 
 #   tar it up
 	wd=$$(pwd); cd ${SERVER_TARBALL_DIR}; tar -cjf $${wd}/${BINARY_SERVER_TARBALL} *

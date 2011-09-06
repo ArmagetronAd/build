@@ -10,6 +10,9 @@ find ${APPDIR} -name "*.desktop" -exec mv \{\} ${APPDIR}/ \;
 #   hack Icon
 find ${APPDIR} -type d -name "desktop" -exec cp \{\}/icons/small/armagetronad.png ${APPDIR}/${PACKAGE}.png \;
 
+# correct absolute symlinks
+APPDIR=${APPDIR} $(dirname $0)/fixlinks
+
 lastpath=
 
 function copylib()

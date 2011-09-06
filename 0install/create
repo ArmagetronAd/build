@@ -1,0 +1,27 @@
+#!/bin/bash
+# creates new 0install feeeds
+
+STABILITY=$1
+SUFFIX=$2
+NAMESUFFIX=$3
+
+if test -z "$1"; then
+  echo "Usage: create stability suffix namesuffix, i.e."
+  echo "       create develioper -alpha Alpha"
+  exit
+fi
+
+test -z "${NAMESUFFIX}" || NAMESUFFIX=" ${NAMESUFFIX}"
+
+cd $(dirname $0)
+sed < armagetronad-proto.xml > armagetronad${SUFFIX}.xml \
+-e "s,-proto,${SUFFIX},g" -e "s, Proto,${NAMESUFFIX},g"
+for arch in Linux-i486 Linux-x86_64 Windows; do
+  ARCH=${arch}
+  test ${arch} = Windows && ARCH="Windows-*"
+  sed < armagetronad-proto-arch.xml > armagetronad${SUFFIX}-${arch}.xml \
+  -e "s,-proto,${SUFFIX},g" -e "s, Proto,${NAMESUFFIX},g" \
+  -e "s,-os-arch,-${arch},g" -e "s,os-arch,${ARCH},g" \
+  -e "s,developer,${STABILITY},g"
+done
+

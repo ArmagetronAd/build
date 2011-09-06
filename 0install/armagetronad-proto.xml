@@ -2,7 +2,7 @@
 <?xml-stylesheet type='text/xsl' href='interface.xsl'?>
 <interface uri="http://simamo.de/0install/armagetronad-proto.xml" xmlns="http://zero-install.sourceforge.net/2004/injector/interface">
   <name>Armagetron Proto</name>
-  <summary>Tron clone in 3D proto builds</summary>
+  <summary>Tron clone in 3D Proto builds</summary>
   <description>
 Dumping cores since 2000.
 

@@ -49,9 +49,11 @@ $(UPLOAD)/.tag: $(RCDIR)/.tag
 	test -d $(UPLOAD) || mkdir $(UPLOAD)
 	echo "" > $@
 
+ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
+
 uploadcheck: $(UPLOAD)/.tag
 #   check for windows build directory dumped into Upload
-	if test -d $(UPLOAD)/dist; then RCDIR=$(RCDIR) VERSION=$(VERSION) PACKAGE=${PACKAGE} scripts/handledist; fi
+	if test -d $(UPLOAD)/dist; then RCDIR=$(RCDIR) VERSION=$(VERSION) PACKAGE=${PACKAGE} scripts/handledist; rm -f $(ZEROINSTTAG); fi
 
 # bump rc number
 bump:
@@ -448,6 +450,8 @@ upload-ubuntu-oneiric
 
 # generic client build
 GENERIC_CLIENT_DIR=$(RCDIR)/client.build
+GENERIC_CONFIGURE_ARGUMENTS=--prefix='/usr/local' --disable-uninstall --disable-restoreold --enable-etc --enable-automakedefaults --disable-useradd
+CLIENT_CONFIGURE_ARGUMENTS=${GENERIC_CONFIGURE_ARGUMENTS} --disable-sysinstall --disable-initscripts
 generic_client: $(GENERIC_CLIENT_DIR).tag
 $(GENERIC_CLIENT_DIR).tag: $(SOURCEDIR)/.tag
 	#
@@ -460,7 +464,7 @@ $(GENERIC_CLIENT_DIR).tag: $(SOURCEDIR)/.tag
 	mkdir -p $(GENERIC_CLIENT_DIR)
 
 	# configure and make
-	bash scripts/configure $(GENERIC_CLIENT_DIR) $(SOURCEDIR) --prefix='/usr/local' --disable-uninstall --disable-sysinstall --disable-restoreold --enable-etc --disable-initscripts --enable-automakedefaults --disable-useradd --enable-armathentication
+	bash scripts/configure $(GENERIC_CLIENT_DIR) $(SOURCEDIR) $(CLIENT_CONFIGURE_ARGUMENTS)
 
 	${MAKE} -C $(GENERIC_CLIENT_DIR)
 
@@ -469,31 +473,52 @@ $(GENERIC_CLIENT_DIR).tag: $(SOURCEDIR)/.tag
 
 	touch $@
 
+GENERIC_SERVER_DIR=$(RCDIR)/server.build
+SERVER_CONFIGURE_ARGUMENTS=$(GENERIC_CONFIGURE_ARGUMENTS) --disable-glout --enable-armathentication
+generic_server: $(GENERIC_SERVER_DIR).tag
+$(GENERIC_SERVER_DIR).tag: $(SOURCEDIR)/.tag
+	#
+	# *****************************************
+	# *  generic server build          
+	# *****************************************
+	#
+	# create build directory
+	rm -rf $(GENERIC_SERVER_DIR)/config.cache $(GENERIC_SERVER_DIR)/Makefile
+	mkdir -p $(GENERIC_SERVER_DIR)
+
+	# configure and make
+	bash scripts/configure $(GENERIC_SERVER_DIR) $(SOURCEDIR) $(SERVER_CONFIGURE_ARGUMENTS)
+
+	${MAKE} -C $(GENERIC_SERVER_DIR)
+	touch $@
+
+generic_build: generic_client generic_server
+
 # portable client build
 PORTABLE_CLIENT_BASENAME=$(subst ",,${PROGNAME})
 #"
 PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
-APPDIR=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
+APPDIR_CLIENT=$(RCDIR)/$(PORTABLE_CLIENT_NAME).AppDir
 PORTABLE_CLIENT=$(UPLOAD)/$(PORTABLE_CLIENT_NAME)_${VERSION}
 appdir: $(APPDIR).tag
 portable_client: $(PORTABLE_CLIENT)
-$(APPDIR).tag: $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build $(UPLOAD)/.tag
+$(APPDIR_CLIENT).tag: $(GENERIC_CLIENT_DIR).tag portable/AppRun portable/build portable/fixlinks $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package portable client, appdir
 	# *****************************************
 	#
 #   install into appdir
-	rm -rf ${APPDIR}
-	${MAKE} -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${APPDIR} install
+	rm -rf ${APPDIR_CLIENT}
+	${MAKE} -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${APPDIR_CLIENT} install
 
 #   delegate
-	APPDIR=${APPDIR} PORTABLE_CLIENT=${PORTABLE_CLIENT} PACKAGE=${PACKAGE} portable/build	
+	APPDIR=${APPDIR_CLIENT} PORTABLE=${PORTABLE_CLIENT} PACKAGE=${PACKAGE} portable/build	
 
 #   mark
 	touch $@
 
-$(PORTABLE_CLIENT): $(APPDIR).tag
+$(PORTABLE_CLIENT): $(APPDIR_CLIENT).tag
 	#
 	# *****************************************
 	# *  package portable client, appimage
@@ -504,85 +529,144 @@ $(PORTABLE_CLIENT): $(APPDIR).tag
 #   called AppImageAssistant; fetch it and extract it with AppImageExtractor
 #   to /usr/local/bin/.
 	rm -f $@
-	/usr/local/bin/AppImageAssistant.AppDir/package ${APPDIR} ${PORTABLE_CLIENT}
+	/usr/local/bin/AppImageAssistant.AppDir/package ${APPDIR_CLIENT} ${PORTABLE_CLIENT}
+
+# portable server build
+PORTABLE_SERVER_BASENAME=$(subst ",,${PROGNAME})Dedicated
+#"
+PORTABLE_SERVER_NAME=$(shell echo ${PORTABLE_SERVER_BASENAME} | sed -e "s, ,,g")
+APPDIR_SERVER=$(RCDIR)/$(PORTABLE_SERVER_NAME).AppDir
+PORTABLE_SERVER=$(UPLOAD)/$(PORTABLE_SERVER_NAME)_${VERSION}
+portable_server: $(PORTABLE_SERVER)
+$(APPDIR_SERVER).tag: $(GENERIC_SERVER_DIR).tag portable/AppRun portable/build portable/fixlinks WorkMakefile $(UPLOAD)/.tag
+	#
+	# *****************************************
+	# *  package portable server
+	# *****************************************
+	#
+#   install into appdir
+	rm -rf ${APPDIR_SERVER}
+	${MAKE} -C ${GENERIC_SERVER_DIR} DESTDIR=$$(pwd)/${APPDIR_SERVER} install
+
+#   delegate
+	APPDIR=${APPDIR_SERVER} PORTABLE=${PORTABLE_SERVER} PACKAGE=${PACKAGE}-dedicated portable/build	
+
+$(PORTABLE_SERVER): $(APPDIR_SERVER).tag
+
+#   and pack it up. The script is stupidly only available inside a portable app
+#   called AppImageAssistant; fetch it and extract it with AppImageExtractor
+#   to /usr/local/bin/.
+	rm -f $@
+	/usr/local/bin/AppImageAssistant.AppDir/package ${APPDIR_SERVER} ${PORTABLE_SERVER}
 
 # plain binary tarball
-PORTABLE_CLIENT_NAME=$(shell echo ${PORTABLE_CLIENT_BASENAME} | sed -e "s, ,,g")
-BINARY_TARBALL_NAME=${PACKAGE}-${VERSION}.${OSTAG_GENERIC}
+BINARY_CLIENT_TARBALL_NAME=${PACKAGE}-${VERSION}.${OSTAG_GENERIC}
 BINARY_TARBALL_DATA_NAME=${PACKAGE}-data-${VERSION}
 BINARY_TARBALL_LIBS_NAME=${PACKAGE}-libs-${VERSION}.${OSTAG_GENERIC}
-TARBALL_DIR=$(RCDIR)/$(BINARY_TARBALL_NAME).fortar
-binary_tarball_dir: $(TARBALL_DIR).tag
-BINARY_TARBALL=$(UPLOAD)/$(BINARY_TARBALL_NAME).bin.tar.bz2
+CLIENT_TARBALL_DIR=$(RCDIR)/$(BINARY_CLIENT_TARBALL_NAME).fortar
+binary_tarball_dir: $(CLIENT_TARBALL_DIR).tag
+BINARY_CLIENT_TARBALL=$(UPLOAD)/$(BINARY_CLIENT_TARBALL_NAME).bin.tar.bz2
 BINARY_TARBALL_DATA=$(UPLOAD)/$(BINARY_TARBALL_DATA_NAME).bin.tar.bz2
 BINARY_TARBALL_LIBS=$(UPLOAD)/$(BINARY_TARBALL_LIBS_NAME).bin.tar.bz2
-binary_tarball: $(BINARY_TARBALL)
+binary_tarball: $(BINARY_CLIENT_TARBALL)
 binary_tarball_data: $(BINARY_TARBALL_DATA)
 binary_tarball_libs: $(BINARY_TARBALL_LIBS)
-$(TARBALL_DIR).tag: $(APPDIR).tag WorkMakefile portable/AppRun $(UPLOAD)/.tag
+$(CLIENT_TARBALL_DIR).tag: $(APPDIR_CLIENT).tag WorkMakefile portable/AppRun $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package client as tarball, preparation
 	# *****************************************
 	#
 #   copy appdir into tarball directories
-	rm -rf ${TARBALL_DIR}
-	mkdir -p ${TARBALL_DIR}
-	cp -ax ${APPDIR}/usr ${TARBALL_DIR}/
+	rm -rf ${CLIENT_TARBALL_DIR}
+	mkdir -p ${CLIENT_TARBALL_DIR}
+	cp -ax ${APPDIR_CLIENT}/usr ${CLIENT_TARBALL_DIR}/
 
 #   get out libraries
-	mkdir -p ${TARBALL_DIR}/libs
-	mv ${TARBALL_DIR}/usr/local/lib ${TARBALL_DIR}/libs/lib
-	mv ${TARBALL_DIR}/usr/lib/* ${TARBALL_DIR}/libs/lib/
-	rm -rf ${TARBALL_DIR}/usr/lib ${TARBALL_DIR}/usr/local/lib
+	mkdir -p ${CLIENT_TARBALL_DIR}/libs
+	mv ${CLIENT_TARBALL_DIR}/usr/local/lib ${CLIENT_TARBALL_DIR}/libs/lib
+	mv ${CLIENT_TARBALL_DIR}/usr/lib/* ${CLIENT_TARBALL_DIR}/libs/lib/
+	rm -rf ${CLIENT_TARBALL_DIR}/usr/lib ${CLIENT_TARBALL_DIR}/usr/local/lib
 
 #   get out data and program
-	mkdir ${TARBALL_DIR}/main/
-	mv ${TARBALL_DIR}/usr ${TARBALL_DIR}/main/
-	mv ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE} ${TARBALL_DIR}/data
-	mkdir -p ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}
-	for f in language resource scripts; do mv ${TARBALL_DIR}/data/$$f ${TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}/; done
+	mkdir ${CLIENT_TARBALL_DIR}/main/
+	mv ${CLIENT_TARBALL_DIR}/usr ${CLIENT_TARBALL_DIR}/main/
+	mv ${CLIENT_TARBALL_DIR}/main/usr/local/share/games/${PACKAGE} ${CLIENT_TARBALL_DIR}/data
+	mkdir -p ${CLIENT_TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}
+	for f in language resource scripts; do mv ${CLIENT_TARBALL_DIR}/data/$$f ${CLIENT_TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}/; done
 
 #   copy AppRun
-	cp portable/AppRun ${TARBALL_DIR}/main/
-	cp ${APPDIR}/*.desktop ${TARBALL_DIR}/main/
+	cp portable/AppRun ${CLIENT_TARBALL_DIR}/main/
+	cp ${APPDIR_CLIENT}/*.desktop ${CLIENT_TARBALL_DIR}/main/
 
 #   tag
 	touch $@
 
-$(BINARY_TARBALL): $(TARBALL_DIR).tag WorkMakefile $(UPLOAD)/.tag
+$(BINARY_CLIENT_TARBALL): $(CLIENT_TARBALL_DIR).tag WorkMakefile $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package client as tarball
 	# *****************************************
 	#
-	wd=$$(pwd); cd ${TARBALL_DIR}/main; tar -cjf $${wd}/${BINARY_TARBALL} *
+	wd=$$(pwd); cd ${CLIENT_TARBALL_DIR}/main; tar -cjf $${wd}/${BINARY_CLIENT_TARBALL} *
+	rm -f $(ZEROINSTTAG)
 
-$(BINARY_TARBALL_DATA): $(TARBALL_DIR).tag WorkMakefile $(UPLOAD)/.tag
+$(BINARY_TARBALL_DATA): $(CLIENT_TARBALL_DIR).tag WorkMakefile $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package data as tarball
 	# *****************************************
 	#
-	wd=$$(pwd); cd ${TARBALL_DIR}/data; tar -cjf $${wd}/${BINARY_TARBALL_DATA} *
+	wd=$$(pwd); cd ${CLIENT_TARBALL_DIR}/data; tar -cjf $${wd}/${BINARY_TARBALL_DATA} *
+	rm -f $(ZEROINSTTAG)
 
-$(BINARY_TARBALL_LIBS): $(TARBALL_DIR).tag WorkMakefile $(UPLOAD)/.tag
+$(BINARY_TARBALL_LIBS): $(CLIENT_TARBALL_DIR).tag WorkMakefile $(UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package libraries as tarball
 	# *****************************************
 	#
-	wd=$$(pwd); cd ${TARBALL_DIR}/libs; tar -cjf $${wd}/${BINARY_TARBALL_LIBS} *
+	wd=$$(pwd); cd ${CLIENT_TARBALL_DIR}/libs; tar -cjf $${wd}/${BINARY_TARBALL_LIBS} *
+	rm -f $(ZEROINSTTAG)
 
-ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
+ZEROINSTTAG=$(RCDIR)/.$(BINARY_CLIENT_TARBALL_NAME).0installtag
+
+# plain binary tarball
+BINARY_SERVER_TARBALL_NAME=${PACKAGE}-dedicated-${VERSION}.${OSTAG_GENERIC}
+SERVER_TARBALL_DIR=$(RCDIR)/$(BINARY_SERVER_TARBALL_NAME).fortar
+BINARY_SERVER_TARBALL=$(UPLOAD)/$(BINARY_SERVER_TARBALL_NAME).bin.tar.bz2
+binary_server_tarball: $(BINARY_SERVER_TARBALL)
+$(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/fixlinks portable/AppRun $(UPLOAD)/.tag
+	#
+	# *****************************************
+	# *  package server as tarball
+	# *****************************************
+	#
+#   install into appdir
+	rm -rf ${SERVER_TARBALL_DIR}
+	${MAKE} -C ${GENERIC_SERVER_DIR} DESTDIR=$$(pwd)/${SERVER_TARBALL_DIR} install
+
+#   copy AppRun
+	cp portable/AppRun ${SERVER_TARBALL_DIR}/
+	find ${SERVER_TARBALL_DIR} -type f -name "*.desktop" -exec mv \{\} ${SERVER_TARBALL_DIR}/ \;
+
+	APPDIR=${SERVER_TARBALL_DIR} portable/fixlinks 
+
+#   tar it up
+	wd=$$(pwd); cd ${SERVER_TARBALL_DIR}; tar -cjf $${wd}/${BINARY_SERVER_TARBALL} *
+	rm -f $(ZEROINSTTAG)
+
+binary_tarball: binary_client_tarball binary_server_tarball
+
 zeroinstall:  uploadcheck $(ZEROINSTTAG)
-$(ZEROINSTTAG): $(BINARY_TARBALL) 0install/update 0install/*.xml $(UPLOAD)/*
+$(ZEROINSTTAG): $(BINARY_CLIENT_TARBALL) $(BINARY_SERVER_TARBALL) 0install/update
 	#
 	# *****************************************
 	# *  update zeroinstall stream
 	# *****************************************
 	#
-	OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_TARBALL} VERSION=${VERSION} 0install/update
+	OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_CLIENT_TARBALL} VERSION=${VERSION} 0install/update
+	OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE}-dedicated SERIES=${SERIES} FILE=${BINARY_SERVER_TARBALL} VERSION=${VERSION} 0install/update
 	touch $@
 
 APFILE=$(RCDIR)/.package

@@ -20,9 +20,13 @@ Fortress modes.</description>
       <version before="0.3-pre0.1571" not-before="0.3-pre0.1570"/>
             <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
     </requires>
-    <implementation id="sha1new=a969de284cbfb648041cb5fedea3051916297b42" main="AppRun" released="2011-09-06" version="0.2.8.3.1">
+    <implementation id="sha1new=a969de284cbfb648041cb5fedea3051916297b42" main="AppRun" released="2011-09-06" stability="insecure" version="0.2.8.3.1">
       <manifest-digest sha256="0c3112bed0998083fb8b4812eebe587db66d7b14db0d905b4c3a2d3cdaa415f6"/>
       <archive href="http://launchpad.net/armagetronad/0.2.8/0.2.8.3.1/+download/armagetronad-dedicated-0.2.8.3.1.i486-generic-linux-gnu.bin.tar.bz2" size="1106581"/>
+    </implementation>
+    <implementation id="sha1new=0297685d56a4ec6bf6ab5669e284d3a6c2f133ee" main="AppRun" released="2011-09-11" version="0.2.8.3.2">
+      <manifest-digest sha256="3323a0890bfafe372a93bb4c5ab55441ceaf45995b111b3f726eff55450fa59f"/>
+      <archive href="http://launchpad.net/armagetronad/0.2.8/0.2.8.3.2/+download/armagetronad-dedicated-0.2.8.3.2.i486-generic-linux-gnu.bin.tar.bz2" size="1108087"/>
     </implementation>
   </group>
 </interface>

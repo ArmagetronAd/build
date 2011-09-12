@@ -22,5 +22,9 @@ Fortress modes.</description>
     </requires>
     <implementation id="sha1new=aaaac42323a6d6a85ea9f3c1550f8c8be06d90ae" released="2011-08-29" version="0-pre0-pre0">
     </implementation>
+    <implementation id="sha1new=ede4a8de81d728926856d2c8f88f6f1e001b3ae7" main="AppRun" released="2011-09-12" version="0.2.8-pre0.20110912">
+      <manifest-digest sha256="994fb5f128112909288844849780d20c83a6e483644db77b238d188de6434d65"/>
+      <archive href="http://launchpad.net/armagetronad/0.2.8-snapshots/0.2.8-alpha20110912/+download/armagetronad-alpha-dedicated-0.2.8_alpha20110912.x86_64-generic-linux-gnu.bin.tar.bz2" size="1196888"/>
+    </implementation>
   </group>
 </interface>

@@ -15,16 +15,24 @@ Fortress modes.</description>
   <homepage>http://armagetronad.net</homepage>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
+  <group arch="Linux-i486" stability="insecure"> 
+    <requires interface="http://simamo.de/0install/armagetronad-libs-Linux-i486.xml">
+      <version before="0.3-pre0.1571" not-before="0.3-pre0.1570"/>
+            <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
+    </requires>
+    <implementation id="sha1new=3dd0010177bf26f500570cb64d17718df3701435" main="AppRun" released="2011-09-06" version="0.2.8-pre0.20110905">
+      <manifest-digest sha256="dca22a2e57e9b322440209bd67f878abfc0a812c694f2648480ee61f8591ab2a"/>
+      <archive href="http://launchpad.net/armagetronad/0.2.8-snapshots/0.2.8-alpha20110905/+download/armagetronad-alpha-dedicated-0.2.8_alpha20110905.i486-generic-linux-gnu.bin.tar.bz2" size="1106684"/>
+    </implementation>
+  </group>
   <group arch="Linux-i486" stability="developer"> 
     <requires interface="http://simamo.de/0install/armagetronad-libs-Linux-i486.xml">
       <version before="0.3-pre0.1571" not-before="0.3-pre0.1570"/>
             <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
     </requires>
-    <implementation id="sha1new=aaaac42323a6d6a85ea9f3c1550f8c8be06d90ae" released="2011-08-29" version="0-pre0-pre0">
-    </implementation>
-    <implementation id="sha1new=3dd0010177bf26f500570cb64d17718df3701435" main="AppRun" released="2011-09-06" version="0.2.8-pre0.20110905">
-      <manifest-digest sha256="dca22a2e57e9b322440209bd67f878abfc0a812c694f2648480ee61f8591ab2a"/>
-      <archive href="http://launchpad.net/armagetronad/0.2.8-snapshots/0.2.8-alpha20110905/+download/armagetronad-alpha-dedicated-0.2.8_alpha20110905.i486-generic-linux-gnu.bin.tar.bz2" size="1106684"/>
+    <implementation id="sha1new=c758d391799a9bc0aee5c7d8ffadfcc122afc7fb" main="AppRun" released="2011-09-12" version="0.2.8-pre0.20110912">
+      <manifest-digest sha256="462d460bafc60f0737755184a7179a6079f0c6438fcf467525fc2cf3406fdd00"/>
+      <archive href="http://launchpad.net/armagetronad/0.2.8-snapshots/0.2.8-alpha20110912/+download/armagetronad-alpha-dedicated-0.2.8_alpha20110912.i486-generic-linux-gnu.bin.tar.bz2" size="1123938"/>
     </implementation>
   </group>
 </interface>

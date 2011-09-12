@@ -19,6 +19,6 @@ Fortress modes.</description>
   <implementation id="sha1new=6b8363c8f78c891e80c8007fa07f60d1879a68a4" released="2011-08-31" version="0.2.8.3.2-rc1">
     <manifest-digest sha256="ec61c4fbb15c1a693ebeaad500fb4fc8eb49f0429b530bdd8d2f6878a4884aa0"/>
     <archive href="http://launchpad.net/armagetronad/0.2.8/0.2.8.3.2-rc1/+download/armagetronad-0.2.8.3.2_rc1-Windows.zip" size="3574789"/>
-  </implementation> 
+  </implementation>
  </group>
 </interface>

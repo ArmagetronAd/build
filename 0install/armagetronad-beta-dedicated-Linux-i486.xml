@@ -15,7 +15,7 @@ Fortress modes.</description>
   <homepage>http://armagetronad.net</homepage>
   <category>Game</category>
   <icon href="http://simamo.de/0install/armagetronad.png" type="image/png"/>
-  <group arch="Linux-i486" stability="testing"> 
+  <group arch="Linux-i486" stability="insecure"> 
     <requires interface="http://simamo.de/0install/armagetronad-libs-Linux-i486.xml">
       <version before="0.3-pre0.1571" not-before="0.3-pre0.1570"/>
             <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
@@ -23,6 +23,14 @@ Fortress modes.</description>
     <implementation id="sha1new=3164d7bef0ebd21e0a9f513909108f38b9471e42" main="AppRun" released="2011-09-06" version="0.2.8.3.2-rc1">
       <manifest-digest sha256="6372cdd6696ca9a31505c897241312ea4e8a18ff1ea9ded3178599b068d7ea6c"/>
       <archive href="http://launchpad.net/armagetronad/0.2.8/0.2.8.3.2-rc1/+download/armagetronad-dedicated-0.2.8.3.2_rc1.i486-generic-linux-gnu.bin.tar.bz2" size="1106275"/>
+    </implementation>
+  </group>
+  <group arch="Linux-i486" stability="testing"> 
+    <requires interface="http://simamo.de/0install/armagetronad-libs-Linux-i486.xml">
+      <version before="0.3-pre0.1571" not-before="0.3-pre0.1570"/>
+            <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
+    </requires>
+    <implementation id="sha1new=aaaac42323a6d6a85ea9f3c1550f8c8be06d90ae" released="2011-08-29" stability="insecure" version="0-pre0-pre0">
     </implementation>
   </group>
 </interface>

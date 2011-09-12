@@ -550,6 +550,7 @@ $(APPDIR_SERVER).tag: $(GENERIC_SERVER_DIR).tag portable/AppRun portable/build p
 
 #   delegate
 	APPDIR=${APPDIR_SERVER} PORTABLE=${PORTABLE_SERVER} PACKAGE=${PACKAGE}-dedicated portable/build	
+	touch $@
 
 $(PORTABLE_SERVER): $(APPDIR_SERVER).tag
 

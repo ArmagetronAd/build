@@ -5,10 +5,13 @@
 
 #   add AppRun and desktop file
 cp portable/AppRun ${APPDIR}/
-find ${APPDIR} -name "*.desktop" -exec mv \{\} ${APPDIR}/ \;
+find ${APPDIR} -type f -name "*.desktop" -exec mv \{\} ${APPDIR}/ \;
 
 #   hack Icon
-find ${APPDIR} -type d -name "desktop" -exec cp \{\}/icons/small/armagetronad.png ${APPDIR}/${PACKAGE}.png \;
+# find ${APPDIR} -type d -name "desktop" -exec ls \{\}/icons/small/ \;
+find ${APPDIR} -type d -name "desktop" -exec cp -ax \{\}/icons/small ${APPDIR} \;
+mv ${APPDIR}/small/*.png ${APPDIR}/${PACKAGE}.png
+rmdir ${APPDIR}/small
 
 # correct absolute symlinks
 APPDIR=${APPDIR} $(dirname $0)/fixlinks

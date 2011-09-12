@@ -20,7 +20,7 @@ Fortress modes.</description>
       <version before="0.3-pre0.1571" not-before="0.3-pre0.1570"/>
             <environment insert="lib" mode="prepend" name="LD_LIBRARY_PATH"/>
     </requires>
-    <implementation id="sha1new=aaaac42323a6d6a85ea9f3c1550f8c8be06d90ae" released="2011-08-29" version="0-pre0-pre0">
+    <implementation id="sha1new=aaaac42323a6d6a85ea9f3c1550f8c8be06d90ae" released="2011-08-29" stability="insecure" version="0-pre0-pre0">
     </implementation>
   </group>
 </interface>

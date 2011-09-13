@@ -3,6 +3,5 @@
 ./builds
 ./ap-client
 ./make.conf.bak
-*.gpg
-interface.xsl
+0install
 Upload

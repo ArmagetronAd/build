@@ -60,6 +60,7 @@ libprotobuf \
   fi
 done
 
+if ! echo ${PACKAGE} grep dedicated; then
 # libraries we know are dynamically loaded later, so they don't appear in ldd's output
 for library in \
 libjpeg.so.62 \
@@ -76,6 +77,6 @@ libmikmod.so.2 \
     echo "Installing library ${library} anyway, we know it's needed."
     copylib ${lastpath}/${library}
 done
-
+fi
 
 echo $lastpath

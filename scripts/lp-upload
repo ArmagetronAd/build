@@ -80,12 +80,12 @@ Mac=False
 
 def prepare_file( filename ):
     # Get the signature, if available.
-    signature = filename + '.asc'
+    signature = 'signatures/ ' + filename + '.asc'
     if not os.path.exists(signature):
         print 'Calling GPG to create ' + filename + ' signature...'
-        if subprocess.call(['gpg', '--armor', '--sign', '--detach-sig', filename]) != 0:
+        if subprocess.call(['gpg', '--armor', '--sign', '--output', signature, '--detach-sig', filename]) != 0:
             print >> sys.stderr, 'gpg failed, aborting'
-
+        
 def upload_file( filename, description, mime_type, file_type ):
     # Get the file contents.
     file_content = open(filename, 'r').read()
@@ -96,7 +96,7 @@ def upload_file( filename, description, mime_type, file_type ):
             print "Already exists, delete it first if you want to re-upload it."
             return
     
-    signature = filename + '.asc'
+    signature = 'signatures/ ' + filename + '.asc'
     
     if os.path.exists(signature):
         signature_content = open(signature, 'r').read()
@@ -119,6 +119,8 @@ except Exception, e:
     sys.exit(2)
 
 try:
+    if not os.path.exists("signatures"):
+        os.makedirs("signatures")
     uploads=[]
     for f in builds:
         if os.path.exists(f) and os.path.splitext(f)[1] != ".asc":

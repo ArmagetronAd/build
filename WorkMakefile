@@ -571,6 +571,7 @@ binary_tarball: binary_client_tarball binary_server_tarball
 	#
 	rm -rf $@
 	bzr branch bzr+ssh://bazaar.launchpad.net/~armagetronad-dev/armagetronad/trunk-zeroinstall-work $@
+	cd $@; bzr push bzr+ssh://bazaar.launchpad.net/~armagetronad-dev/armagetronad/trunk-zeroinstall-work
 
 0install/update: 0install
 

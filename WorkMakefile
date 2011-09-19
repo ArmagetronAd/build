@@ -383,10 +383,6 @@ $(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 #   adapt the following line as ubuntu releases get updated
 	bzr pull -d ../ubuntu || HOME=/noway bzr branch lp:ubuntu/armagetronad ../ubuntu
 	cp -ax ../ubuntu/debian $(UBUNTUSOURCEDIR)$*/debian
-#       applied on the branch we check out, no longer required
-#	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu.patch
-#   Fixes var dir location of dedicated server.
-	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu-vardir.patch
 #   Updates dependencies
 	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu-trunkdeps.patch
 #   version dependant patches

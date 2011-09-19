@@ -354,7 +354,7 @@ deb: debianbuild $(UPLOAD)/.tag
 	find $(RCDIR) -name "$(PACKAGE)*.deb" -exec mv \{\} $(UPLOAD) \;
 
 
-DEBVERSION=$(subst _,~,${VERSION})~ppa
+DEBVERSION=$(subst -,~,$(subst _,~,$(subst _rc,_arc,${VERSION})))~ppa
 UBUNTUSOURCEDIR=$(RCDIR)/$(PACKAGE)-$(DEBVERSION)
 $(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	#

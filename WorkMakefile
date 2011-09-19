@@ -569,6 +569,7 @@ binary_tarball: binary_client_tarball binary_server_tarball
 	# *  checking out zeroinstall streams
 	# *****************************************
 	#
+	rm -rf $@
 	bzr branch bzr+ssh://bazaar.launchpad.net/~armagetronad-dev/armagetronad/trunk-zeroinstall-work $@
 
 0install/update: 0install

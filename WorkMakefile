@@ -577,7 +577,7 @@ binary_tarball: binary_client_tarball binary_server_tarball
 0install/update: 0install
 
 # sf upload subdirectory
-SF_DIRECTORY=$(shell echo "$(SERIES)" | sed -e 's,^0.2.8$$,stable,' -e 's,^\(.*\)-snapshots,snapshots/\1,')
+SF_DIRECTORY=$(shell echo "$(SERIES)" | sed -e 's,^0.2.8$$,stable,' -e 's,^\(.*\)-snapshots,snapshots/\1,' -e 's,^hacks$$,snapshots/hacks,')
 
 zeroinstall:  uploadcheck $(ZEROINSTTAG)
 $(ZEROINSTTAG): $(BINARY_CLIENT_TARBALL) $(BINARY_SERVER_TARBALL) 0install 0install/update

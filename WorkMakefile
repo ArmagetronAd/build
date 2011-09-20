@@ -576,6 +576,9 @@ binary_tarball: binary_client_tarball binary_server_tarball
 
 0install/update: 0install
 
+# sf upload subdirectory
+SF_DIRECTORY=$(shell echo "$(SERIES)" | sed -e 's,^0.2.8$$,stable,' -e 's,^\(.*\)-snapshots,snapshots/\1,')
+
 zeroinstall:  uploadcheck $(ZEROINSTTAG)
 $(ZEROINSTTAG): $(BINARY_CLIENT_TARBALL) $(BINARY_SERVER_TARBALL) 0install 0install/update
 	#
@@ -583,8 +586,8 @@ $(ZEROINSTTAG): $(BINARY_CLIENT_TARBALL) $(BINARY_SERVER_TARBALL) 0install 0inst
 	# *  update zeroinstall stream
 	# *****************************************
 	#
-	OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_CLIENT_TARBALL} VERSION=${VERSION} 0install/update
-	OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE}-dedicated SERIES=${SERIES} FILE=${BINARY_SERVER_TARBALL} VERSION=${VERSION} 0install/update
+	SF_DIRECTORY=$(SF_DIRECTORY) OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_CLIENT_TARBALL} VERSION=${VERSION} 0install/update
+	SF_DIRECTORY=$(SF_DIRECTORY) OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE}-dedicated SERIES=${SERIES} FILE=${BINARY_SERVER_TARBALL} VERSION=${VERSION} 0install/update
 	touch $@
 
 APFILE=$(RCDIR)/.package
@@ -625,10 +628,9 @@ upload-sf: uploadcheck upload-rename
 	# *  uploading compiled files to sf       *
 	# *****************************************
 	#
-
 	cp doc/releasenotes.txt $(UPLOAD)/
 	todos $(UPLOAD)/releasenotes.txt
-	cd ${UPLOAD}; mkdir -p new/$(VERSION); rsync -avP -e ssh new z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/; rmdir new/$(VERSION); rmdir new; rsync -avP -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/new/$(VERSION)/
+	cd ${UPLOAD}; mkdir -p armagetronad/$(SF_DIRECTORY)/$(VERSION); rsync -r -e ssh armagetronad z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/; rm -rf armagetronad; rsync -avP -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/$(SF_DIRECTORY)/$(VERSION)/
 
 TOEMPTYLINE=sed -e "s,^$$,," -e "t q" -e "p" -e "d" -e ": q" -e "q"
 

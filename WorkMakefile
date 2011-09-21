@@ -593,7 +593,7 @@ $(CLIENT_TARBALL_DIR).tag: $(APPDIR_CLIENT).tag WorkMakefile portable/AppRun $(U
 	for f in language resource scripts; do mv ${CLIENT_TARBALL_DIR}/data/$$f ${CLIENT_TARBALL_DIR}/main/usr/local/share/games/${PACKAGE}/; done
 
 #   copy AppRun
-	cp portable/AppRun ${CLIENT_TARBALL_DIR}/main/
+	cp portable/AppRun ${CLIENT_TARBALL_DIR}/main/run
 	cp ${APPDIR_CLIENT}/*.desktop ${CLIENT_TARBALL_DIR}/main/
 
 #   tag
@@ -644,7 +644,7 @@ $(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/fixlin
 	${MAKE} -C ${GENERIC_SERVER_DIR} DESTDIR=$$(pwd)/${SERVER_TARBALL_DIR} install
 
 #   copy AppRun
-	cp portable/AppRun ${SERVER_TARBALL_DIR}/
+	cp portable/AppRun ${SERVER_TARBALL_DIR}/run
 	find ${SERVER_TARBALL_DIR} -type f -name "*.desktop" -exec mv \{\} ${SERVER_TARBALL_DIR}/ \;
 
 	APPDIR=${SERVER_TARBALL_DIR} portable/fixlinks 
@@ -668,7 +668,12 @@ binary_tarball: binary_client_tarball binary_server_tarball
 0install/update: 0install
 
 # sf upload subdirectory
-SF_DIRECTORY=$(shell echo "$(SERIES)" | sed -e 's,^0.2.8$$,stable,' -e 's,^\(.*\)-snapshots,snapshots/\1,' -e 's,^hacks$$,snapshots/hacks,')
+# get a stable year tag
+$(UPLOAD).datetag:
+	date +BUILDYEAR=%Y > $@
+sinclude $(UPLOAD).datetag
+
+SF_DIRECTORY=$(shell echo "$(SERIES)" | sed -e 's,^0.2.8$$,stable,' -e 's,^\(.*\)-snapshots,snapshots/\1,' -e 's,^hacks$$,snapshots/hacks,' -e 's,\(snapshots.*\),\1/$(BUILDYEAR),')
 
 zeroinstall:  uploadcheck $(ZEROINSTTAG)
 $(ZEROINSTTAG): $(BINARY_CLIENT_TARBALL) $(BINARY_SERVER_TARBALL) 0install 0install/update
@@ -719,6 +724,7 @@ upload-sf: uploadcheck upload-rename
 	# *  uploading compiled files to sf       *
 	# *****************************************
 	#
+	#echo $(SF_DIRECTORY); false
 	cp doc/releasenotes.txt $(UPLOAD)/
 	todos $(UPLOAD)/releasenotes.txt
 	cd ${UPLOAD}; mkdir -p armagetronad/$(SF_DIRECTORY)/$(VERSION); rsync -r -e ssh armagetronad z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/; rm -rf armagetronad; rsync -avP -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/$(SF_DIRECTORY)/$(VERSION)/

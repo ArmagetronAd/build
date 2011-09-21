@@ -530,7 +530,7 @@ $(BINARY_CLIENT_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile portable/AppRun
 	${MAKE} -C ${GENERIC_CLIENT_DIR} DESTDIR=$$(pwd)/${CLIENT_TARBALL_DIR} install
 
 #   copy AppRun
-	cp portable/AppRun ${CLIENT_TARBALL_DIR}/
+	cp portable/AppRun ${CLIENT_TARBALL_DIR}/run
 	find ${CLIENT_TARBALL_DIR} -type f  -name "*.desktop" -exec mv \{\} ${CLIENT_TARBALL_DIR}/ \;
 
 #   tar it up
@@ -553,7 +553,7 @@ $(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/fixlin
 	${MAKE} -C ${GENERIC_SERVER_DIR} DESTDIR=$$(pwd)/${SERVER_TARBALL_DIR} install
 
 #   copy AppRun
-	cp portable/AppRun ${SERVER_TARBALL_DIR}/
+	cp portable/AppRun ${SERVER_TARBALL_DIR}/run
 	find ${SERVER_TARBALL_DIR} -type f -name "*.desktop" -exec mv \{\} ${SERVER_TARBALL_DIR}/ \;
 
 	APPDIR=${SERVER_TARBALL_DIR} portable/fixlinks 

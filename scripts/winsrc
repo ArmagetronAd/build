@@ -29,9 +29,9 @@ if test -n "${CODEBLOCKS}" && test -d ${CODEBLOCKS}; then
     cp -r ${CODEBLOCKS}/* ${WINDIR}/ || exit 1
     
     # adapt relative paths to source
-    for f in `ls ${CODEBLOCKS} -1 | egrep ".*\.cbp$"`; do
+    for f in `ls ${CODEBLOCKS} -1 | egrep ".*\.cbp$|.*.\.bat$"`; do
         #echo $f
-		sed < ${CODEBLOCKS}/$f > ${WINDIR}/$f -e "s,\.\.\\\\armagetronad\",.\",g" -e "s,\.\./armagetronad[^_],,g" -e "s,\.\.\\\\armagetronad[^_],,g"
+		sed < ${CODEBLOCKS}/$f > ${WINDIR}/$f -e "s,=\.\.\\\\armagetronad,=.,g" -e "s,\.\./armagetronad[^_],,g" -e "s,\.\.\\\\armagetronad[^_],,g"
     done
 fi
 
@@ -66,7 +66,7 @@ if test -n "${VISUALC}" && test -d ${VISUALC}; then
     # adapt relative paths to source
     for f in `ls ${VISUALC} -1 | egrep ".*\.ds[wp]|.*.\.bat$"`; do
         #echo $f
-		sed < ${VISUALC}/$f > ${WINDIR}/$f -e "s,\.\.\\\\armagetronad\",.\",g" -e "s,\.\./armagetronad[^_],,g" -e "s,\.\.\\\\armagetronad[^_],,g"
+		sed < ${VISUALC}/$f > ${WINDIR}/$f -e "s,=\.\.\\\\armagetronad,=.,g" -e "s,\.\./armagetronad[^_],,g" -e "s,\.\.\\\\armagetronad[^_],,g"
     done
 fi
 
@@ -76,7 +76,7 @@ for suffix in bat nsi nsi.m4 cfg txt dsp dsw h cpp dtd xml; do
 done
 
 rm -rf $WINDIR/config.* $WINDIR/configure* $WINDIR/*.m4 $WINDIR/*.kde* 
-rm -rf $WINDIR/*.sh $WINDIR/batch $WINDIR/missing $WINDIR/install-sh $WINDIR/textures/KGN*
+rm -rf $WINDIR/bootstrap.sh $WINDIR/batch $WINDIR/missing $WINDIR/install-sh $WINDIR/textures/KGN*
 find $WINDIR -name "*.in" -exec rm \{\} \;
 find $WINDIR -name "*.am" -exec rm \{\} \;
 find $WINDIR -name "Makefile*" -exec rm \{\} \;

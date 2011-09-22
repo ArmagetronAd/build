@@ -23,8 +23,8 @@ rm -f *_master.exe
 rm -f *.a *.def banner.bmp var
 zip -r ../../${PACKAGE}-libs-${VERSION}.win32.zip *.dll || exit 1
 rm -f *.dll
-zip -r ../${PACKAGE}-${VERSION}.win32.zip * -x *_dedicated.exe || exit 1
 rm -rf textures models sound music
+zip -r ../${PACKAGE}-${VERSION}.win32.zip * -x *_dedicated.exe || exit 1
 zip -r ../${PACKAGE}-dedicated-${VERSION}.win32.zip * -x armagetronad.exe ArmagetronAd.exe || exit 1
 popd
 

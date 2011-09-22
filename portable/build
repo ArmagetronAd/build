@@ -44,6 +44,7 @@ mkdir -p ${APPDIR}/usr/local/lib/
 for library in \
 libxml2 \
 libSDL-1 \
+libboost_thread \
 libSDL_image libpng \
 libSDL_mixer \
 libGLEW \
@@ -64,11 +65,10 @@ if ! echo ${PACKAGE} | grep dedicated; then
 # libraries we know are dynamically loaded later, so they don't appear in ldd's output
 for library in \
 libjpeg.so.62 \
-libZThread.so \
-libZThread-2.3.so.2 \
-libboost_thread.so \
 libogg.so \
 libogg.so.0 \
+libvorbis.so \
+libvorbis.so.0 \
 libvorbisfile.so \
 libvorbisfile.so.3 \
 libmikmod.so \

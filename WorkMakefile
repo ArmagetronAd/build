@@ -279,6 +279,7 @@ webdoc:$(RCDIR)/doc.web
 # keep windows build dir
 .PRECIOUS: $(RCDIR)/doc.windows.build $(RCDIR)/doc.web.build
 
+sourcedir: $(SOURCEDIR)/.tag
 $(SOURCEDIR)/.tag: $(INPUTTARBALLBASE) $(RCDIR)/.tag
 	#
 	# *****************************************

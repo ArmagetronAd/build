@@ -44,7 +44,7 @@ $(VERSIONTAG): $(SOURCE_TARBALLS) make.conf $(SOURCETAG) builds/.tag
 	# *****************************************
 	#
 	rm -f $@.proto
-	for f in tarballs/*.tar*; do if test $$f -nt $@.proto || ! test -r $@.proto ; then echo $$f | sed -e "s,.*-,," -e "s,\.src\.tar.*,," -e "s,\.tar.*,," > $@.proto; touch $@.proto -r $$f; fi; done
+	for f in tarballs/*.tar*; do if test $$f -nt $@.proto || ! test -r $@.proto ; then echo $$f | sed -e "s,.*${PACKAGE}-,," -e "s,\.src\.tar.*,," -e "s,\.tar.*,," > $@.proto; touch $@.proto -r $$f; fi; done
 	test -r $@.proto || { echo -e "\n\nNo sources found. Drop a tarball into the tarballs subdirectory\nor check out the main armagetronad CVS module in parallel.\n\n"; rm -f .includes-updated; $(OUTDATE) $(SOURCETAG); false; }
 	echo VERSION=`cat $@.proto` > $@
 	if test -z `cat $@.proto | grep -e "alpha\|beta\|rc\|^[^\.]\.[0-9]*[13579]"`; then echo "STABLE=true" >> $@; else echo "STABLE=false" >> $@; fi

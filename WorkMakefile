@@ -566,7 +566,7 @@ binary_tarball_dir: $(CLIENT_TARBALL_DIR).tag
 BINARY_CLIENT_TARBALL=$(UPLOAD)/$(BINARY_CLIENT_TARBALL_NAME).bin.tar.bz2
 BINARY_TARBALL_DATA=$(UPLOAD)/$(BINARY_TARBALL_DATA_NAME).bin.tar.bz2
 BINARY_TARBALL_LIBS=$(UPLOAD)/$(BINARY_TARBALL_LIBS_NAME).bin.tar.bz2
-binary_tarball: $(BINARY_CLIENT_TARBALL)
+binary_client_tarball: $(BINARY_CLIENT_TARBALL)
 binary_tarball_data: $(BINARY_TARBALL_DATA)
 binary_tarball_libs: $(BINARY_TARBALL_LIBS)
 $(CLIENT_TARBALL_DIR).tag: $(APPDIR_CLIENT).tag WorkMakefile portable/AppRun $(UPLOAD)/.tag

@@ -444,7 +444,8 @@ upload-ubuntu-hardy \
 upload-ubuntu-lucid \
 upload-ubuntu-maverick \
 upload-ubuntu-natty \
-upload-ubuntu-oneiric
+upload-ubuntu-oneiric \
+upload-ubuntu-precise
 	echo $@
 
 # generic client build

@@ -270,7 +270,7 @@ $(RCDIR)/doc.%: $(RCDIR)/doc.%.build
 	DESTDIR=`pwd`/$@-build $(MAKE) -C $(RCDIR)/doc.$*.build/src/doc install
 
 	# copy documentation to destination
-	mv $@-build/usr/local/share/doc/games/$(PACKAGE)-dedicated/html $@
+	mv $@-build/usr/local/share/games/$(PACKAGE)-dedicated/doc $@
 	rm -rf $@-build
 
 # web documentation

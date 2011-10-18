@@ -1,0 +1,16 @@
+=== modified file 'debian/armagetronad-common.docs'
+--- debian/armagetronad-common.docs	2007-04-24 11:38:26 +0000
++++ debian/armagetronad-common.docs	2011-10-18 17:15:42 +0000
+@@ -1,1 +1,1 @@
+-debian/tmp-client/usr/share/doc/armagetronad/html
++debian/tmp-client/usr/share/games/armagetronad/doc
+
+=== modified file 'debian/armagetronad.install'
+--- debian/armagetronad.install	2007-04-24 11:38:26 +0000
++++ debian/armagetronad.install	2011-10-18 17:14:22 +0000
+@@ -4,3 +4,4 @@
+ usr/share/games/armagetronad/models
+ usr/share/games/armagetronad/sound
+ usr/share/games/armagetronad/textures
++usr/share/games/armagetronad/doc
+

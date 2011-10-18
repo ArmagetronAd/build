@@ -386,6 +386,8 @@ $(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	cp -ax ../ubuntu/debian $(UBUNTUSOURCEDIR)$*/debian
 #   Updates dependencies
 	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu-trunkdeps.patch
+#   Adapt to doc move
+	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu-docmove.patch
 #   version dependant patches
 	rel=$$(echo $* | sed -e "s,.*~,,"); echo patches/ubuntu~$$rel.patch; if test -r patches/ubuntu~$$rel.patch; then patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu~$$rel.patch; fi
 #   rebrand package

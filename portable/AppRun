@@ -31,4 +31,8 @@ else
   extralib=$(cat ${CACHE})
 fi
 
-LD_LIBRARY_PATH="${root}/usr/local/lib:${LD_LIBRARY_PATH}${extralib}:${root}/usr/lib" PATH="${root}/usr/local/bin:${PATH}${root}/usr/bin" exec $EXEC ${extraarg} $@
+LD_LIBRARY_PATH="${root}/usr/local/lib${extralib}:${LD_LIBRARY_PATH}:${root}/usr/lib"
+PATH="${root}/usr/local/bin:${PATH}${root}/usr/bin" 
+export LD_LIBRARY_PATH
+export PATH
+exec $EXEC ${extraarg} $@

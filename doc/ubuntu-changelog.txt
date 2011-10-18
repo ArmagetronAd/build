@@ -2,6 +2,7 @@
 
   * slapping the new upstream code around the ubuntu distribution files.
   * adding new compile time dependencies for trunk builds
+  * adapting to new doc location
 
  -- Manuel Moos <z-man@users.sf.net>  @date@
  

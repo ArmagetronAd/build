@@ -48,7 +48,7 @@ echo '*' | import
 
 [Prepare]
 # Dependency checking
-require @gnu.org/libstdc++ 3
+require @gnu.org/libstdc++ 4
 require @xmlsoft.org/libxml2 2.6
 #client_require @libsdl.org/sdl 1.2
 #client_require @libsdl.org/sdl_mixer 1.2

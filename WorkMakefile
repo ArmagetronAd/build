@@ -50,6 +50,12 @@ $(UPLOAD)/.tag: $(RCDIR)/.tag
 	test -d $(UPLOAD) || mkdir $(UPLOAD)
 	echo "" > $@
 
+# upload directory for zeroinstall archives
+0UPLOAD=$(UPLOAD)/ZeroInstall
+$(0UPLOAD)/.tag: $(UPLOAD)/.tag
+	test -d $(0UPLOAD) || mkdir $(0UPLOAD)
+	echo "" > $@
+
 ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
 
 uploadcheck: $(UPLOAD)/.tag
@@ -533,9 +539,9 @@ $(PORTABLE_SERVER): $(GENERIC_SERVER_DIR).tag portable/AppRun portable/build por
 # plain binary tarball
 BINARY_CLIENT_TARBALL_NAME=${PACKAGE}-${VERSION}.${OSTAG_GENERIC}
 CLIENT_TARBALL_DIR=$(RCDIR)/$(BINARY_CLIENT_TARBALL_NAME).fortar
-BINARY_CLIENT_TARBALL=$(UPLOAD)/$(BINARY_CLIENT_TARBALL_NAME).bin.tar.bz2
+BINARY_CLIENT_TARBALL=$(0UPLOAD)/$(BINARY_CLIENT_TARBALL_NAME).bin.tar.bz2
 binary_client_tarball: $(BINARY_CLIENT_TARBALL)
-$(BINARY_CLIENT_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile portable/AppRun $(UPLOAD)/.tag
+$(BINARY_CLIENT_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile portable/AppRun $(0UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package client as tarball
@@ -556,9 +562,9 @@ $(BINARY_CLIENT_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile portable/AppRun
 # plain binary tarball
 BINARY_SERVER_TARBALL_NAME=${PACKAGE}-dedicated-${VERSION}.${OSTAG_GENERIC}
 SERVER_TARBALL_DIR=$(RCDIR)/$(BINARY_SERVER_TARBALL_NAME).fortar
-BINARY_SERVER_TARBALL=$(UPLOAD)/$(BINARY_SERVER_TARBALL_NAME).bin.tar.bz2
+BINARY_SERVER_TARBALL=$(0UPLOAD)/$(BINARY_SERVER_TARBALL_NAME).bin.tar.bz2
 binary_server_tarball: $(BINARY_SERVER_TARBALL)
-$(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/fixlinks portable/AppRun $(UPLOAD)/.tag
+$(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/fixlinks portable/AppRun $(0UPLOAD)/.tag
 	#
 	# *****************************************
 	# *  package server as tarball

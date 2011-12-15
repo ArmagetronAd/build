@@ -49,6 +49,13 @@ $(UPLOAD)/.tag: $(RCDIR)/.tag
 	test -d $(UPLOAD) || mkdir $(UPLOAD)
 	echo "" > $@
 
+# upload directory for zeroinstall archives
+0UPLOAD=$(UPLOAD)/ZeroInstall
+0UPLOADTAG=$(RCDIR)/.0uploadtag
+$(0UPLOADTAG): $(UPLOAD)/.tag
+	test -d $(0UPLOAD) || mkdir $(0UPLOAD)
+	echo "" > $@
+
 ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
 
 uploadcheck: $(UPLOAD)/.tag
@@ -566,13 +573,13 @@ BINARY_TARBALL_DATA_NAME=${PACKAGE}-data-${VERSION}
 BINARY_TARBALL_LIBS_NAME=${PACKAGE}-libs-${VERSION}.${OSTAG_GENERIC}
 CLIENT_TARBALL_DIR=$(RCDIR)/$(BINARY_CLIENT_TARBALL_NAME).fortar
 binary_tarball_dir: $(CLIENT_TARBALL_DIR).tag
-BINARY_CLIENT_TARBALL=$(UPLOAD)/$(BINARY_CLIENT_TARBALL_NAME).bin.tar.bz2
-BINARY_TARBALL_DATA=$(UPLOAD)/$(BINARY_TARBALL_DATA_NAME).bin.tar.bz2
-BINARY_TARBALL_LIBS=$(UPLOAD)/$(BINARY_TARBALL_LIBS_NAME).bin.tar.bz2
+BINARY_CLIENT_TARBALL=$(0UPLOAD)/$(BINARY_CLIENT_TARBALL_NAME).bin.tar.bz2
+BINARY_TARBALL_DATA=$(0UPLOAD)/$(BINARY_TARBALL_DATA_NAME).bin.tar.bz2
+BINARY_TARBALL_LIBS=$(0UPLOAD)/$(BINARY_TARBALL_LIBS_NAME).bin.tar.bz2
 binary_client_tarball: $(BINARY_CLIENT_TARBALL)
 binary_tarball_data: $(BINARY_TARBALL_DATA)
 binary_tarball_libs: $(BINARY_TARBALL_LIBS)
-$(CLIENT_TARBALL_DIR).tag: $(APPDIR_CLIENT).tag WorkMakefile portable/AppRun $(UPLOAD)/.tag
+$(CLIENT_TARBALL_DIR).tag: $(APPDIR_CLIENT).tag WorkMakefile portable/AppRun $(0UPLOADTAG)
 	#
 	# *****************************************
 	# *  package client as tarball, preparation
@@ -635,9 +642,9 @@ ZEROINSTTAG=$(RCDIR)/.$(BINARY_CLIENT_TARBALL_NAME).0installtag
 # plain binary tarball
 BINARY_SERVER_TARBALL_NAME=${PACKAGE}-dedicated-${VERSION}.${OSTAG_GENERIC}
 SERVER_TARBALL_DIR=$(RCDIR)/$(BINARY_SERVER_TARBALL_NAME).fortar
-BINARY_SERVER_TARBALL=$(UPLOAD)/$(BINARY_SERVER_TARBALL_NAME).bin.tar.bz2
+BINARY_SERVER_TARBALL=$(0UPLOAD)/$(BINARY_SERVER_TARBALL_NAME).bin.tar.bz2
 binary_server_tarball: $(BINARY_SERVER_TARBALL)
-$(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/fixlinks portable/AppRun $(UPLOAD)/.tag
+$(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/fixlinks portable/AppRun $(0UPLOADTAG)
 	#
 	# *****************************************
 	# *  package server as tarball

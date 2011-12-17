@@ -52,10 +52,10 @@ $(UPLOAD)/.tag: $(RCDIR)/.tag
 
 # upload directory for zeroinstall archives
 0UPLOAD=$(UPLOAD)/ZeroInstall
-0UPLOADTAG=$(RCDIR)/.0uploadtag
+0UPLOADTAG=$(0UPLOAD)/README.TXT
 $(0UPLOADTAG): $(UPLOAD)/.tag
 	test -d $(0UPLOAD) || mkdir $(0UPLOAD)
-	echo "" > $@
+	echo "These files are for the ZeroInstall system and hard to get working if you donwload them manually.\nStick to the files one folder up or use our ZeroInstall feeds:\nhttp://wiki.armagetronad.org/index.php/0Install" > $@
 
 ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
 

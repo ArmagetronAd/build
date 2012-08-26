@@ -10,7 +10,7 @@ EXEC=$(grep -h -m 1 -r Exec= ${root}/*.desktop | cut -d "=" -f 2 | cut -d % -f 1
 # true portable app: create a .armagetronad directory in the current directory and
 # it'll be used to store your data.
 extraarg=
-test -d .${EXEC} && extraarg="--userdatadir .${EXEC}"
+test -d .${EXEC} && extraarg="--userdatadir .${EXEC} --vardir .${EXEC}/var --userconfigdir .${EXEC}/config"
 
 # for debugging: if LD_DEBUG_APP=true, use the included libraries first.
 # you can then use strace to check no non-standard external libraries are needed. 

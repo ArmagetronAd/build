@@ -338,6 +338,7 @@ $(WINSOURCEDIR).hasbeenbuilt: $(WINSOURCEDIR) $(UPLOAD)/.tag ${AA_WINLIBS}/SDL
 	# *  build windows
 	# *****************************************
 	#
+	rm -rf $(WINSOURCEDIR).build
 	cp -ax $(WINSOURCEDIR) $(WINSOURCEDIR).build
 	rm -f ${RCDIR}/winlibs; ln -s $$(pwd)/${AA_WINLIBS} ${RCDIR}/winlibs
 	cd $(WINSOURCEDIR).build; if test -z "$$DISPLAY"; then DISPLAY=:0.0 xterm -e "bash ./fromunix.sh"; else bash ./fromunix.sh; fi

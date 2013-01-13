@@ -14,7 +14,7 @@ for f in arma*.nsi; do
     wine C:/Program\ Files/NSIS/makensis.exe $f || exit 1
   fi
 done
-mv *.win32.exe ../
+mv *.win32.exe ../ || exit 1
 rm -f *.nsi
 
 # zip up 

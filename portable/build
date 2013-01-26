@@ -17,6 +17,7 @@ done
 APPDIR=${APPDIR} $(dirname $0)/fixlinks
 
 lastpath=
+otherpath=
 
 function copylib()
 {
@@ -24,12 +25,8 @@ function copylib()
     path=$(dirname ${baselib})
     baselib=$(basename ${baselib})
     echo "Found in ${path}."
-    if test "/lib" == "$path"; then
-      path=/usr/lib
-    fi
-    if test -n "$lastpath" && test "$lastpath" != "$path"; then
-        echo "error: different paths detected, frankenbuild!"
-        exit 1
+    if test "$lastpath" != "$path"; then
+        otherpath=$lastpath
     fi
     lastpath=$path
     while test -n "${baselib}"; do
@@ -65,7 +62,11 @@ for library in \
 libjpeg.so.62 \
 ; do
     echo "Installing library ${library} anyway, we know it's needed."
-    copylib ${lastpath}/${library}
+    if test -r ${lastpath}/${library}; then
+        copylib ${lastpath}/${library}
+    else
+        copylib ${otherpath}/${library}
+    fi
 done
 fi
 

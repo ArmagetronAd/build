@@ -51,10 +51,10 @@ $(UPLOAD)/.tag: $(RCDIR)/.tag
 	echo "" > $@
 
 # upload directory for zeroinstall archives
-0UPLOAD=$(UPLOAD)/ZeroInstall
+0UPLOAD=$(UPLOAD)/ZeroInstall/$(RC)
 0UPLOADTAG=$(0UPLOAD)/README.txt
 $(0UPLOADTAG): $(UPLOAD)/.tag
-	test -d $(0UPLOAD) || mkdir $(0UPLOAD)
+	test -d $(0UPLOAD) || mkdir -p $(0UPLOAD)
 	echo "IMPORTANT, READ ME:\nThese files are for the ZeroInstall system and hard to get working if you donwload them manually.\nStick to the files one folder up or use our ZeroInstall feeds (which we very much recommend):\nhttp://wiki.armagetronad.org/index.php/0Install" > $@
 	todos $@
 
@@ -67,7 +67,7 @@ uploadcheck: $(UPLOAD)/.tag
 # bump rc number
 bump:
 	# update release candidate number
-	rm $(RCFILE).tag
+	rm builds/.tag
 .PHONY: bump
 
 SOURCEDIR=$(RCDIR)/$(PACKAGE)-$(VERSION)
@@ -616,8 +616,8 @@ $(ZEROINSTTAG): $(BINARY_CLIENT_TARBALL) $(BINARY_SERVER_TARBALL) 0install 0inst
 	# *  update zeroinstall stream
 	# *****************************************
 	#
-	SF_DIRECTORY=$(SF_DIRECTORY) OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_CLIENT_TARBALL} VERSION=${VERSION} 0install/update
-	SF_DIRECTORY=$(SF_DIRECTORY) OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE}-dedicated SERIES=${SERIES} FILE=${BINARY_SERVER_TARBALL} VERSION=${VERSION} 0install/update
+	SF_DIRECTORY=$(SF_DIRECTORY) OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_CLIENT_TARBALL} VERSION=${VERSION} RC=${RC} 0install/update
+	SF_DIRECTORY=$(SF_DIRECTORY) OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE}-dedicated SERIES=${SERIES} FILE=${BINARY_SERVER_TARBALL} VERSION=${VERSION} RC=${RC} 0install/update
 	touch $@
 
 APFILE=$(RCDIR)/.package
@@ -661,7 +661,7 @@ upload-sf: uploadcheck upload-rename
 	#echo $(SF_DIRECTORY); false
 	cp doc/releasenotes.txt $(UPLOAD)/
 	todos $(UPLOAD)/releasenotes.txt
-	cd ${UPLOAD}; mkdir -p armagetronad/$(SF_DIRECTORY)/$(VERSION); rsync -r -e ssh armagetronad z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/; rm -rf armagetronad; rsync -avP -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/$(SF_DIRECTORY)/$(VERSION)/
+	cd ${UPLOAD}; mkdir -p armagetronad/$(SF_DIRECTORY)/$(VERSION); rsync -r -e ssh armagetronad z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/; rm -rf armagetronad; rsync --ignore-existing -avP -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/$(SF_DIRECTORY)/$(VERSION)/; rsync -avP --no-R -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/$(SF_DIRECTORY)/$(VERSION)/
 
 TOEMPTYLINE=sed -e "s,^$$,," -e "t q" -e "p" -e "d" -e ": q" -e "q"
 

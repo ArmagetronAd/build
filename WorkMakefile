@@ -9,7 +9,7 @@ rpm-mdk: mandriva
 rpm-mdkded: mandriva-dedicated
 
 # everything z-man can build at home and work
-z-man-home: tarsource zipsource webdoc windoc autopackage ubuntu-lucid
+z-man-home: tarsource zipsource webdoc windoc autopackage
 z-man-work: autopackage-legacyserver autopackage-client
 
 # other builders are invited to add their build sets.
@@ -398,6 +398,8 @@ $(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu.patch
 #   version dependant patches
 	rel=$$(echo $* | sed -e "s,.*~,,"); echo patches/ubuntu~$$rel.patch; if test -r patches/ubuntu~$$rel.patch; then patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu~$$rel.patch; fi
+	# we're actually using 1.0 format here still.
+	echo "1.0" > $(UBUNTUSOURCEDIR)$*/debian/source/format
 #   rebrand package
 #	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\./armagetronad./g" > $(UBUNTUSOURCEDIR)/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
 	cd $(UBUNTUSOURCEDIR)$*/debian/; for f in *; do dest=$$(echo $$f | sed -e "s,armagetronad,${PACKAGE},g"); test -d $$f || sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" --e "s/${PACKAGE}\.source/armagetronad.source/g" > $$dest.out; rm $$f; mv $$dest.out $$dest; done
@@ -448,13 +450,13 @@ upload-ubuntu: xupload-ubuntu-$(RC)
 	echo $@
 upload-ubuntu-%: xupload-ubuntu-$(RC)~%
 	echo $@
+
 upload-ubuntu-all: \
-upload-ubuntu-hardy \
-upload-ubuntu-lucid \
-upload-ubuntu-maverick \
-upload-ubuntu-natty \
-upload-ubuntu-oneiric \
-upload-ubuntu-precise
+upload-ubuntu-utopic \
+upload-ubuntu-trusty \
+upload-ubuntu-saucy \
+upload-ubuntu-precise \
+upload-ubuntu-lucid 
 	echo $@
 
 # generic client build

@@ -13,7 +13,7 @@ rpm-mdkded: mandriva-dedicated
 include IncludesMakefile3
 
 # everything z-man can build at home and work
-z-man-home: tarsource zipsource webdoc windoc autopackage ubuntu-lucid
+z-man-home: tarsource zipsource webdoc windoc autopackage
 z-man-work: autopackage-legacyserver autopackage-client
 
 # other builders are invited to add their build sets.
@@ -50,10 +50,10 @@ $(UPLOAD)/.tag: $(RCDIR)/.tag
 	echo "" > $@
 
 # upload directory for zeroinstall archives
-0UPLOAD=$(UPLOAD)/ZeroInstall
+0UPLOAD=$(UPLOAD)/ZeroInstall/$(RC)
 0UPLOADTAG=$(0UPLOAD)/README.txt
 $(0UPLOADTAG): $(UPLOAD)/.tag
-	test -d $(0UPLOAD) || mkdir $(0UPLOAD)
+	test -d $(0UPLOAD) || mkdir -p $(0UPLOAD)
 	echo "IMPORTANT, READ ME:\nThese files are for the ZeroInstall system and hard to get working if you donwload them manually.\nStick to the files one folder up or use our ZeroInstall feeds (which we very much recommend):\nhttp://wiki.armagetronad.org/index.php/0Install" > $@
 	todos $@
 
@@ -66,7 +66,7 @@ uploadcheck: $(UPLOAD)/.tag
 # bump rc number
 bump:
 	# update release candidate number
-	rm $(RCFILE).tag
+	rm builds/.tag
 .PHONY: bump
 
 SOURCEDIR=$(RCDIR)/$(PACKAGE)-$(VERSION)
@@ -399,6 +399,8 @@ $(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu-docmove.patch
 #   version dependant patches
 	rel=$$(echo $* | sed -e "s,.*~,,"); echo patches/ubuntu~$$rel.patch; if test -r patches/ubuntu~$$rel.patch; then patch -p0 -d $(UBUNTUSOURCEDIR)$* < patches/ubuntu~$$rel.patch; fi
+	# we're actually using 1.0 format here still.
+	echo "1.0" > $(UBUNTUSOURCEDIR)$*/debian/source/format
 #   rebrand package
 #	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\./armagetronad./g" > $(UBUNTUSOURCEDIR)/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
 	cd $(UBUNTUSOURCEDIR)$*/debian/; for f in *; do dest=$$(echo $$f | sed -e "s,armagetronad,${PACKAGE},g"); test -d $$f || sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" --e "s/${PACKAGE}\.source/armagetronad.source/g" > $$dest.out; rm $$f; mv $$dest.out $$dest; done
@@ -449,12 +451,13 @@ upload-ubuntu: xupload-ubuntu-$(RC)
 	echo $@
 upload-ubuntu-%: xupload-ubuntu-$(RC)~%
 	echo $@
+
 upload-ubuntu-all: \
-upload-ubuntu-lucid \
-upload-ubuntu-maverick \
-upload-ubuntu-natty \
-upload-ubuntu-oneiric \
-upload-ubuntu-precise
+upload-ubuntu-utopic \
+upload-ubuntu-trusty \
+upload-ubuntu-saucy \
+upload-ubuntu-precise \
+upload-ubuntu-lucid 
 	echo $@
 
 # generic client build
@@ -695,8 +698,8 @@ $(ZEROINSTTAG): $(BINARY_CLIENT_TARBALL) $(BINARY_SERVER_TARBALL) 0install 0inst
 	# *  update zeroinstall stream
 	# *****************************************
 	#
-	SF_DIRECTORY=$(SF_DIRECTORY) OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_CLIENT_TARBALL} VERSION=${VERSION} 0install/update
-	SF_DIRECTORY=$(SF_DIRECTORY) OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE}-dedicated SERIES=${SERIES} FILE=${BINARY_SERVER_TARBALL} VERSION=${VERSION} 0install/update
+	SF_DIRECTORY=$(SF_DIRECTORY) OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE} SERIES=${SERIES} FILE=${BINARY_CLIENT_TARBALL} VERSION=${VERSION} RC=${RC} 0install/update
+	SF_DIRECTORY=$(SF_DIRECTORY) OSTAG_GENERIC=${OSTAG_GENERIC} PACKAGE=${PACKAGE}-dedicated SERIES=${SERIES} FILE=${BINARY_SERVER_TARBALL} VERSION=${VERSION} RC=${RC} 0install/update
 	touch $@
 
 APFILE=$(RCDIR)/.package
@@ -740,7 +743,7 @@ upload-sf: uploadcheck upload-rename
 	#echo $(SF_DIRECTORY); false
 	cp doc/releasenotes.txt $(UPLOAD)/
 	todos $(UPLOAD)/releasenotes.txt
-	cd ${UPLOAD}; mkdir -p armagetronad/$(SF_DIRECTORY)/$(VERSION); rsync -r -e ssh armagetronad z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/; rm -rf armagetronad; rsync -avP -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/$(SF_DIRECTORY)/$(VERSION)/
+	cd ${UPLOAD}; mkdir -p armagetronad/$(SF_DIRECTORY)/$(VERSION); rsync -r -e ssh armagetronad z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/; rm -rf armagetronad; rsync --ignore-existing -avP -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/$(SF_DIRECTORY)/$(VERSION)/; rsync -avP --no-R -e ssh * z-man,armagetronad@frs.sourceforge.net:/home/frs/project/a/ar/armagetronad/$(SF_DIRECTORY)/$(VERSION)/
 
 TOEMPTYLINE=sed -e "s,^$$,," -e "t q" -e "p" -e "d" -e ": q" -e "q"
 

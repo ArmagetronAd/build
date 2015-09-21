@@ -25,31 +25,26 @@ for f in $WINDIR/INSTALL $WINDIR/COPYING $WINDIR/AUTHORS $WINDIR/NEWS $WINDIR/Ch
 done
 
 # copy Code::Blocks build files
-if test -n "${CODEBLOCKS}" && test -d ${CODEBLOCKS}; then
+if test -d ${CODEBLOCKS}; then
     cp -r ${CODEBLOCKS}/* ${WINDIR}/ || exit 1
     
     # adapt relative paths to source
-    for f in `ls ${CODEBLOCKS} -1 | egrep ".*\.cbp$|.*.\.bat$"`; do
+    for f in `ls ${CODEBLOCKS} -1 | egrep ".*\.cbp$"`; do
         #echo $f
-		sed < ${CODEBLOCKS}/$f > ${WINDIR}/$f -e "s,=\.\.\\\\armagetronad,=.,g" -e "s,\.\./armagetronad[^_],,g" -e "s,\.\.\\\\armagetronad[^_],,g"
+		sed < ${CODEBLOCKS}/$f > ${WINDIR}/$f -e "s,\.\.\\\\armagetronad\",.\",g" -e "s,\.\./armagetronad[^_],,g" -e "s,\.\.\\\\armagetronad[^_],,g"
     done
 fi
 
 # copy visualC build files
-if test -n "${VISUALC}" && test -d ${VISUALC}; then
+if test -d ${VISUALC}; then
     cp -r ${VISUALC}/* ${WINDIR}/ || exit 1
 
     # transcribe nsi scripts
 	for f in `ls ${VISUALC} -1 | grep ".*.nsi$"`; do
 		#echo Adapting installer script $f...
-		sed < ${VISUALC}/$f > ${WINDIR}/$f \
-            -e "s,define PRODUCT_VERSION.*$,define PRODUCT_VERSION \"${VERSION}\"," \
-            -e "s,define PRODUCT_BASENAME.*$,define PRODUCT_BASENAME \"${PROGNAME}\"," \
-
+		sed < ${VISUALC}/$f > ${WINDIR}/$f -e "s,define PRODUCT_VERSION.*$,define PRODUCT_VERSION \"${VERSION}\","
         for suffix in gcc vc6 vc8; do
-            sed < ${VISUALC}/$f > ${WINDIR}/${suffix}.$f \
-            -e "s,define PRODUCT_VERSION.*$,define PRODUCT_VERSION \"${VERSION}.${suffix}\"," \
-            -e "s,define PRODUCT_BASENAME.*$,define PRODUCT_BASENAME \"${PROGNAME}\"," \
+            sed < ${VISUALC}/$f > ${WINDIR}/${suffix}.$f -e "s,define PRODUCT_VERSION.*$,define PRODUCT_VERSION \"${VERSION}.${suffix}\","
 
             # generate special makedist script that copies only the wanted installer generators
             MAKEDIST=${WINDIR}/makedist_${suffix}.bat
@@ -66,7 +61,7 @@ if test -n "${VISUALC}" && test -d ${VISUALC}; then
     # adapt relative paths to source
     for f in `ls ${VISUALC} -1 | egrep ".*\.ds[wp]|.*.\.bat$"`; do
         #echo $f
-		sed < ${VISUALC}/$f > ${WINDIR}/$f -e "s,=\.\.\\\\armagetronad,=.,g" -e "s,\.\./armagetronad[^_],,g" -e "s,\.\.\\\\armagetronad[^_],,g"
+		sed < ${VISUALC}/$f > ${WINDIR}/$f -e "s,\.\.\\\\armagetronad\",.\",g" -e "s,\.\./armagetronad[^_],,g" -e "s,\.\.\\\\armagetronad[^_],,g"
     done
 fi
 
@@ -76,10 +71,10 @@ for suffix in bat nsi nsi.m4 cfg txt dsp dsw h cpp dtd xml; do
 done
 
 rm -rf $WINDIR/config.* $WINDIR/configure* $WINDIR/*.m4 $WINDIR/*.kde* 
-rm -rf $WINDIR/bootstrap.sh $WINDIR/batch $WINDIR/missing $WINDIR/install-sh $WINDIR/textures/KGN*
+rm -rf $WINDIR/*.sh $WINDIR/batch $WINDIR/missing $WINDIR/install-sh $WINDIR/textures/KGN*
 find $WINDIR -name "*.in" -exec rm \{\} \;
 find $WINDIR -name "*.am" -exec rm \{\} \;
 find $WINDIR -name "Makefile*" -exec rm \{\} \;
 find $WINDIR -name "*.ghost" -exec rm \{\} \;
-find $WINDIR -depth -name "CVS" -exec rm -rf \{\} \;
-find $WINDIR -depth -name "*~" -exec rm -rf \{\} \;
+find $WINDIR -name "CVS" -depth -exec rm -rf \{\} \;
+find $WINDIR -name "*~" -depth -exec rm -rf \{\} \;

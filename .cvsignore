@@ -1,0 +1,9 @@
+.includes-updated
+.remaking-includes
+ap-*
+aptest
+aptest-client
+aptest-server
+builds
+make.conf
+tarballs

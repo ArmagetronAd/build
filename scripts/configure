@@ -6,7 +6,7 @@ shift
 source="$1"
 shift
 
-CONFIGURE=`pwd`/${source}/configure
+CONFIGURE=`which $source/configure`
 
 echo cd $target
 cd $target

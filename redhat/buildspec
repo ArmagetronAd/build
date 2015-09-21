@@ -5,7 +5,7 @@ test -r ../make.conf && . ../make.conf
 test -r ../builds/.versionfile && . ../builds/.versionfile
 
 # determine build version and release count
-RELEASE=$( cat ../builds/b_$VERSION/.rc.base )
+RELEASE=$( cat ../builds/b_$VERSION/rc.base )
 
 # fallback version
 test -z "$VERSION" && VERSION=`date +%y%m%d`

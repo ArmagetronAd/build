@@ -7,14 +7,10 @@
 BRANCH=0.2.8
 
 OFFICIAL_VERSION=`cat ../../../.versionfile.proto`
-# LJR: Does this work? The directory for alphas is Branch/Date...
 
-DIRECTORY=${BRANCH}/${OFFICIAL_VERSION}
+DIRECTORY=`echo "${BRANCH}/${OFFICIAL_VERSION}" | sed 's,^\([^/]\+/\)[0-9.]\+_alpha\([0-9]\+\)$,\1\2,'`
 
 rm -f releases*.php*
-
-test -r "Armagetron Advanced.app.dmg" && mv "Armagetron Advanced.app.dmg" armagetronad-$OFFICIAL_VERSION.macosx-universal.dmg
-test -r "Armagetron Advanced Dedicated.dmg" && mv "Armagetron Advanced Dedicated.dmg" armagetronad-dedicated-$OFFICIAL_VERSION.macosx-universal.dmg
 
 for f in *; do
     # ignore old-libxml files
@@ -65,14 +61,9 @@ for f in *; do
         SYSTEM_AABETA=windows
         SYSTEM_AABETA_FULL=\(Source\)
         EXT_AABETA=zip
-    # test if this is a mac build
-    elif test "${REST}" = "macosx-universal.dmg"; then
-        TARGET=${PRODUCT}-${VERSION}.macosx-universal.dmg
-        SYSTEM_AABETA_FULL="Mac OS X 10.3+"
-        SYSTEM_AABETA=macosx
-        ARCH_AABETA="ppc_32 & x86_32"
-        EXT_AABETA=dmg
     else
+        # TODO: mac files
+
         # assume it's unix
 
         # nothing needs to be done for source packages
@@ -152,9 +143,9 @@ done
 grep < releases.php.proto > releases.php -v "'doesnotapply'"
 
 # build in new elements into releases.php
-REALRELEASES=../../../../../../www-aabeta/releases.php
+REALRELEASES=../../../../../www-aabeta/releases.php
 if test -r ${REALRELEASES}; then
-    insertat=$( grep -n "INSERT NEW" $REALRELEASES | sed -e s/:.*//g | head -n 1 )
+    insertat=2
     totallines=`wc -l < ${REALRELEASES}`
     lines=$(( ${totallines} - ${insertat} ))
     tail -n ${lines} ${REALRELEASES} > releases_tail.php
@@ -181,8 +172,8 @@ ls -l
 
 echo
 echo Upload commands:
-COMMAND1="ssh ${USERNAME_AABETA}@beta.armagetronad.net mkdir -m g+ws -p /var/www/armagetron/distfiles/${DIRECTORY}"
-COMMAND2="rsync --progress * ${USERNAME_AABETA}@beta.armagetronad.net:/var/www/armagetron/distfiles/${DIRECTORY}/"
+COMMAND1="ssh ${USERNAME_AABETA}@beta.armagetronad.net mkdir -m g+ws -p /var/www/aabeta/download/${DIRECTORY}"
+COMMAND2="rsync --progress * ${USERNAME_AABETA}@beta.armagetronad.net:/var/www/aabeta/download/${DIRECTORY}/"
 echo ${COMMAND1}
 echo ${COMMAND2}
 

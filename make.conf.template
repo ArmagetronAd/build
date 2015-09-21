@@ -7,9 +7,6 @@ PACKAGE=armagetronad
 #prefix to install the program to
 PREFIX=/usr/local
 
-# Launchpad series
-SERIES=0.2.8
-
 # RPM build root
 #RPMBUILDROOT="%{_tmppath}/%{name}-%{version}-root"
 
@@ -27,6 +24,6 @@ SERIES=0.2.8
 # CXXFLAGS="-Os"
 
 #
-# AUTOMATICALLY DETERMINED VALUES FOLLOW. DO NOT EDIT THIS LINE OR REARRANGE ELEMENTS.
+# AUTOMATICALLY DETERMINED VALUES FOLLOW. PLEASE CHECK IN make.conf
 #
 

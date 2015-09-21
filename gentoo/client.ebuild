@@ -1,6 +1,6 @@
 # Copyright 1999-2006 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /cvsroot/armagetronad/armagetronad_build/gentoo/client.ebuild,v 1.24 2006/05/05 13:55:13 luke-jr Exp $
+# $Header$
 
 inherit flag-o-matic eutils games
 
@@ -55,6 +55,12 @@ DEPEND="${RDEPEND}
 	!dedicated? ( ${OPT_CLIENTDEPS} )
 "
 
+src_unpack() {
+	unpack ${A}
+	cd "${S}/batch"
+	epatch "${FILESDIR}/0280_fix-sysinstall.patch"
+}
+
 aabuild() {
 	MyBUILDDIR="${WORKDIR}/build-$1"
 	mkdir -p "${MyBUILDDIR}" || die "error creating build directory($1)"	# -p to allow EEXIST scenario
@@ -63,10 +69,8 @@ aabuild() {
 	use debug && DEBUGLEVEL=3 || DEBUGLEVEL=0
 	export DEBUGLEVEL CODELEVEL=0
 	[ "$SLOT" == "0" ] && myconf="--disable-multiver" || myconf="--enable-multiver=${SLOT}"
-	GameDir="${PN}${ded}${GameSLOT}"
 	egamesconf ${myconf} \
 		--disable-binreloc \
-		--docdir "/usr/share/doc/${PF}/${DOCDESTTREE}" \
 		--disable-master \
 		--enable-main \
 		$(use_enable krawall) \
@@ -78,7 +82,7 @@ aabuild() {
 		--enable-uninstall="emerge --clean =${CATEGORY}/${PF}" \
 		"${@:2}" || die "egamesconf($1) failed"
 	[ "$1" == "server" ] && ded='-dedicated' || ded=''
-	cat >>"Xconfig.h" <<EOF
+	cat >>"config.h" <<EOF
 #define DATA_DIR "${GAMES_DATADIR}/${PN}${ded}${GameSLOT}"
 #define CONFIG_DIR "${GAMES_SYSCONFDIR}/${PN}${ded}${GameSLOT}"
 #define RESOURCE_DIR "${GAMES_DATADIR}/${PN}${ded}${GameSLOT}/resource"

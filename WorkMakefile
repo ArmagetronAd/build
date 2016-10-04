@@ -452,10 +452,13 @@ upload-ubuntu-%: xupload-ubuntu-$(RC)~%
 	echo $@
 
 upload-ubuntu-all: \
+upload-ubuntu-xenial \
+upload-ubuntu-wily \
+upload-ubuntu-vivid \
+upload-ubuntu-saucy \
 upload-ubuntu-utopic \
 upload-ubuntu-trusty \
-upload-ubuntu-saucy \
-upload-ubuntu-precise \
+load-ubuntu-precise \
 upload-ubuntu-lucid 
 	echo $@
 

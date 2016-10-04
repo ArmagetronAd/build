@@ -455,11 +455,8 @@ upload-ubuntu-all: \
 upload-ubuntu-xenial \
 upload-ubuntu-wily \
 upload-ubuntu-vivid \
-upload-ubuntu-saucy \
-upload-ubuntu-utopic \
 upload-ubuntu-trusty \
-upload-ubuntu-precise \
-upload-ubuntu-lucid 
+upload-ubuntu-precise
 	echo $@
 
 # generic client build

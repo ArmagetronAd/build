@@ -452,6 +452,7 @@ upload-ubuntu-%: xupload-ubuntu-$(RC)~%
 	echo $@
 
 upload-ubuntu-all: \
+upload-ubuntu-yakkety \
 upload-ubuntu-xenial \
 upload-ubuntu-wily \
 upload-ubuntu-vivid \

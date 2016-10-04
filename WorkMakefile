@@ -458,7 +458,7 @@ upload-ubuntu-vivid \
 upload-ubuntu-saucy \
 upload-ubuntu-utopic \
 upload-ubuntu-trusty \
-load-ubuntu-precise \
+upload-ubuntu-precise \
 upload-ubuntu-lucid 
 	echo $@
 

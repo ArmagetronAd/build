@@ -453,11 +453,12 @@ upload-ubuntu-%: xupload-ubuntu-$(RC)~%
 	echo $@
 
 upload-ubuntu-all: \
-upload-ubuntu-utopic \
+upload-ubuntu-yakkety \
+upload-ubuntu-xenial \
+upload-ubuntu-wily \
+upload-ubuntu-vivid \
 upload-ubuntu-trusty \
-upload-ubuntu-saucy \
-upload-ubuntu-precise \
-upload-ubuntu-lucid 
+upload-ubuntu-precise
 	echo $@
 
 # generic client build

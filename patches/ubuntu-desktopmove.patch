@@ -1,0 +1,30 @@
+=== modified file 'debian/armagetronad.install'
+--- debian/armagetronad.install	2007-04-24 11:38:26 +0000
++++ debian/armagetronad.install	2016-10-14 21:35:19 +0000
+@@ -1,6 +1,7 @@
+ usr/games/armagetronad.real usr/games/
+ usr/share/games/armagetronad/desktop/icons usr/share/pixmaps/armagetronad
+-usr/share/games/armagetronad/desktop/armagetronad.desktop usr/share/applications
++/usr/share/games/armagetronad/desktop/armagetronad-armagetronad-handler.desktop usr/share/applications
++/usr/share/games/armagetronad/desktop/armagetronad-armagetronad.desktop usr/share/applications
+ usr/share/games/armagetronad/models
+ usr/share/games/armagetronad/sound
+ usr/share/games/armagetronad/textures
+
+=== modified file 'debian/rules'
+--- debian/rules	2011-09-13 13:04:33 +0000
++++ debian/rules	2016-10-14 21:44:52 +0000
+@@ -131,9 +131,9 @@
+ 	# Convert icon to xpm format.
+ 	convert debian/armagetronad/usr/share/pixmaps/armagetronad/icons/medium/armagetronad.png debian/armagetronad/usr/share/pixmaps/armagetronad.xpm
+ 	# Fix .desktop file.
+-	sed 's/Path=\/usr\/bin/Path=\/usr\/games/' -i debian/armagetronad/usr/share/applications/armagetronad.desktop
+-	sed 's/Icon=armagetronad.png/Icon=\/usr\/share\/pixmaps\/armagetronad\/icons\/large\/armagetronad.png/' -i debian/armagetronad/usr/share/applications/armagetronad.desktop
+-	sed 's/Categories=Application\;Game\;ActionGame\;GameAction\;ActionGames\;GamesAction\;/Categories=Game\;ActionGame;/' -i debian/armagetronad/usr/share/applications/armagetronad.desktop
++	sed 's/Path=\/usr\/bin/Path=\/usr\/games/' -i debian/armagetronad/usr/share/applications/armagetronad-armagetronad.desktop
++	sed 's/Icon=armagetronad.png/Icon=\/usr\/share\/pixmaps\/armagetronad\/icons\/large\/armagetronad.png/' -i debian/armagetronad/usr/share/applications/armagetronad-armagetronad.desktop
++	sed 's/Categories=Application\;Game\;ActionGame\;GameAction\;ActionGames\;GamesAction\;/Categories=Game\;ActionGame;/' -i debian/armagetronad/usr/share/applications/armagetronad-armagetronad.desktop
+ 	# Clean up cruft.
+ 	rm -rf debian/armagetronad/usr/share/games/armagetronad/desktop
+ 	dh_installchangelogs ChangeLog
+

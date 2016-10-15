@@ -405,7 +405,7 @@ $(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 	echo "1.0" > $(UBUNTUSOURCEDIR)$*/debian/source/format
 #   rebrand package
 #	for f in ../ubuntu/debian/*; do sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\./armagetronad./g" > $(UBUNTUSOURCEDIR)/debian/$$(echo $$f | sed -e s,../ubuntu/debian/,, -e "s/armagetronad/${PACKAGE}/"); done
-	cd $(UBUNTUSOURCEDIR)$*/debian/; for f in *; do dest=$$(echo $$f | sed -e "s,armagetronad,${PACKAGE},g"); test -d $$f || sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" --e "s/${PACKAGE}\.source/armagetronad.source/g" > $$dest.out; rm $$f; mv $$dest.out $$dest; done
+	cd $(UBUNTUSOURCEDIR)$*/debian/; for f in *; do dest=$$(echo $$f | sed -e "s,armagetronad,${PACKAGE},g"); test -d $$f || sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" -e "s/${PACKAGE}\.source/armagetronad.source/g" -e "s/${PACKAGE}-armagetronad/armagetronad-armagetronad/g" > $$dest.out; rm $$f; mv $$dest.out $$dest; done
 	chmod 755 $(UBUNTUSOURCEDIR)$*/debian/rules
 #   build changelog
 	DIST="`echo $* | sed -e s/^[0-9]*// -e s/.*~//`"; test -z $$DIST && DIST=hardy; sed -e "s/@distribution@/$$DIST/g" -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/${DEBVERSION}$*/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $(UBUNTUSOURCEDIR)$*/debian/changelog

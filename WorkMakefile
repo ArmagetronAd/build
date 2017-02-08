@@ -410,6 +410,8 @@ $(UBUNTUSOURCEDIR)%.tag: $(INPUTTARBALLBASE) $(UPLOAD)/.tag
 #   build changelog
 	DIST="`echo $* | sed -e s/^[0-9]*// -e s/.*~//`"; test -z $$DIST && DIST=hardy; sed -e "s/@distribution@/$$DIST/g" -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/${DEBVERSION}$*/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $(UBUNTUSOURCEDIR)$*/debian/changelog
 	cat < ../ubuntu/debian/changelog >> $(UBUNTUSOURCEDIR)$*/debian/changelog
+#	patch desktop file
+	cd $(UBUNTUSOURCEDIR)$*/desktop; sed -e "s,Icon=.*,Icon=/usr/share/pixmaps/${PACKAGE}.xpm," > armagetronad-armagetronad.desktop.in.out < armagetronad-armagetronad.desktop.in; mv armagetronad-armagetronad.desktop.in.out armagetronad-armagetronad.desktop.in
 	echo "x" > $@
 
 $(RCDIR)/ubuntu%.tag: $(UBUNTUSOURCEDIR)%.tag

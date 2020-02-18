@@ -20,7 +20,7 @@ if test -z "$VERSION"; then
     cd ${lwd}
         
     # adapt version to source
-    VERSION=`sed -e 's,.*\[,,' -e 's,\].*,,'  < $AA_SOURCE/version`
+    VERSION=`sed -e 's,.*\[,,' -e 's,\].*,,'  < $AA_SOURCE/version.m4`
 else
     # adapt source to version
     echo "m4_define(AUTOMATIC_VERSION,[$VERSION])" > .v

@@ -83,7 +83,7 @@ AIT_SUFFIX=x86_64
 PORTABLE_SUFFIX=""
 if test `getconf LONG_BIT` -eq 32; then
   AIT_SUFFIX=i686
-  PORTABLE_SUFFIX=-32bit
+  PORTABLE_SUFFIX=_32bit
 fi
 
 #   and pack it up. The appimagetool package is available here:

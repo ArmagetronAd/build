@@ -5,8 +5,14 @@
 
 #   add AppRun and desktop file
 cp portable/AppRun ${APPDIR}/
+
 find ${APPDIR} -name "*.desktop" -exec mv \{\} ${APPDIR}/ \;
 find ${APPDIR} -type l -name "*.desktop" -exec rm \{\} \;
+
+# appimagetool says desktop icons should not have extensions
+DESKTOP=`ls ${APPDIR}/*.desktop`
+sed -e s/\.png// < ${DESKTOP} > ${DESKTOP}.sed
+mv ${DESKTOP}.sed ${DESKTOP}
 
 #   hack Icon
 for f in $(find ${APPDIR} -type d -name "desktop"); do
@@ -72,8 +78,16 @@ fi
 
 echo $lastpath
 
-#   and pack it up. The script is stupidly only available inside a portable app
-#   called AppImageAssistant; fetch it and extract it with AppImageExtractor
-#   to /usr/local/bin/.
-rm -f ${PORTABLE}
-/usr/local/bin/AppImageAssistant.AppDir/package ${APPDIR} ${PORTABLE}
+# determine arch suffix
+AIT_SUFFIX=x86_64
+PORTABLE_SUFFIX=""
+if test `getconf LONG_BIT` -eq 32; then
+  AIT_SUFFIX=i686
+  PORTABLE_SUFFIX=-32bit
+fi
+
+#   and pack it up. The appimagetool package is available here:
+#   https://github.com/AppImage/AppImageKit/releases
+
+rm -f ${PORTABLE}${PORTABLE_SUFFIX}
+appimagetool-${AIT_SUFFIX}.AppImage ${APPDIR} ${PORTABLE}${PORTABLE_SUFFIX}

@@ -10,6 +10,7 @@ rpm-mdkded: mandriva-dedicated
 
 # everything z-man can build at home and work
 z-man-home: tarsource zipsource webdoc windoc winbin portable_client portable_server uploadcheck
+z-man-home-32: portable_client portable_server uploadcheck
 #z-man-work: autopackage-legacyserver autopackage-client
 
 # other builders are invited to add their build sets.

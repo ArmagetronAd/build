@@ -21,12 +21,12 @@ rm -f *.nsi
 #rm -f *_dedicated.exe
 rm -f *_master.exe
 rm -f *.a *.def banner.bmp var
-mkdir -p ../ZeroInstall
+mkdir -p ../ZeroInstall/${RC}
 zip -r ../../${PACKAGE}-libs-${VERSION}.win32.zip *.dll || exit 1
 rm -f *.dll
-zip -r ../ZeroInstall/${PACKAGE}-${VERSION}.win32.zip * -x *_dedicated.exe || exit 1
+zip -r ../ZeroInstall/${RC}/${PACKAGE}-${VERSION}.win32.zip * -x *_dedicated.exe || exit 1
 rm -rf textures models sound music
-zip -r ../ZeroInstall/${PACKAGE}-dedicated-${VERSION}.win32.zip * -x armagetronad.exe ArmagetronAd.exe || exit 1
+zip -r ../ZeroInstall/${RC}/${PACKAGE}-dedicated-${VERSION}.win32.zip * -x armagetronad.exe ArmagetronAd.exe || exit 1
 popd
 
 # discard garbage

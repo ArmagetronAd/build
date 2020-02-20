@@ -9,7 +9,7 @@ rpm-mdk: mandriva
 rpm-mdkded: mandriva-dedicated
 
 # everything z-man can build at home and work
-z-man-home: tarsource zipsource webdoc windoc winbin portable_client portable_server uploadcheck
+z-man-home: tarsource zipsource webdoc windoc portable_client portable_server winbin uploadcheck
 z-man-home-32: portable_client portable_server uploadcheck
 #z-man-work: autopackage-legacyserver autopackage-client
 
@@ -59,11 +59,11 @@ $(0UPLOADTAG): $(UPLOAD)/.tag
 	echo "IMPORTANT, READ ME:\nThese files are for the ZeroInstall system and hard to get working if you donwload them manually.\nStick to the files one folder up or use our ZeroInstall feeds (which we very much recommend):\nhttp://wiki.armagetronad.org/index.php/0Install" > $@
 	todos $@
 
-ZEROINSTTAG=$(RCDIR)/.$(BINARY_TARBALL_NAME).0installtag
+ZEROINSTTAG=$(RCDIR)/.0installtag
 
 uploadcheck: $(UPLOAD)/.tag
 #   check for windows build directory dumped into Upload
-	if test -d $(UPLOAD)/dist; then RCDIR=$(RCDIR) VERSION=$(VERSION) PACKAGE=${PACKAGE} scripts/handledist; rm -f $(ZEROINSTTAG); fi
+	if test -d $(UPLOAD)/dist; then RC=$(RC) RCDIR=$(RCDIR) VERSION=$(VERSION) PACKAGE=${PACKAGE} scripts/handledist; rm -f $(ZEROINSTTAG); fi
 
 # bump rc number
 bump:
@@ -547,7 +547,7 @@ BINARY_CLIENT_TARBALL_NAME=${PACKAGE}-${VERSION}.${OSTAG_GENERIC}
 CLIENT_TARBALL_DIR=$(RCDIR)/$(BINARY_CLIENT_TARBALL_NAME).fortar
 BINARY_CLIENT_TARBALL=$(0UPLOAD)/$(BINARY_CLIENT_TARBALL_NAME).bin.tar.bz2
 binary_client_tarball: $(BINARY_CLIENT_TARBALL)
-$(BINARY_CLIENT_TARBALL): $(GENERIC_CLIENT_DIR).tag WorkMakefile portable/AppRun $(0UPLOADTAG)
+$(BINARY_CLIENT_TARBALL): $(GENERIC_CLIENT_DIR).tag portable/AppRun $(0UPLOADTAG)
 	#
 	# *****************************************
 	# *  package client as tarball
@@ -570,7 +570,7 @@ BINARY_SERVER_TARBALL_NAME=${PACKAGE}-dedicated-${VERSION}.${OSTAG_GENERIC}
 SERVER_TARBALL_DIR=$(RCDIR)/$(BINARY_SERVER_TARBALL_NAME).fortar
 BINARY_SERVER_TARBALL=$(0UPLOAD)/$(BINARY_SERVER_TARBALL_NAME).bin.tar.bz2
 binary_server_tarball: $(BINARY_SERVER_TARBALL)
-$(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag WorkMakefile portable/fixlinks portable/AppRun $(0UPLOADTAG)
+$(BINARY_SERVER_TARBALL): $(GENERIC_SERVER_DIR).tag portable/fixlinks portable/AppRun $(0UPLOADTAG)
 	#
 	# *****************************************
 	# *  package server as tarball

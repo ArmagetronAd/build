@@ -397,7 +397,7 @@ $(UBUNTUSOURCEDIR)%.tag: $(TARBALLBZ) $(UPLOAD)/.tag
 	git -C ../ubuntu pull || { HOME=/noway git clone https://gitlab.com/armagetronad/ubuntu-packaging.git ../ubuntu && git -C ../ubuntu checkout ubuntu-bionic-0.2.8.3; }
 	cp -ax ../ubuntu/debian $(UBUNTUSOURCEDIR)$*/debian
 #   rebrand package
-	cd $(UBUNTUSOURCEDIR)$*/debian/; for f in * bin/* source/*; do dest=$$(echo $$f | sed -e "s,armagetronad,${PACKAGE},g"); test -d $$f || { sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" --e "s/${PACKAGE}\.source/armagetronad.source/g" > $$dest.out; rm $$f; mv $$dest.out $$dest; } done
+	cd $(UBUNTUSOURCEDIR)$*/debian/; for f in * bin/* source/* man/*; do dest=$$(echo $$f | sed -e "s,armagetronad,${PACKAGE},g"); test -d $$f || { sed -e "s/armagetronad/${PACKAGE}/g" < $$f | sed -e "s/${PACKAGE}\.net/armagetronad.net/g" --e "s/${PACKAGE}\.source/armagetronad.source/g" > $$dest.out; rm $$f; mv $$dest.out $$dest; } done
 	chmod 755 $(UBUNTUSOURCEDIR)$*/debian/rules
 #   build changelog
 	DIST="`echo $* | sed -e s/^[0-9]*// -e s/.*~//`"; test -z $$DIST && DIST=hardy; sed -e "s/@distribution@/$$DIST/g" -e "s/@package@/$(PACKAGE)/g" -e "s/@version@/${DEBVERSION}$*/g" -e "s;@date@;$$(date -R);g" < doc/ubuntu-changelog.txt > $(UBUNTUSOURCEDIR)$*/debian/changelog
